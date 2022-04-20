@@ -1,0 +1,68 @@
+import express, { Express, Request, Response } from "express";
+import dotenv from "dotenv";
+import { imrController } from "./src/controllers/imr";
+import { statusController } from "./src/controllers/status";
+import { errorHandler } from "./src/controllers/errorHandler";
+import * as Sentry from "@sentry/node";
+import documentRouter from "./src/routes/document";
+
+dotenv.config();
+
+const app: Express = express();
+const port = process.env.PORT;
+const useSentry =
+  process.env.NODE_ENV === "production" && process.env.SENTRY_DSN;
+
+/**
+ * Error handling
+ */
+
+if (useSentry) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+  });
+
+  // The request handler must be the first middleware on the app
+  app.use(Sentry.Handlers.requestHandler());
+}
+
+/**
+ * Up and running
+ */
+app.get("/", (req: Request, res: Response) => {
+  res.json({ message: "Server is up and running" });
+});
+
+/**
+ * IMR
+ */
+app.get("/imr/:siren", imrController);
+
+/**
+ * KBIS
+ */
+app.use("/document", documentRouter);
+
+/**
+ * Status
+ */
+app.get("/status", statusController);
+
+/**
+ * Error handling
+ */
+
+if (useSentry) {
+  // The error handler must be before any other error middleware and after all controllers
+  app.use(Sentry.Handlers.errorHandler());
+}
+app.use(errorHandler);
+
+app.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+});
