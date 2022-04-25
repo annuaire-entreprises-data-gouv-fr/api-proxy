@@ -4,11 +4,6 @@ Ce proxy permet de compenser les instabilités des services d’accès au RNCS p
 
 ## Architecture du service 🏗
 
-Ce repository fait partie d'un ensemble de services qui constituent l'Annuaire des Entreprises :
-
-
-## Architecture du service 🏗
-
 Ce repository fait partie d'un ensemble de services qui constituent l'[Annuaire des Entreprises](https://annuaire-entreprises.data.gouv.fr) :
 
 | Description | Accès |
