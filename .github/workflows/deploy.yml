@@ -14,7 +14,6 @@ jobs:
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ./deploy.key
           sudo chmod 600 ./deploy.key
-          echo "$SSH_HOST"
           ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
         shell: bash
         env:
