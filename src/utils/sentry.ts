@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/node";
+import * as Sentry from '@sentry/node';
 
 export interface IScope {
   page?: string;
@@ -14,29 +14,25 @@ const getScope = (extra: IScope) => {
   const scope = new Sentry.Scope();
   Object.keys(extra).forEach((key) => {
     //@ts-ignore
-    scope.setTag(key, extra[key] || "N/A");
+    scope.setTag(key, extra[key] || 'N/A');
   });
   return scope;
 };
 
-const logInSentryFactory =
-  (severity = Sentry.Severity.Error) =>
-  (errorMsg: any, extra?: IScope) => {
-    if (process.env.NODE_ENV === "development" || !process.env.SENTRY_DSN) {
-      console.log(errorMsg, JSON.stringify(extra));
+export const logWarningInSentry = (errorMsg: any, extra?: IScope) => {
+  const shouldLogInSentry =
+    process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN && Sentry;
+
+  if (shouldLogInSentry) {
+    const scope = getScope(extra || {});
+    scope.setLevel(Sentry.Severity.Info);
+
+    if (typeof errorMsg === 'string') {
+      Sentry.captureMessage(errorMsg, scope);
+    } else {
+      Sentry.captureException(errorMsg, scope);
     }
-    if (process.env.NODE_ENV === "production" && process.env.SENTRY_DSN) {
-      const scope = getScope(extra || {});
-      scope.setLevel(severity);
-
-      if (typeof errorMsg === "string") {
-        Sentry.captureMessage(errorMsg, scope);
-      } else {
-        Sentry.captureException(errorMsg, scope);
-      }
-    }
-  };
-
-export const logWarningInSentry = logInSentryFactory(Sentry.Severity.Info);
-
-export const logErrorInSentry = logInSentryFactory(Sentry.Severity.Error);
+  } else {
+    console.log(errorMsg, JSON.stringify(extra));
+  }
+};

@@ -1,6 +1,5 @@
-import fileSystem, { FileSystemProvider } from "../file-system";
-import randomId from "../helpers/random-id";
-import { logErrorInSentry } from "../sentry";
+import fileSystem, { FileSystemProvider } from '../file-system';
+import randomId from '../helpers/random-id';
 
 /**
  * INPI Pdf generation can be very slow
@@ -17,19 +16,19 @@ interface IStatusMetaData {
 
 const STATUSES: { [key: string]: IStatusMetaData } = {
   pending: {
-    status: "pending",
+    status: 'pending',
     isPending: true,
   },
   retried: {
-    status: "retried",
+    status: 'retried',
     isPending: true,
   },
   aborted: {
-    status: "aborted",
+    status: 'aborted',
     isPending: false,
   },
   downloaded: {
-    status: "downloaded",
+    status: 'downloaded',
     isPending: false,
   },
 };
@@ -46,7 +45,7 @@ export class PDFDownloader {
 
   async init() {
     if (!this.directory) {
-      throw new Error("Download manager : directory is not defined");
+      throw new Error('Download manager : directory is not defined');
     }
 
     if (!this.fileSystem.exists(this.directory)) {
@@ -86,10 +85,8 @@ export class PDFDownloader {
       if (shouldRetry) {
         await this.downloadAndRetry(slug, downloadCallBack);
       } else {
-        logErrorInSentry("Download manager : download failed", {
-          details: e.toString(),
-        });
         this.removePendingDownload(slug);
+        throw new Error('Download manager : download failed');
       }
     }
   }
@@ -138,9 +135,7 @@ export class PDFDownloader {
         })
       );
     } catch (e: any) {
-      logErrorInSentry("Download manager : file cleaning failed", {
-        details: e.toString(),
-      });
+      throw new Error('Download manager : file cleaning failed');
     }
     setTimeout(() => this.cleanOldFiles(), FILES_CLEANING_FREQUENCY);
   };
