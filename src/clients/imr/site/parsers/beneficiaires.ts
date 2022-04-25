@@ -1,17 +1,17 @@
-import { IBeneficiaire } from "../../../../models/imr";
-import { capitalize } from "../../../../utils/helpers/formatters";
-import { extractFromHtmlBlock, parseNameAndRole } from "./helpers";
+import { IBeneficiaire } from '../../../../models/imr';
+import { capitalize } from '../../../../utils/helpers/formatters';
+import { extractFromHtmlBlock, parseNameAndRole } from './helpers';
 
 const parseBeneficiaires = (beneficiairesHtml: Element) => {
   const beneficiaires = [] as IBeneficiaire[];
 
   // parse each sub section and look for a dirigeant
-  const blocsHtml = beneficiairesHtml.querySelectorAll("div.col-12.row.mt-4");
+  const blocsHtml = beneficiairesHtml.querySelectorAll('div.col-12.row.mt-4');
 
   for (var i = 0; i < blocsHtml.length; i++) {
     // every dirigeant is composed of three blocks
     const currentBeneficiaireBlock = blocsHtml[i].querySelectorAll(
-      "div.bloc-detail-notice"
+      'div.bloc-detail-notice'
     );
 
     const parsedBlocs = {} as any;
@@ -22,15 +22,15 @@ const parseBeneficiaires = (beneficiairesHtml: Element) => {
     }
 
     // let s assume Name is always first
-    const { nom, prenom } = parseNameAndRole(parsedBlocs["Nom prénom"] || "");
+    const { nom, prenom } = parseNameAndRole(parsedBlocs['Nom prénom'] || '');
 
     beneficiaires.push({
-      type: "",
+      type: '',
       nom: nom,
       prenoms: prenom,
-      dateNaissance: parsedBlocs["Date de naissance (mm/aaaa)"] || "",
-      nationalite: capitalize(parsedBlocs["Nationalité"] || ""),
-      dateGreffe: "",
+      dateNaissance: parsedBlocs['Date de naissance (mm/aaaa)'] || '',
+      nationalite: capitalize(parsedBlocs['Nationalité'] || ''),
+      dateGreffe: '',
     });
   }
   return beneficiaires;
