@@ -1,5 +1,8 @@
 # Proxy de l'API RNCS
 
+[![Pre-merge checks](https://github.com/etalab/rncs-api-proxy/actions/workflows/pre-merge.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/pre-merge.yml)
+[![Deploy - Production](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy.yml)
+
 Ce proxy permet de compenser les instabilités des services d’accès au RNCS proposés par l’INPI.
 
 ## Architecture du service 🏗
