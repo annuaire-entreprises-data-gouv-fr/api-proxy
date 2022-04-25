@@ -14,11 +14,15 @@ jobs:
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ./deploy.key
           sudo chmod 600 ./deploy.key
-          ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_MACHINE_USER_PRIVATE_KEY}}
-          SSH_HOST: ${{secrets.SSH_HOST}}
+        
+      - name: Adding Known Hosts
+        run: echo "${{ secrets.SSH_HOST }}"
+        
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to production
         run: ssh -i ./deploy.key www-data@${{ secrets.SSH_HOST }}  'sh /opt/apps/rncs-api-proxy/rncs-api-proxy-deploy.sh'
