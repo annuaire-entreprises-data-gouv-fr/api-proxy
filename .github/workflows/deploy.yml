@@ -21,4 +21,4 @@ jobs:
           SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS_PRODUCTION}}
 
       - name: Deploy to production
-        run: ssh -i ./deploy.key www-data@production.annuaire-entreprises-infra.data.gouv.fr  'sh /opt/apps/annuaire-entreprises/annuaire-entreprises-deploy.sh'
+        run: ssh -i ./deploy.key www-data@proxy.annuaire-entreprises-infra.data.gouv.fr  'sh /opt/apps/rncs-api-proxy/rncs-api-proxy-deploy.sh'

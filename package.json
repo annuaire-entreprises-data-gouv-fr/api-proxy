@@ -7,6 +7,10 @@
     "type": "git",
     "url": "git+https://github.com/etalab/rncs-api-proxy.git"
   },
+  "engines": {
+    "node": ">=16.4",
+    "npm": ">=7"
+  },
   "author": "Etalab",
   "license": "AGPL-3.0-or-later",
   "bugs": {
@@ -16,7 +20,7 @@
   "scripts": {
     "dev": "nodemon index.ts",
     "start": "node dist/index.js",
-    "test": "jest",
+    "test": "jest --runInBand",
     "lint": "eslint",
     "build": "tsc"
   },
@@ -32,18 +36,24 @@
     "yauzl": "^2.10.0"
   },
   "devDependencies": {
+    "@swc/jest": "^0.2.20",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.1",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^17.0.25",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
-    "concurrently": "^7.1.0",
     "eslint": "^8.14.0",
     "jest": "^27.5.1",
     "nodemon": "^2.0.15",
-    "ts-jest": "^27.1.4",
+    "pre-commit": "^1.2.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
+  },
+  "pre-commit": {
+    "run": [
+      "lint",
+      "test"
+    ]
   }
 }
