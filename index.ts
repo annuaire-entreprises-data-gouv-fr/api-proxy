@@ -10,7 +10,7 @@ import documentRouter from './src/routes/document';
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 const useSentry =
   process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN;
 
@@ -76,7 +76,5 @@ if (useSentry) {
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(
-    `⚡️[server]: Server is running at https://localhost:${port || 3000}`
-  );
+  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });
