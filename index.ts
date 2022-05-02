@@ -6,6 +6,7 @@ import { errorHandler } from './src/controllers/errorHandler';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import documentRouter from './src/routes/document';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -13,6 +14,9 @@ const app: Express = express();
 const port = process.env.PORT || 3000;
 const useSentry =
   process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN;
+
+// https://expressjs.com/fr/advanced/best-practice-security.html
+app.use(helmet());
 
 /**
  * Error handling
