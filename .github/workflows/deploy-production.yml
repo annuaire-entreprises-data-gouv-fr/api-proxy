@@ -1,6 +1,8 @@
 name: Deploy - Production
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -18,9 +20,9 @@ jobs:
         shell: bash
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_MACHINE_USER_PRIVATE_KEY}}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_HOST: ${{ secrets.SSH_HOST_PRODUCTION }}
 
       - name: Deploy to production
         run: ssh -i ./deploy.key www-data@$SSH_HOST 'sh /opt/apps/rncs-api-proxy/rncs-api-proxy-deploy.sh'
         env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_HOST: ${{ secrets.SSH_HOST_PRODUCTION }}
