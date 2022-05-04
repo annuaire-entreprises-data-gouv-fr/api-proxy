@@ -69,7 +69,7 @@ app.use('/document', documentRouter);
 /**
  * Status
  */
-app.get('/status', statusRouter);
+app.use('/status', statusRouter);
 
 /**
  * Error handling

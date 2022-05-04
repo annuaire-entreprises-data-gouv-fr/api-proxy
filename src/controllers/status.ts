@@ -9,17 +9,17 @@ export const apiImrStatusController = async (req: Request, res: Response) => {
   try {
     const dummySiren = verifySiren('880878145');
     await fetchRNCSImmatriculationFromAPI(dummySiren);
-    res.send({ test: true, status: 200 });
+    res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
-    res.send({ test: false, status: e.status | 500 });
+    res.send({ message: 'ko', status: e.status | 500 });
   }
 };
 export const siteImrStatusController = async (req: Request, res: Response) => {
   try {
     const dummySiren = verifySiren('880878145');
     await fetchRNCSImmatriculationFromSite(dummySiren);
-    res.send({ test: true, status: 200 });
+    res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
-    res.send({ test: false, status: e.status | 500 });
+    res.send({ message: 'ko', status: e.status | 500 });
   }
 };
