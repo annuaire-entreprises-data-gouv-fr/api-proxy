@@ -1,12 +1,12 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { imrController } from './src/controllers/imr';
-import { statusController } from './src/controllers/status';
 import { errorHandler } from './src/controllers/errorHandler';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import documentRouter from './src/routes/document';
 import helmet from 'helmet';
+import statusRouter from './src/routes/status';
 
 dotenv.config();
 
@@ -69,7 +69,7 @@ app.use('/document', documentRouter);
 /**
  * Status
  */
-app.get('/status', statusController);
+app.get('/status', statusRouter);
 
 /**
  * Error handling
