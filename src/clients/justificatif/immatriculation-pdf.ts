@@ -1,9 +1,9 @@
-import inpiSiteAuth from "../../utils/auth/site/provider";
-import { httpGet } from "../../utils/network";
-import routes from "../urls";
-import { Siren } from "../../models/siren-and-siret";
-import constants from "../../constants";
-import pdfDownloader from "../../utils/download-manager";
+import inpiSiteAuth from '../../utils/auth/site/provider';
+import { httpGet } from '../../utils/network';
+import routes from '../urls';
+import { Siren } from '../../models/siren-and-siret';
+import constants from '../../constants';
+import pdfDownloader from '../../utils/download-manager';
 
 export const downloadImmatriculationPdf = async (
   siren: Siren
@@ -14,19 +14,19 @@ export const downloadImmatriculationPdf = async (
       `${routes.rncs.portail.entreprise}${siren}?format=pdf`,
       {
         headers: {
-          Cookie: cookies || "",
+          Cookie: cookies || '',
         },
-        responseType: "arraybuffer",
+        responseType: 'arraybuffer',
         timeout: constants.pdfTimeout,
       }
     );
     const { data } = response;
     if (!data) {
-      throw new Error("response is empty");
+      throw new Error('response is empty');
     }
     return data;
   } catch (e: any) {
-    throw new Error("download failed" + e);
+    throw new Error('download failed' + e);
   }
 };
 

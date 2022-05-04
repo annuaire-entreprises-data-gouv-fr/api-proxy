@@ -1,5 +1,6 @@
 import fileSystem, { FileSystemProvider } from '../file-system';
 import randomId from '../helpers/random-id';
+import { logWarningInSentry } from '../sentry';
 
 /**
  * INPI Pdf generation can be very slow
@@ -86,7 +87,9 @@ export class PDFDownloader {
         await this.downloadAndRetry(slug, downloadCallBack);
       } else {
         this.removePendingDownload(slug);
-        throw new Error('Download manager : download failed');
+        logWarningInSentry('Download manager : download failed', {
+          details: e,
+        });
       }
     }
   }

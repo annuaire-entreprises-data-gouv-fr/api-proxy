@@ -15,6 +15,9 @@ const port = process.env.PORT || 3000;
 const useSentry =
   process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN;
 
+// parse incoming request json body
+app.use(express.json());
+
 // https://expressjs.com/fr/advanced/best-practice-security.html
 app.use(helmet());
 

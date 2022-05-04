@@ -8,7 +8,10 @@ const extractCookies = (sessionCookies: any): IInpiSiteCookies => {
     throw new Error('Invalid session cookies');
   }
 
-  const cookieSearch = RegExp(/(PHPSESSID=[^;]*|Q71x4Drzmg@@=[^;]*)/, 'g');
+  const cookieSearch = RegExp(
+    /(PHPSESSID=[^;]*|Q71x4Drzmg@@=[^;]*|Q71x4Drzmg__=[^;]*)/,
+    'g'
+  );
   let cookieSearchResult = cookieSearch.exec(sessionCookies);
 
   let Q71 = null;
@@ -20,6 +23,8 @@ const extractCookies = (sessionCookies: any): IInpiSiteCookies => {
       phpSessionId = match.replace('PHPSESSID=', '');
     } else if (match.indexOf('Q71x4Drzmg@@=') > -1) {
       Q71 = match.replace('Q71x4Drzmg@@=', '');
+    } else if (match.indexOf('Q71x4Drzmg__=') > -1) {
+      Q71 = match.replace('Q71x4Drzmg__=', '');
     }
     cookieSearchResult = cookieSearch.exec(sessionCookies);
   }

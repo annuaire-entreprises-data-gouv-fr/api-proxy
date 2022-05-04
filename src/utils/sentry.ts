@@ -33,6 +33,6 @@ export const logWarningInSentry = (errorMsg: any, extra?: IScope) => {
       Sentry.captureException(errorMsg, scope);
     }
   } else {
-    console.log(errorMsg, JSON.stringify(extra));
+    console.log(errorMsg, JSON.stringify(extra || {}));
   }
 };

@@ -1,9 +1,9 @@
-import { verifySiren } from "../models/siren-and-siret";
-import { Request, Response, NextFunction } from "express";
+import { verifySiren } from '../models/siren-and-siret';
+import { Request, Response, NextFunction } from 'express';
 import downloadImmatriculationPdf, {
   downloadImmatriculationPdfAndSaveOnDisk,
-} from "../clients/justificatif/immatriculation-pdf";
-import pdfDownloader from "../utils/download-manager";
+} from '../clients/justificatif/immatriculation-pdf';
+import pdfDownloader from '../utils/download-manager';
 
 export const justificatifController = async (
   req: Request,
@@ -13,9 +13,9 @@ export const justificatifController = async (
   try {
     const siren = verifySiren(req.params.siren);
     const data = await downloadImmatriculationPdf(siren);
-    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader('Content-Type', 'application/pdf');
     res.setHeader(
-      "Content-Disposition",
+      'Content-Disposition',
       `attachment; filename=justificatif_immatriculation_rcs_${siren}.pdf`
     );
     res.status(200).send(data);
@@ -44,7 +44,7 @@ export const justificatifJobStatusController = (
   next: NextFunction
 ) => {
   try {
-    const slugs = JSON.parse(req.body) as string[];
+    const slugs = req.body as string[];
 
     const pdfStatuses = slugs.map((slug) => {
       const status = pdfDownloader.getDownloadStatus(slug);
