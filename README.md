@@ -32,6 +32,25 @@ npm run build && npm run start
 
 ```
 
+## Utilisation
+
+L’API est protégée en appel par un header `X-API-Key`
+
+Une fois doté de ce header vous pouvez appeler les routes suivantes :
+
+```
+// get IMR as json response
+https://rncs-proxy.api.gouv.fr/imr/:siren
+
+// create a PDF download job
+https://rncs-proxy.api.gouv.fr/document/justificatif/:siren
+https://rncs-proxy.api.gouv.fr/document/justificatif/job/:siren
+https://rncs-proxy.api.gouv.fr/document/justificatif/job/status
+
+// download an existing file
+https://rncs-proxy.api.gouv.fr/document/downloads/:filename
+```
+
 ## Licence
 
 Ce projet est sous AGPL 3.0
