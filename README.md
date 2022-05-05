@@ -43,12 +43,15 @@ Une fois doté de ce header vous pouvez appeler les routes suivantes :
 https://rncs-proxy.api.gouv.fr/imr/:siren
 
 // create a PDF download job
-https://rncs-proxy.api.gouv.fr/document/justificatif/:siren
 https://rncs-proxy.api.gouv.fr/document/justificatif/job/:siren
 https://rncs-proxy.api.gouv.fr/document/justificatif/job/status
 
-// download an existing file
-https://rncs-proxy.api.gouv.fr/document/downloads/:filename
+// download an existing file with the slug given on job creation
+https://rncs-proxy.api.gouv.fr/document/downloads/:slug
+
+// status 
+https://rncs-proxy.api.gouv.fr/status/imr/api
+https://rncs-proxy.api.gouv.fr/status/imr/site
 ```
 
 ## Licence
