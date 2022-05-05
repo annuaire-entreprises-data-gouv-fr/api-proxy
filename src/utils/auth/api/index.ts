@@ -1,8 +1,12 @@
-import { AxiosRequestConfig } from "axios";
-import inpiAPIAuth from "./provider";
+import { AxiosRequestConfig } from 'axios';
+import inpiAPIAuth from './provider';
 
-const apiClient = async (route: string, options?: AxiosRequestConfig) => {
-  return await inpiAPIAuth.authenticatedClient(route, options);
+const authApiClient = async (
+  route: string,
+  options?: AxiosRequestConfig,
+  withCache = true
+) => {
+  return await inpiAPIAuth.authenticatedClient(route, options, withCache);
 };
 
-export { apiClient };
+export { authApiClient };

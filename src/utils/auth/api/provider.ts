@@ -1,9 +1,9 @@
-import httpClient from "../../../utils/network";
-import { HttpUnauthorizedError } from "../../../htttp-exceptions";
-import { AxiosRequestConfig } from "axios";
-import constants from "../../../constants";
-import { APICookie } from "./cookie";
-import dotenv from "dotenv";
+import { httpGet } from '../../../utils/network';
+import { HttpUnauthorizedError } from '../../../htttp-exceptions';
+import { AxiosRequestConfig } from 'axios';
+import constants from '../../../constants';
+import { APICookie } from './cookie';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -21,10 +21,8 @@ class InpiAPIAuthProvider {
     cookie: string,
     options?: AxiosRequestConfig
   ) => {
-    return await httpClient({
+    return await httpGet(route, {
       timeout: constants.defaultTimeout,
-      url: route,
-      method: "GET",
       headers: { Cookie: cookie },
       ...options,
     });

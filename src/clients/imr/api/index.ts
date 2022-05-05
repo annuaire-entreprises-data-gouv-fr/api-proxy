@@ -1,9 +1,9 @@
-import { IImmatriculationRNCS } from "../../../models/imr";
-import { Siren } from "../../../models/siren-and-siret";
-import routes from "../../urls";
-import { apiClient } from "../../../utils/auth/api";
-import { extractIMRFromXml } from "./IMR-parser";
-import { unzipTwiceIMR } from "./unzipper";
+import { IImmatriculationRNCS } from '../../../models/imr';
+import { Siren } from '../../../models/siren-and-siret';
+import routes from '../../urls';
+import { authApiClient } from '../../../utils/auth/api';
+import { extractIMRFromXml } from './IMR-parser';
+import { unzipTwiceIMR } from './unzipper';
 
 export interface IRNCSResponse {
   fichier: {
@@ -13,9 +13,9 @@ export interface IRNCSResponse {
 }
 
 export interface IRNCSResponseDossier {
-  "@_code_greffe": string; //'7501',
-  "@_num_gestion": string; // '2020B02214',
-  "@_siren": string; // '880878145',
+  '@_code_greffe': string; //'7501',
+  '@_num_gestion': string; // '2020B02214',
+  '@_siren': string; // '880878145',
   representants: {
     representant: IRNCSRepresentantResponse | IRNCSRepresentantResponse[];
   };
@@ -97,8 +97,8 @@ export interface IRNCSIdentiteResponse {
 }
 
 export const fetchRNCSImmatriculationFromAPI = async (siren: Siren) => {
-  const response = await apiClient(routes.rncs.api.imr.get + siren, {
-    responseType: "arraybuffer",
+  const response = await authApiClient(routes.rncs.api.imr.get + siren, {
+    responseType: 'arraybuffer',
   });
   const data = await response.data;
   const IMRBuffer = Buffer.from(new Uint8Array(data));

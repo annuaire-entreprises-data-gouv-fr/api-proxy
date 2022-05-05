@@ -1,8 +1,8 @@
-import { IImmatriculationRNCS } from "../../../models/imr";
-import { Siren } from "../../../models/siren-and-siret";
-import routes from "../../urls";
-import { httpGet } from "../../../utils/network";
-import { extractIMRFromHtml } from "./IMR-parser";
+import { IImmatriculationRNCS } from '../../../models/imr';
+import { Siren } from '../../../models/siren-and-siret';
+import routes from '../../urls';
+import { httpGet } from '../../../utils/network';
+import { extractIMRFromHtml } from './IMR-parser';
 
 export const fetchRNCSImmatriculationFromSite = async (
   siren: Siren
