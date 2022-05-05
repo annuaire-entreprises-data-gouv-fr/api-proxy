@@ -1,28 +1,27 @@
-import routes from "../../../clients/urls";
-import httpClient, { httpGet } from "../../network";
-import { logWarningInSentry } from "../../sentry";
+import routes from '../../../clients/urls';
+import constants from '../../../constants';
+import httpClient, { httpGet } from '../../network';
+import { logWarningInSentry } from '../../sentry';
 import {
   extractCookies,
   IInpiSiteCookies,
   extractAuthSuccessFromHtmlForm,
   loginFormData,
-} from "./helpers";
+} from './helpers';
 
 const DEFAULT_HEADERS = {
-  "User-Agent":
-    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0",
+  'User-Agent':
+    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0',
   Accept:
-    "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-  "Accept-Language": "fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3",
+    'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+  'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
   Referer: routes.rncs.portail.login,
-  DNT: "1",
-  Connection: "keep-alive",
-  "Upgrade-Insecure-Requests": "1",
-  Pragma: "no-cache",
-  "Cache-Control": "no-cache",
+  DNT: '1',
+  Connection: 'keep-alive',
+  'Upgrade-Insecure-Requests': '1',
+  Pragma: 'no-cache',
+  'Cache-Control': 'no-cache',
 };
-
-const INPI_SITE_IMEOUT = 30 * 1000;
 
 const COOKIE_VALIDITY_TIME = 1 * 60 * 1000;
 const COOKIE_OUTDATED_RETRY_TIME = 10 * 60 * 1000;
@@ -58,7 +57,7 @@ class InpiSiteAuthProvider {
       this.setCookies(newCookies);
       setTimeout(() => this.refreshCookies(), COOKIE_VALIDITY_TIME);
     } catch (e: any) {
-      logWarningInSentry("InpiSiteAuthProvider: cookie refresh failed", {
+      logWarningInSentry('InpiSiteAuthProvider: cookie refresh failed', {
         details: e.toString(),
       });
       setTimeout(() => this.refreshCookies(), COOKIE_OUTDATED_RETRY_TIME);
@@ -71,9 +70,9 @@ class InpiSiteAuthProvider {
   async getInitialCookies(): Promise<IInpiSiteCookies> {
     const response = await httpGet(routes.rncs.portail.login, {
       headers: DEFAULT_HEADERS,
-      timeout: INPI_SITE_IMEOUT,
+      timeout: constants.pdfTimeout,
     });
-    const sessionCookies = (response.headers["set-cookie"] || []).join(" ");
+    const sessionCookies = (response.headers['set-cookie'] || []).join(' ');
 
     return extractCookies(sessionCookies);
   }
@@ -84,27 +83,27 @@ class InpiSiteAuthProvider {
   async authenticateCookies(cookies: IInpiSiteCookies) {
     const cookieString = this.formatCookies(cookies);
     if (!cookieString) {
-      throw new Error("trying to authenticate empty cookies or token");
+      throw new Error('trying to authenticate empty cookies or token');
     }
 
     const response = await httpClient({
       url: routes.rncs.portail.login,
-      method: "POST",
+      method: 'POST',
       headers: {
         ...DEFAULT_HEADERS,
-        "Content-Type": "application/x-www-form-urlencoded",
-        Origin: "https://data.inpi.fr",
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Origin: 'https://data.inpi.fr',
         Cookie: cookieString,
       },
       data: loginFormData(),
-      timeout: INPI_SITE_IMEOUT,
+      timeout: constants.pdfTimeout,
     });
 
     const html = response.data;
     const loginSuccess = extractAuthSuccessFromHtmlForm(html);
 
     if (!loginSuccess) {
-      throw new Error("INPI response does not contain success alert");
+      throw new Error('INPI response does not contain success alert');
     }
   }
 
