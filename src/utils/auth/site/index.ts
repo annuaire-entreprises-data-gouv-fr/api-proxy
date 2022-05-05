@@ -1,8 +1,9 @@
+import { AxiosRequestConfig } from 'axios';
 import constants from '../../../constants';
 import { httpGet } from '../../network';
 import inpiSiteAuth from './provider';
 
-const authSiteClient = async (url: string) => {
+const authSiteClient = async (url: string, config?: AxiosRequestConfig) => {
   const cookies = await inpiSiteAuth.getCookies();
   const response = await httpGet(url, {
     headers: {
@@ -10,6 +11,7 @@ const authSiteClient = async (url: string) => {
     },
     responseType: 'arraybuffer',
     timeout: constants.defaultTimeout,
+    ...config,
   });
   const { data } = response;
   if (!data) {

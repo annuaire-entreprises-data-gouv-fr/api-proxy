@@ -2,13 +2,14 @@ import routes from '../urls';
 import { Siren } from '../../models/siren-and-siret';
 import pdfDownloader from '../../utils/download-manager';
 import authSiteClient from '../../utils/auth/site';
+import constants from '../../constants';
 
 export const downloadImmatriculationPdf = async (
   siren: Siren
 ): Promise<string> => {
   try {
     const url = `${routes.rncs.portail.entreprise}${siren}?format=pdf`;
-    return await authSiteClient(url);
+    return await authSiteClient(url, { timeout: constants.pdfTimeout });
   } catch (e: any) {
     throw new Error('download failed' + e);
   }

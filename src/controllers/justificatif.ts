@@ -1,8 +1,6 @@
 import { verifySiren } from '../models/siren-and-siret';
 import { Request, Response, NextFunction } from 'express';
-import downloadImmatriculationPdf, {
-  downloadImmatriculationPdfAndSaveOnDisk,
-} from '../clients/justificatif/immatriculation-pdf';
+import { downloadImmatriculationPdfAndSaveOnDisk } from '../clients/justificatif/immatriculation-pdf';
 import pdfDownloader from '../utils/download-manager';
 
 export const justificatifCreateJobController = (
