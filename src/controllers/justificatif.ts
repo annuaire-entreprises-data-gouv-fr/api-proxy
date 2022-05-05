@@ -5,25 +5,6 @@ import downloadImmatriculationPdf, {
 } from '../clients/justificatif/immatriculation-pdf';
 import pdfDownloader from '../utils/download-manager';
 
-export const justificatifController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const siren = verifySiren(req.params.siren);
-    const data = await downloadImmatriculationPdf(siren);
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader(
-      'Content-Disposition',
-      `attachment; filename=justificatif_immatriculation_rcs_${siren}.pdf`
-    );
-    res.status(200).send(data);
-  } catch (e) {
-    next(e);
-  }
-};
-
 export const justificatifCreateJobController = (
   req: Request,
   res: Response,
