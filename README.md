@@ -4,7 +4,8 @@
 [![Deploy - Staging](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml)
 [![Deploy - Production](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml)
 
-Ce proxy permet de compenser les instabilités des services d’accès au RNCS proposés par l’INPI.
+Ce proxy permet de dezipper et convertir la réponse XML de l'API RNCS de l'Inpi, en une réponse Json, consommable par les services d'Etalab.
+
 
 ## Architecture du service 🏗
 
