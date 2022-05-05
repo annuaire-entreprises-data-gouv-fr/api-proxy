@@ -1,6 +1,6 @@
-import { fetchRNCSImmatriculation } from "../models/imr";
-import { verifySiren } from "../models/siren-and-siret";
-import { Request, Response, NextFunction } from "express";
+import { fetchRNCSImmatriculation } from '../models/imr';
+import { verifySiren } from '../models/siren-and-siret';
+import { Request, Response, NextFunction } from 'express';
 
 export const imrController = async (
   req: Request,
@@ -10,7 +10,11 @@ export const imrController = async (
   try {
     const siren = verifySiren(req.params.siren);
     const imr = await fetchRNCSImmatriculation(siren);
-    res.json(imr);
+
+    // return partial content 206 when using site fallback
+    const status = imr?.metadata?.isFallback ? 206 : 200;
+
+    res.status(status).json(imr);
   } catch (e) {
     next(e);
   }
