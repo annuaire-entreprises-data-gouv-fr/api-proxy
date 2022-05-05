@@ -79,7 +79,6 @@ export class PDFDownloader {
       await this.savePdfOnDisk(slug, file);
       this.removePendingDownload(slug);
     } catch (e: any) {
-      console.log(e);
       const downloadEntry = this.pendingDownloads[slug];
       const shouldRetry =
         downloadEntry && downloadEntry.retry < MAX_RETRY_COUNT;
