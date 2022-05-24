@@ -3,7 +3,10 @@ import constants from '../../../constants';
 import { httpGet } from '../../network';
 import inpiSiteAuth from './provider';
 
-const authSiteClient = async (url: string, config?: AxiosRequestConfig) => {
+const authenticatedSiteClient = async (
+  url: string,
+  config?: AxiosRequestConfig
+) => {
   const cookies = await inpiSiteAuth.getCookies();
   const response = await httpGet(url, {
     headers: {
@@ -20,4 +23,4 @@ const authSiteClient = async (url: string, config?: AxiosRequestConfig) => {
   return data;
 };
 
-export default authSiteClient;
+export default authenticatedSiteClient;

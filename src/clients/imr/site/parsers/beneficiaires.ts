@@ -8,7 +8,7 @@ const parseBeneficiaires = (beneficiairesHtml: Element) => {
   // parse each sub section and look for a dirigeant
   const blocsHtml = beneficiairesHtml.querySelectorAll('div.col-12.row.mt-4');
 
-  for (var i = 0; i < blocsHtml.length; i++) {
+  for (let i = 0; i < blocsHtml.length; i++) {
     // every dirigeant is composed of three blocks
     const currentBeneficiaireBlock = blocsHtml[i].querySelectorAll(
       'div.bloc-detail-notice'
@@ -16,7 +16,7 @@ const parseBeneficiaires = (beneficiairesHtml: Element) => {
 
     const parsedBlocs = {} as any;
 
-    for (var j = 0; j < currentBeneficiaireBlock.length; j++) {
+    for (let j = 0; j < currentBeneficiaireBlock.length; j++) {
       const { label, text } = extractFromHtmlBlock(currentBeneficiaireBlock[j]);
       parsedBlocs[label] = text;
     }

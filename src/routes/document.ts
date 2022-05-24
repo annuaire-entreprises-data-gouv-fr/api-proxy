@@ -3,8 +3,9 @@ import {
   justificatifJobStatusController,
 } from '../controllers/justificatif';
 
-var express = require('express'),
-  documentRouter = express.Router();
+import express from 'express';
+
+const documentRouter = express.Router();
 
 documentRouter
   .get('/justificatif/job/:siren', justificatifCreateJobController)

@@ -21,7 +21,10 @@ describe('CreateJob', () => {
     await pdfDownloader.init();
 
     const jobId = pdfDownloader.createJob(
-      () => new Promise((resolve) => resolve('mon-téléchargement'))
+      2,
+      () => new Promise((resolve) => resolve('mon-téléchargement')),
+      () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      () => null
     );
     expect(jobId).toBeDefined();
   });
@@ -32,7 +35,10 @@ describe('getDownloadStatus', () => {
     const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
     await pdfDownloader.init();
     const jobId = pdfDownloader.createJob(
-      () => new Promise((resolve) => resolve('mon-téléchargement'))
+      2,
+      () => new Promise((resolve) => resolve('mon-téléchargement')),
+      () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      () => null
     );
     const status = pdfDownloader.getDownloadStatus(jobId);
     expect(status.status).toBe('pending');
@@ -41,7 +47,10 @@ describe('getDownloadStatus', () => {
     const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
     await pdfDownloader.init();
     const jobId = pdfDownloader.createJob(
-      () => new Promise((resolve) => resolve('mon-téléchargement'))
+      2,
+      () => new Promise((resolve) => resolve('mon-téléchargement')),
+      () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      () => null
     );
     pdfDownloader.removePendingDownload(jobId);
     const status = pdfDownloader.getDownloadStatus(jobId);

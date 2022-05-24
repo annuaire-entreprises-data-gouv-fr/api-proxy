@@ -1,28 +1,28 @@
-import { Stats } from "fs";
-import { FileSystemProvider } from ".";
+import { Stats } from 'fs';
+import { FileSystemProvider } from '.';
 
 class FileSystemMockup implements FileSystemProvider {
-  exists(dir: string) {
+  exists(_dir: string) {
     return true;
   }
 
-  async createDir(dir: string, options: { recursive: boolean }) {
-    return "";
+  async createDir(_dir: string, _options: { recursive: boolean }) {
+    return '';
   }
 
-  async writeFile(path: string, data: string, options: any) {
+  async writeFile(_path: string, _data: string, _options: any) {
     return;
   }
 
-  async readdir(dir: string) {
+  async readdir(_dir: string) {
     return [];
   }
 
-  async stats(path: string) {
+  async stats(_path: string) {
     return new Stats();
   }
 
-  async delete(path: string) {
+  async delete(_path: string) {
     return;
   }
 }

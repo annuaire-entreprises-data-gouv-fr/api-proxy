@@ -1,12 +1,10 @@
 import fileSystem, { FileSystemProvider } from '../file-system';
 import randomId from '../helpers/random-id';
-import { logWarningInSentry } from '../sentry';
 
 /**
  * INPI Pdf generation can be very slow
  */
 const DIRECTORY = process.env.PDF_DOWNLOAD_DIRECTORY as string;
-const MAX_RETRY_COUNT = 3;
 const FILES_LIFESPAN = 30 * 60 * 1000;
 const FILES_CLEANING_FREQUENCY = 1 * 60 * 1000;
 
@@ -36,7 +34,7 @@ const STATUSES: { [key: string]: IStatusMetaData } = {
 
 export class PDFDownloader {
   _initialized = false;
-  pendingDownloads: { [key: string]: { retry: number } } = {};
+  pendingDownloads: { [key: string]: boolean } = {};
 
   constructor(
     private readonly fileSystem: FileSystemProvider,
@@ -59,46 +57,66 @@ export class PDFDownloader {
     this._initialized = true;
   }
 
-  createJob(downloadCallBack: () => Promise<string>) {
-    const downloadJobId = randomId();
-    this.downloadAndRetry(downloadJobId, downloadCallBack);
-    return downloadJobId;
+  /**
+   * Create a download job that save file on disk
+   * With several retry
+   *
+   * @param downloadCallBack
+   * @param downloadFallBack - optional last try
+   * @returns
+   */
+  createJob(
+    retry: number,
+    downloadCallBack: () => Promise<string>,
+    downloadFallBack: () => Promise<string>,
+    errorCallBack: (e: any) => void
+  ) {
+    const slug = randomId();
+    this.pendingDownloads[slug] = true;
+    this.downloadAndRetry(
+      retry,
+      slug,
+      downloadCallBack,
+      downloadFallBack,
+      errorCallBack
+    );
+    return slug;
   }
 
   async downloadAndRetry(
+    retry: number,
     slug: string,
-    downloadCallBack: () => Promise<string>
+    downloadCallBack: () => Promise<string>,
+    downloadFallBack: () => Promise<string>,
+    errorCallBack: (e: any) => void
   ) {
     if (!this._initialized) {
       await this.init();
     }
-    this.addOrUpdatePendingDownload(slug);
 
     try {
       const file = await downloadCallBack();
       await this.savePdfOnDisk(slug, file);
       this.removePendingDownload(slug);
     } catch (e: any) {
-      const downloadEntry = this.pendingDownloads[slug];
-      const shouldRetry =
-        downloadEntry && downloadEntry.retry < MAX_RETRY_COUNT;
-
-      if (shouldRetry) {
-        await this.downloadAndRetry(slug, downloadCallBack);
+      if (retry > 1) {
+        await this.downloadAndRetry(
+          retry - 1,
+          slug,
+          downloadCallBack,
+          downloadFallBack,
+          errorCallBack
+        );
       } else {
-        this.removePendingDownload(slug);
-        logWarningInSentry('Download manager : download failed', {
-          details: e,
-        });
+        try {
+          const file = await downloadFallBack();
+          await this.savePdfOnDisk(slug, file);
+          this.removePendingDownload(slug);
+        } catch (lastError: any) {
+          this.removePendingDownload(slug);
+          errorCallBack(lastError);
+        }
       }
-    }
-  }
-
-  addOrUpdatePendingDownload(slug: string) {
-    if (this.pendingDownloads[slug]) {
-      this.pendingDownloads[slug].retry += 1;
-    } else {
-      this.pendingDownloads[slug] = { retry: 0 };
     }
   }
 
@@ -112,10 +130,8 @@ export class PDFDownloader {
 
   getDownloadStatus(slug: string): IStatusMetaData {
     const fileMetaData = this.pendingDownloads[slug];
-    if (fileMetaData && fileMetaData.retry === 0) {
+    if (fileMetaData) {
       return STATUSES.pending;
-    } else if (fileMetaData && fileMetaData.retry > 0) {
-      return STATUSES.retried;
     }
     if (this.fileSystem.exists(`${this.directory}/${slug}.pdf`)) {
       return STATUSES.downloaded;

@@ -3,8 +3,9 @@ import {
   siteImrStatusController,
 } from '../controllers/status';
 
-var express = require('express'),
-  statusRouter = express.Router();
+import express from 'express';
+
+const statusRouter = express.Router();
 
 statusRouter
   .get('/imr/site', siteImrStatusController)

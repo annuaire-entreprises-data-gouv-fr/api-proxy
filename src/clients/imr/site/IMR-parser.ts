@@ -13,7 +13,7 @@ const clean = (raw = '') => raw.replace('\n', '').replace(/\s+/g, ' ').trim();
 
 const extractIMRFromHtml = (
   html: string,
-  siren: Siren
+  _siren: Siren
 ): {
   dirigeants: IDirigeant[];
   beneficiaires: IBeneficiaire[];
@@ -43,7 +43,7 @@ const extractIMRFromHtml = (
   const radiationText =
     container.querySelector('p.company-removed')?.textContent || '';
 
-  for (var i = 0; i < rowsHtml.length; i++) {
+  for (let i = 0; i < rowsHtml.length; i++) {
     const row = rowsHtml[i];
     const title = clean(row.querySelector('h2, h3, h4, h5')?.innerHTML);
 
@@ -51,10 +51,13 @@ const extractIMRFromHtml = (
       case 'Identité':
         response.identite = parseIdentite(row, radiationText);
         rawIdentite = row;
+        break;
       case 'Représentants':
         response.dirigeants = parseDirigeants(row);
+        break;
       case 'Bénéficiaires effectifs':
         response.beneficiaires = parseBeneficiaires(row);
+        break;
       default:
     }
   }

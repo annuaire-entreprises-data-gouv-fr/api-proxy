@@ -1,23 +1,26 @@
 import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import constants from '../../constants';
-import handleError from './handle-errors';
+import errorInterceptor from './errors-interceptor';
+import logInterceptor from './log-interceptor';
+
+const axios = Axios.create();
+
+axios.interceptors.response.use(logInterceptor, errorInterceptor);
 
 /**
- * Default axios client - not cached
+ * Default axios client
  * @param config
  * @returns
  */
 const httpClient = (config: AxiosRequestConfig): Promise<AxiosResponse> => {
-  return Axios({
+  return axios({
     timeout: constants.defaultTimeout,
     ...config,
-  })
-    .then((response) => response)
-    .catch((error) => handleError(error));
+  });
 };
 
 /**
- * GET axios client - not cached
+ * GET axios client
  * @param url
  * @param config
  * @returns
