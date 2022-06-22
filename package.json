@@ -45,6 +45,9 @@
     "uninstall": "^0.0.0",
     "yauzl": "^2.10.0"
   },
+  "optionalDependencies": {
+    "@swc/core-linux-x64-gnu": "^1.2.160"
+  },
   "devDependencies": {
     "@swc/jest": "^0.2.20",
     "eslint": "^8.15.0",
