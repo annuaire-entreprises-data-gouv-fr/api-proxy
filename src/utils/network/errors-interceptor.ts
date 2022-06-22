@@ -11,6 +11,9 @@ import {
 const errorInterceptor = (error: AxiosError) => {
   const { config, response, message } = error;
 
+  const log = `status=${response?.status || 500} request=${config?.url || ''}`;
+  console.log(log);
+
   if (!response) {
     if (message) {
       if (message.indexOf('timeout of') > -1) {
