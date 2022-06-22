@@ -36,8 +36,6 @@ export const downloadImmatriculationPdf = async (
       throw new Error('response is empty');
     }
     return data;
-
-    return response.data;
   } catch (e: any) {
     throw new Error('PDF download failed: ' + e);
   }
