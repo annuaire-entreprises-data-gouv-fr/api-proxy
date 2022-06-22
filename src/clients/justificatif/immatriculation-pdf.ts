@@ -13,7 +13,7 @@ export const downloadImmatriculationPdf = async (
   authenticated = false
 ): Promise<string> => {
   try {
-    const urlPdf = `${routes.rncs.portail.entreprise}${siren}?format=pdf`;
+    const urlPdf = `${routes.rncs.portail.pdf}?format=pdf&ids=[%22${siren}%22]`;
     if (authenticated) {
       return await authenticatedSiteClient(urlPdf, {
         timeout: constants.pdfTimeout,
