@@ -1,6 +1,6 @@
 /** COMMON ERRORS */
 
-import { HttpBadRequestError } from "../../htttp-exceptions";
+import { HttpBadRequestError } from '../../http-exceptions';
 
 /**
  * This look like a siren but does not respect Luhn formula

@@ -1,5 +1,5 @@
 import { httpGet } from '../../../utils/network';
-import { HttpUnauthorizedError } from '../../../htttp-exceptions';
+import { HttpUnauthorizedError } from '../../../http-exceptions';
 import { AxiosRequestConfig } from 'axios';
 import constants from '../../../constants';
 import { APICookie } from './cookie';

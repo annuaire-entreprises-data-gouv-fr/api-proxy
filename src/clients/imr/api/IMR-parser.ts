@@ -1,16 +1,16 @@
-import { XMLParser } from "fast-xml-parser";
+import { XMLParser } from 'fast-xml-parser';
 
-import { IRNCSResponse, IRNCSResponseDossier } from ".";
-import { extractBeneficiaires } from "./parsers/beneficiaires";
-import { extractRepresentants } from "./parsers/dirigeants";
-import { extractIdentite } from "./parsers/identite";
-import { HttpNotFound, HttpServerError } from "../../../htttp-exceptions";
-import { Siren } from "../../../models/siren-and-siret";
-import { logWarningInSentry } from "../../../utils/sentry";
+import { IRNCSResponse, IRNCSResponseDossier } from '.';
+import { extractBeneficiaires } from './parsers/beneficiaires';
+import { extractRepresentants } from './parsers/dirigeants';
+import { extractIdentite } from './parsers/identite';
+import { HttpNotFound, HttpServerError } from '../../../http-exceptions';
+import { Siren } from '../../../models/siren-and-siret';
+import { logWarningInSentry } from '../../../utils/sentry';
 
 export class InvalidFormatError extends HttpServerError {
   constructor(message: string) {
-    super("Unable to parse XML :" + message);
+    super('Unable to parse XML :' + message);
   }
 }
 
@@ -53,7 +53,7 @@ const extractDossierPrincipal = (
 
   // use most "inscription principale"
   const principaux = dossiers
-    .filter((dossier) => dossier.identite.type_inscrip === "P")
+    .filter((dossier) => dossier.identite.type_inscrip === 'P')
     .sort((a, b) => {
       return (
         new Date(b?.identite?.dat_immat).getTime() -
@@ -62,7 +62,7 @@ const extractDossierPrincipal = (
     });
 
   if (principaux.length === 0) {
-    logWarningInSentry("No inscription principale", { siren });
+    logWarningInSentry('No inscription principale', { siren });
     return dossiers[0];
   }
 

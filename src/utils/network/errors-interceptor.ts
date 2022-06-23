@@ -6,7 +6,7 @@ import {
   HttpTimeoutError,
   HttpTooManyRequests,
   HttpUnauthorizedError,
-} from '../../htttp-exceptions';
+} from '../../http-exceptions';
 
 const errorInterceptor = (error: AxiosError) => {
   const { config, response, message } = error;
