@@ -1,7 +1,7 @@
-import yauzl from "yauzl";
-import { HttpNotFound } from "../../../htttp-exceptions";
-import { Siren } from "../../../models/siren-and-siret";
-import { logWarningInSentry } from "../../../utils/sentry";
+import yauzl from 'yauzl';
+import { HttpNotFound } from '../../../http-exceptions';
+import { Siren } from '../../../models/siren-and-siret';
+import { logWarningInSentry } from '../../../utils/sentry';
 
 interface IZipFileAsBuffer {
   file: string;
@@ -21,19 +21,19 @@ export const unzipTwiceIMR = async (
   const unzippedIMR = await unZipFromBuffer(IMRBuffer);
 
   if (unzippedIMR.length > 2) {
-    logWarningInSentry("More than 2 files returned in IMR zip", {
+    logWarningInSentry('More than 2 files returned in IMR zip', {
       siren,
-      details: unzippedIMR.join(", "),
+      details: unzippedIMR.join(', '),
     });
   }
 
   // we assume first archive only contains one zip file
   const zippedIMRFile = unzippedIMR.find(
-    (extractedFile) => extractedFile.file.indexOf(".zip") > -1
+    (extractedFile) => extractedFile.file.indexOf('.zip') > -1
   );
 
   if (!zippedIMRFile) {
-    throw new HttpNotFound("No IMR found");
+    throw new HttpNotFound('No IMR found');
   }
 
   const extractedXMLBuffer = await unZipFromBuffer(zippedIMRFile.buffer);
@@ -51,10 +51,10 @@ const unZipFromBuffer = (buffer: Buffer): Promise<IZipFileAsBuffer[]> => {
         if (err) {
           reject(err.message);
         } else if (zipfile === undefined) {
-          reject("Could not find zipfile");
+          reject('Could not find zipfile');
         } else {
           zipfile.readEntry();
-          zipfile.on("entry", function (entry) {
+          zipfile.on('entry', function (entry) {
             if (/\/$/.test(entry.fileName)) {
               // Directory file names end with '/'.
               // Note that entires for directories themselves are optional.
@@ -67,12 +67,12 @@ const unZipFromBuffer = (buffer: Buffer): Promise<IZipFileAsBuffer[]> => {
                   const chunks: any[] = [];
 
                   if (err) throw err;
-                  if (!readStream) throw new Error("ReadStream is undefined");
+                  if (!readStream) throw new Error('ReadStream is undefined');
 
-                  readStream.on("data", (chunk) => {
+                  readStream.on('data', (chunk) => {
                     chunks.push(chunk);
                   });
-                  readStream.on("end", function () {
+                  readStream.on('end', function () {
                     extractedFiles.push({
                       file: entry.fileName,
                       buffer: Buffer.concat(chunks),
@@ -84,7 +84,7 @@ const unZipFromBuffer = (buffer: Buffer): Promise<IZipFileAsBuffer[]> => {
                 reject(e);
               }
             }
-            zipfile.on("end", function () {
+            zipfile.on('end', function () {
               resolve(extractedFiles);
             });
           });

@@ -1,10 +1,10 @@
-import { fetchRNCSImmatriculationFromSite } from "../clients/imr/site";
-import { fetchRNCSImmatriculationFromAPI } from "../clients/imr/api";
-import { Siren } from "./siren-and-siret";
-import { HttpNotFound, HttpServerError } from "../htttp-exceptions";
+import { fetchRNCSImmatriculationFromSite } from '../clients/imr/site';
+import { fetchRNCSImmatriculationFromAPI } from '../clients/imr/api';
+import { Siren } from './siren-and-siret';
+import { HttpNotFound, HttpServerError } from '../http-exceptions';
 
 export interface IEtatCivil {
-  sexe: "M" | "F" | null;
+  sexe: 'M' | 'F' | null;
   nom: string;
   prenom: string;
   role: string;

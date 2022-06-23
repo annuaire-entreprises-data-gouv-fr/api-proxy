@@ -1,30 +1,30 @@
-import { HttpForbiddenError } from "../../../htttp-exceptions";
-import routes from "../../../clients/urls";
-import httpClient from "../../network";
+import { HttpForbiddenError } from '../../../http-exceptions';
+import routes from '../../../clients/urls';
+import httpClient from '../../network';
 
 export class APICookie {
   private cookie: null | string = null;
 
-  constructor(private login = "", private password = "") {}
+  constructor(private login = '', private password = '') {}
 
   async authenticateAndGet() {
     try {
       const response = await httpClient({
         url: routes.rncs.api.login,
-        method: "POST",
+        method: 'POST',
         headers: {
           login: this.login,
           password: this.password,
         },
       });
 
-      const setCookieValue = response.headers["set-cookie"] || [];
+      const setCookieValue = response.headers['set-cookie'] || [];
       const cookieValue = setCookieValue[0];
 
-      if (!cookieValue || typeof cookieValue !== "string") {
-        throw new Error("Authentication failed");
+      if (!cookieValue || typeof cookieValue !== 'string') {
+        throw new Error('Authentication failed');
       }
-      this.cookie = cookieValue.split(";")[0];
+      this.cookie = cookieValue.split(';')[0];
       return this.cookie;
     } catch (e: any) {
       throw new HttpForbiddenError(e);

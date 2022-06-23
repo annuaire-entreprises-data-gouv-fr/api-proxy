@@ -11,7 +11,7 @@ export const apiImrStatusController = async (req: Request, res: Response) => {
     await fetchRNCSImmatriculationFromAPI(dummySiren);
     res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
-    const status = e.status | 500;
+    const status = e.status || 500;
     res.status(status).send({ message: 'ko', status });
   }
 };
@@ -21,7 +21,7 @@ export const siteImrStatusController = async (req: Request, res: Response) => {
     await fetchRNCSImmatriculationFromSite(dummySiren);
     res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
-    const status = e.status | 500;
+    const status = e.status || 500;
     res.status(status).send({ message: 'ko', status });
   }
 };
