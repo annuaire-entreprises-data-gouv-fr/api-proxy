@@ -55,6 +55,19 @@ https://rncs-proxy.api.gouv.fr/status/imr/api
 https://rncs-proxy.api.gouv.fr/status/imr/site
 ```
 
+### Tests
+
+1. Linter
+
+```bash
+npm run lint
+```
+
+2. Tests unitaires
+
+```bash
+npm run test
+```
 
 ### Deploiement
 
