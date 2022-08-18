@@ -5,6 +5,7 @@ import constants from '../../constants';
 import { httpGet } from '../../utils/network';
 import { logWarningInSentry } from '../../utils/sentry';
 import inpiSiteAuth from '../../utils/auth/site/provider';
+import { HttpTimeoutError } from '../../http-exceptions';
 
 const RETRY_COUNT = 3;
 
@@ -25,8 +26,6 @@ const downloadImmatriculationPdf = async ({
       cookies = (await inpiSiteAuth.getCookies()) || '';
     }
 
-    console.log(cookies);
-
     const response = await httpGet(urlPdf, {
       headers: {
         Cookie: cookies,
@@ -44,7 +43,16 @@ const downloadImmatriculationPdf = async ({
     }
     return data;
   } catch (e: any) {
-    throw new Error('PDF download failed: ' + e);
+    console.log('=== PDF download failed ===');
+    console.log(e);
+    if (e instanceof HttpTimeoutError) {
+      // when INPI blacklists a session it produces timeout.
+      // In this case we refresh session cookies
+      inpiSiteAuth.refreshCookies();
+    }
+    console.log('======');
+
+    throw new Error('PDF download failed: ' + e.toString());
   }
 };
 
@@ -57,7 +65,7 @@ export const downloadImmatriculationPdfAndSaveOnDisk = (siren: Siren) => {
     () => downloadImmatriculationPdf({ siren, authenticated: false }),
     (error: any) => {
       logWarningInSentry('Download manager : all retries failed', {
-        details: error,
+        details: error.toString(),
         siren,
       });
     }
