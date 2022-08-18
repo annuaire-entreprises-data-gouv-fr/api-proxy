@@ -45,6 +45,8 @@ class InpiSiteAuthProvider {
 
   async refreshCookies(): Promise<void> {
     try {
+      logWarningInSentry('InpiSiteAuthProvider: cookie refresh initiated', {});
+
       const newCookies = await this.getInitialCookies();
 
       // wait 500 ms
