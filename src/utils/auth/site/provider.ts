@@ -11,20 +11,13 @@ import {
 
 const DEFAULT_HEADERS = {
   'User-Agent':
-    'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0',
-  Accept:
-    'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-  'Accept-Language': 'fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3',
-  Referer: routes.rncs.portail.login,
-  DNT: '1',
-  Connection: 'keep-alive',
-  'Upgrade-Insecure-Requests': '1',
-  Pragma: 'no-cache',
-  'Cache-Control': 'no-cache',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
+  Accept: '*/*',
+  Referer: 'https://data.inpi.fr',
 };
 
-const COOKIE_VALIDITY_TIME = 1 * 60 * 1000;
-const COOKIE_OUTDATED_RETRY_TIME = 10 * 60 * 1000;
+const COOKIE_VALIDITY_TIME = 60 * 60 * 1000;
+const COOKIE_OUTDATED_RETRY_TIME = 5 * 60 * 1000;
 
 interface IAuth {
   cookies: IInpiSiteCookies | null;
@@ -53,6 +46,10 @@ class InpiSiteAuthProvider {
   async refreshCookies(): Promise<void> {
     try {
       const newCookies = await this.getInitialCookies();
+
+      // wait 500 ms
+      await new Promise<void>((resolve) => setTimeout(() => resolve(), 500));
+
       await this.authenticateCookies(newCookies);
       this.setCookies(newCookies);
       setTimeout(() => this.refreshCookies(), COOKIE_VALIDITY_TIME);
@@ -68,7 +65,8 @@ class InpiSiteAuthProvider {
    * First call. Caller get two session cookies and a token in the login form
    * */
   async getInitialCookies(): Promise<IInpiSiteCookies> {
-    const response = await httpGet(routes.rncs.portail.login, {
+    // call any page to get session cookies
+    const response = await httpGet(routes.rncs.portail.any, {
       headers: DEFAULT_HEADERS,
       timeout: constants.pdfTimeout,
     });
@@ -111,7 +109,7 @@ class InpiSiteAuthProvider {
     if (!cookies) {
       return null;
     }
-    return `PHPSESSID=${cookies.phpSessionId}; Q71x4Drzmg@@=${cookies.Q71}; cookieconsent_status=allow`;
+    return `PHPSESSID=${cookies.phpSessionId}`;
   };
 
   setCookies(newCookies: IInpiSiteCookies) {

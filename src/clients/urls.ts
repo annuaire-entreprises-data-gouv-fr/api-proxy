@@ -2,6 +2,7 @@ const routes = {
   rncs: {
     portail: {
       entreprise: 'https://data.inpi.fr/entreprises/',
+      any: 'https://data.inpi.fr/entreprises/409716305',
       login: 'https://data.inpi.fr/login',
       pdf: 'https://data.inpi.fr/export/companies',
     },

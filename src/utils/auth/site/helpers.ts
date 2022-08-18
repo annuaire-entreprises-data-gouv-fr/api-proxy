@@ -1,6 +1,5 @@
 export interface IInpiSiteCookies {
   phpSessionId: string;
-  Q71: string;
 }
 
 const extractCookies = (sessionCookies: any): IInpiSiteCookies => {
@@ -8,39 +7,23 @@ const extractCookies = (sessionCookies: any): IInpiSiteCookies => {
     throw new Error('Invalid session cookies');
   }
 
-  const cookieSearch = RegExp(
-    /(PHPSESSID=[^;]*|Q71x4Drzmg@@=[^;]*|Q71x4Drzmg__=[^;]*)/,
-    'g'
-  );
-  let cookieSearchResult = cookieSearch.exec(sessionCookies);
+  const phpSessionSearch = RegExp(/(PHPSESSID=)([^;]*)/, 'g');
 
-  let Q71 = null;
-  let phpSessionId = null;
+  const phpSessionIdMatch = phpSessionSearch.exec(sessionCookies);
 
-  while (cookieSearchResult !== null) {
-    const match = cookieSearchResult[0];
-    if (match.indexOf('PHPSESSID=') > -1) {
-      phpSessionId = match.replace('PHPSESSID=', '');
-    } else if (match.indexOf('Q71x4Drzmg@@=') > -1) {
-      Q71 = match.replace('Q71x4Drzmg@@=', '');
-    } else if (match.indexOf('Q71x4Drzmg__=') > -1) {
-      Q71 = match.replace('Q71x4Drzmg__=', '');
-    }
-    cookieSearchResult = cookieSearch.exec(sessionCookies);
-  }
+  const phpSessionId = phpSessionIdMatch ? phpSessionIdMatch[2] : null;
 
-  if (Q71 === null || phpSessionId === null) {
+  if (phpSessionId === null) {
     throw new Error('Could not parse session cookies');
   }
 
   return {
     phpSessionId,
-    Q71,
   };
 };
 
 const extractAuthSuccessFromHtmlForm = (html: string) => {
-  return html.indexOf('alert-success alert-dismissible') > -1;
+  return html.indexOf('Xavier') > -1;
 };
 
 const loginFormData = () => {
