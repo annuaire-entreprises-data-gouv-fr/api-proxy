@@ -55,6 +55,32 @@ https://rncs-proxy.api.gouv.fr/status/imr/api
 https://rncs-proxy.api.gouv.fr/status/imr/site
 ```
 
+### Tests
+
+1. Linter
+
+```bash
+npm run lint
+```
+
+2. Tests unitaires
+
+```bash
+npm run test
+```
+
+### Deploiement
+
+Le déploiement se fait par [Github action](https://github.com/etalab/rncs-api-proxy/actions)
+
+A chaque "merge" sur master : 
+
+- Laissez le déploiement se faire automatiquement sur staging via l'action [deploy-staging](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml)
+- Vérifiez vos changements sur staging
+- Lancez manuellement le déploiement sur la production : sur [deploy-production](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml) et cliquez sur "Run workflow" -> "Run workflow"
+
+NB: Si plusieurs déploiements sont déclenchés en même temps, seul le premier va jusqu'au bout. Les autres sont automatiquement interrompus.
+
 ## Licence
 
 Ce projet est sous AGPL 3.0
