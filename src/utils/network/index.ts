@@ -1,12 +1,12 @@
 import Axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import http from 'node:http';
+import https from 'https';
 
 import constants from '../../constants';
 import errorInterceptor from './errors-interceptor';
 import logInterceptor from './log-interceptor';
 
 const axios = Axios.create({
-  httpsAgent: new http.Agent({ keepAlive: true }),
+  httpsAgent: new https.Agent({ keepAlive: true }),
 });
 
 axios.interceptors.response.use(logInterceptor, errorInterceptor);
