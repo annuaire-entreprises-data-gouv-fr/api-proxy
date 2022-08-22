@@ -64,9 +64,10 @@ export class InpiSiteCookiesProvider {
           .join('; ');
       }
       this._lastRefresh = new Date().getTime();
-    } catch (e: any) {
+    } catch (error: any) {
+      console.log(error);
       logWarningInSentry('InpiSiteAuthProvider: cookie refresh failed', {
-        details: e.toString(),
+        details: error.toString(),
       });
     } finally {
       this._refreshing = false;
