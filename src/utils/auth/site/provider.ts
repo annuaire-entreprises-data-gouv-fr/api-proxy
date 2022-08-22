@@ -63,13 +63,13 @@ export class InpiSiteCookiesProvider {
           .map((cookie) => `${cookie.name}=${cookie.value}`)
           .join('; ');
       }
+      this._lastRefresh = new Date().getTime();
     } catch (e: any) {
       logWarningInSentry('InpiSiteAuthProvider: cookie refresh failed', {
         details: e.toString(),
       });
     } finally {
       this._refreshing = false;
-      this._lastRefresh = new Date().getTime();
     }
   }
 
@@ -78,7 +78,15 @@ export class InpiSiteCookiesProvider {
   }
 }
 
-const inpiSiteCookies = [new InpiSiteCookiesProvider()];
+const inpiSiteCookies = [
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+];
 
 const getRandomInpiSiteCookieProvider = () => {
   // select only live cookies
