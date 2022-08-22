@@ -3,27 +3,28 @@ import { Siren } from '../../models/siren-and-siret';
 import pdfDownloader from '../../utils/download-manager';
 import constants from '../../constants';
 import { httpGet } from '../../utils/network';
-import { logWarningInSentry } from '../../utils/sentry';
-import inpiSiteAuth from '../../utils/auth/site/provider';
+import logErrorInSentry from '../../utils/sentry';
 import { HttpTimeoutError } from '../../http-exceptions';
-
-const RETRY_COUNT = 3;
+import getRandomInpiSiteCookieProvider from '../../utils/auth/site/provider';
 
 interface IDownloadArgs {
   siren: Siren;
-  authenticated: boolean;
+  useCookie?: boolean;
 }
 
 const downloadImmatriculationPdf = async ({
   siren,
-  authenticated = false,
+  useCookie = true,
 }: IDownloadArgs): Promise<string> => {
+  let cookieProvider = null;
+
   try {
     const urlPdf = `${routes.rncs.portail.pdf}?format=pdf&ids=["${siren}"]`;
 
     let cookies = '';
-    if (authenticated) {
-      cookies = (await inpiSiteAuth.getCookies()) || '';
+    if (useCookie) {
+      cookieProvider = getRandomInpiSiteCookieProvider();
+      cookies = (await cookieProvider.getCookies()) || '';
     }
 
     const response = await httpGet(urlPdf, {
@@ -43,28 +44,33 @@ const downloadImmatriculationPdf = async ({
     }
     return data;
   } catch (e: any) {
-    console.log('=== PDF download failed ===');
-    console.log(e);
-    if (e instanceof HttpTimeoutError) {
+    if (e instanceof HttpTimeoutError && cookieProvider) {
       // when INPI blacklists a session it produces timeout.
-      // In this case we refresh session cookies
-      inpiSiteAuth.refreshCookies();
+      // In this case we trigger a session cookies refresh
+      cookieProvider.refreshCookies();
     }
-    console.log('======');
 
-    throw new Error('PDF download failed: ' + e.toString());
+    throw e;
   }
 };
 
 export const downloadImmatriculationPdfAndSaveOnDisk = (siren: Siren) => {
+  const authenticatedDownload = () =>
+    downloadImmatriculationPdf({
+      siren,
+    });
+
   const downloadJobId = pdfDownloader.createJob(
-    RETRY_COUNT,
-    // first retries on authenticated PDF
-    () => downloadImmatriculationPdf({ siren, authenticated: true }),
-    // fallback retry on public PDF
-    () => downloadImmatriculationPdf({ siren, authenticated: false }),
+    [
+      // first tries using different cookies PDF
+      authenticatedDownload,
+      authenticatedDownload,
+      authenticatedDownload,
+      // fallback retry on public PDF
+      () => downloadImmatriculationPdf({ siren, useCookie: false }),
+    ],
     (error: any) => {
-      logWarningInSentry('Download manager : all retries failed', {
+      logErrorInSentry('Download manager : all retries failed', {
         details: error.toString(),
         siren,
       });

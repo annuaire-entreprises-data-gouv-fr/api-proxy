@@ -61,63 +61,49 @@ export class PDFDownloader {
    * Create a download job that save file on disk
    * With several retry
    *
-   * @param downloadCallBack
-   * @param downloadFallBack - optional last try
+   * @param downloadAttempts
+   * @param errorCallBack
    * @returns
    */
   createJob(
-    retry: number,
-    downloadCallBack: () => Promise<string>,
-    downloadFallBack: () => Promise<string>,
+    downloadAttempts: (() => Promise<string>)[],
     errorCallBack: (e: any) => void
   ) {
     const slug = randomId();
     this.pendingDownloads[slug] = true;
-    this.downloadAndRetry(
-      retry,
-      slug,
-      downloadCallBack,
-      downloadFallBack,
-      errorCallBack
-    );
+    this.downloadAndRetry(slug, downloadAttempts, errorCallBack);
     return slug;
   }
 
   async downloadAndRetry(
-    retry: number,
     slug: string,
-    downloadCallBack: () => Promise<string>,
-    downloadFallBack: () => Promise<string>,
+    downloadAttempts: (() => Promise<string>)[],
     errorCallBack: (e: any) => void
   ) {
     if (!this._initialized) {
       await this.init();
     }
 
-    try {
-      const file = await downloadCallBack();
-      await this.savePdfOnDisk(slug, file);
-      this.removePendingDownload(slug);
-    } catch (e: any) {
-      if (retry > 1) {
-        await this.downloadAndRetry(
-          retry - 1,
-          slug,
-          downloadCallBack,
-          downloadFallBack,
-          errorCallBack
-        );
-      } else {
-        try {
-          const file = await downloadFallBack();
-          await this.savePdfOnDisk(slug, file);
-          this.removePendingDownload(slug);
-        } catch (lastError: any) {
-          this.removePendingDownload(slug);
-          errorCallBack(lastError);
-        }
+    let tryIndex = 0;
+    let lastError = '';
+    while (tryIndex < downloadAttempts.length) {
+      try {
+        const currentDownload = downloadAttempts[tryIndex];
+        const file = await currentDownload();
+        await this.savePdfOnDisk(slug, file);
+        this.removePendingDownload(slug);
+
+        // file successfully downloaded -> we can stop here
+        return;
+      } catch (error: any) {
+        console.log('Error : ' + error.toString());
+        lastError = error;
       }
+      tryIndex++;
     }
+
+    this.removePendingDownload(slug);
+    errorCallBack(lastError);
   }
 
   removePendingDownload(slug: string) {

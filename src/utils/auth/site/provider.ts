@@ -1,128 +1,99 @@
 import routes from '../../../clients/urls';
-import constants from '../../../constants';
-import httpClient, { httpGet } from '../../network';
 import { logWarningInSentry } from '../../sentry';
-import {
-  extractCookies,
-  IInpiSiteCookies,
-  extractAuthSuccessFromHtmlForm,
-  loginFormData,
-} from './helpers';
+import getPuppeteerBrowser from './browser';
 
-const DEFAULT_HEADERS = {
-  'User-Agent':
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36',
-  Accept: '*/*',
-  Referer: 'https://data.inpi.fr',
-};
+const EXPIRY_TIME = 10 * 60 * 1000;
 
-const COOKIE_VALIDITY_TIME = 60 * 60 * 1000;
-const COOKIE_OUTDATED_RETRY_TIME = 5 * 60 * 1000;
-
-interface IAuth {
-  cookies: IInpiSiteCookies | null;
-  lastSuccessfullAuth: number;
-}
-const authData: IAuth = {
-  cookies: null,
-  lastSuccessfullAuth: 0,
-};
-
-class InpiSiteAuthProvider {
-  _initialized = false;
-
-  async init() {
-    this._initialized = true;
-    await this.refreshCookies();
-  }
+export class InpiSiteCookiesProvider {
+  _cookies = '';
+  _refreshing = false;
+  _lastRefresh = 0;
 
   async getCookies() {
-    if (!this._initialized) {
-      await this.init();
+    const isCookieOutdated =
+      this._lastRefresh + EXPIRY_TIME < new Date().getTime();
+
+    if (!this._cookies || isCookieOutdated) {
+      await this.refreshCookies();
     }
-    return authData.cookies ? this.formatCookies(authData.cookies) : null;
+
+    return this._cookies;
   }
 
-  async refreshCookies(): Promise<void> {
+  async refreshCookies() {
+    if (this._refreshing) {
+      // abort as refresh is already on-going
+      return;
+    }
+
+    this._refreshing = true;
     try {
-      logWarningInSentry('InpiSiteAuthProvider: cookie refresh initiated', {});
+      logWarningInSentry('InpiSiteAuthProvider: cookie refresh initiated');
 
-      const newCookies = await this.getInitialCookies();
+      const browser = await getPuppeteerBrowser();
+      const page = await browser.newPage();
+      await page.setUserAgent(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
+      );
 
-      // wait 500 ms
-      await new Promise<void>((resolve) => setTimeout(() => resolve(), 500));
+      const login = process.env.INPI_SITE_LOGIN || '';
+      const passwd = process.env.INPI_SITE_PASSWORD || '';
 
-      await this.authenticateCookies(newCookies);
-      this.setCookies(newCookies);
-      setTimeout(() => this.refreshCookies(), COOKIE_VALIDITY_TIME);
+      await page.goto(routes.rncs.portail.login);
+      await page.type('#login_form_Email', login);
+      await page.type('#login_form_password', passwd);
+
+      await page.waitForSelector('input#login_form_licence');
+      await page.evaluate(() => {
+        document.getElementById('login_form_licence')?.click();
+        document.getElementById('login_form_submit')?.click();
+      });
+
+      let success = false;
+      try {
+        await page.waitForSelector('.alert.alert-success', { timeout: 5000 });
+        success = true;
+      } catch {
+        throw new Error('login on data.inpi.fr failed');
+      }
+
+      if (success) {
+        const cookiesFromPuppeteer = await page.cookies();
+        this._cookies = cookiesFromPuppeteer
+          .map((cookie) => `${cookie.name}=${cookie.value}`)
+          .join('; ');
+      }
     } catch (e: any) {
       logWarningInSentry('InpiSiteAuthProvider: cookie refresh failed', {
         details: e.toString(),
       });
-      setTimeout(() => this.refreshCookies(), COOKIE_OUTDATED_RETRY_TIME);
+    } finally {
+      this._refreshing = false;
+      this._lastRefresh = new Date().getTime();
     }
   }
 
-  /**
-   * First call. Caller get two session cookies and a token in the login form
-   * */
-  async getInitialCookies(): Promise<IInpiSiteCookies> {
-    // call any page to get session cookies
-    const response = await httpGet(routes.rncs.portail.any, {
-      headers: DEFAULT_HEADERS,
-      timeout: constants.pdfTimeout,
-    });
-    const sessionCookies = (response.headers['set-cookie'] || []).join(' ');
-
-    return extractCookies(sessionCookies);
-  }
-
-  /**
-   * POST the form to validate the cookies
-   */
-  async authenticateCookies(cookies: IInpiSiteCookies) {
-    const cookieString = this.formatCookies(cookies);
-    if (!cookieString) {
-      throw new Error('trying to authenticate empty cookies or token');
-    }
-
-    const response = await httpClient({
-      url: routes.rncs.portail.login,
-      method: 'POST',
-      headers: {
-        ...DEFAULT_HEADERS,
-        'Content-Type': 'application/x-www-form-urlencoded',
-        Origin: 'https://data.inpi.fr',
-        Cookie: cookieString,
-      },
-      data: loginFormData(),
-      timeout: constants.pdfTimeout,
-    });
-
-    const html = response.data;
-    const loginSuccess = extractAuthSuccessFromHtmlForm(html);
-
-    if (!loginSuccess) {
-      throw new Error('INPI response does not contain success alert');
-    }
-  }
-
-  formatCookies = (cookies: IInpiSiteCookies) => {
-    if (!cookies) {
-      return null;
-    }
-    return `PHPSESSID=${cookies.phpSessionId}`;
-  };
-
-  setCookies(newCookies: IInpiSiteCookies) {
-    authData.lastSuccessfullAuth = new Date().getTime();
-    authData.cookies = newCookies;
+  isRefreshing() {
+    return this._refreshing;
   }
 }
 
-/**
- * Create a singleton
- */
-const inpiSiteAuth = new InpiSiteAuthProvider();
+const inpiSiteCookies = [new InpiSiteCookiesProvider()];
 
-export default inpiSiteAuth;
+const getRandomInpiSiteCookieProvider = () => {
+  // select only live cookies
+  let liveCookies = inpiSiteCookies.filter(
+    (provider) => !provider.isRefreshing()
+  );
+
+  // in case all cookies are refreshing, we dont filter
+  if (liveCookies.length === 0) {
+    liveCookies = inpiSiteCookies;
+  }
+
+  // math.random is in [0, 1[ so random index will be in [0, inpiSiteCookies.length[
+  const randomIndex = Math.floor(Math.random() * liveCookies.length);
+  return liveCookies[randomIndex];
+};
+
+export default getRandomInpiSiteCookieProvider;

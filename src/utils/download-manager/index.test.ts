@@ -21,9 +21,12 @@ describe('CreateJob', () => {
     await pdfDownloader.init();
 
     const jobId = pdfDownloader.createJob(
-      2,
-      () => new Promise((resolve) => resolve('mon-téléchargement')),
-      () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      [
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      ],
       () => null
     );
     expect(jobId).toBeDefined();
@@ -35,9 +38,12 @@ describe('getDownloadStatus', () => {
     const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
     await pdfDownloader.init();
     const jobId = pdfDownloader.createJob(
-      2,
-      () => new Promise((resolve) => resolve('mon-téléchargement')),
-      () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      [
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      ],
       () => null
     );
     const status = pdfDownloader.getDownloadStatus(jobId);
@@ -47,9 +53,12 @@ describe('getDownloadStatus', () => {
     const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
     await pdfDownloader.init();
     const jobId = pdfDownloader.createJob(
-      2,
-      () => new Promise((resolve) => resolve('mon-téléchargement')),
-      () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      [
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement')),
+        () => new Promise((resolve) => resolve('mon-téléchargement-fallback')),
+      ],
       () => null
     );
     pdfDownloader.removePendingDownload(jobId);
