@@ -7,6 +7,7 @@ import randomId from '../helpers/random-id';
 const DIRECTORY = process.env.PDF_DOWNLOAD_DIRECTORY as string;
 const FILES_LIFESPAN = 30 * 60 * 1000;
 const FILES_CLEANING_FREQUENCY = 1 * 60 * 1000;
+const QUEUE_INTERVAL = 500;
 
 interface IStatusMetaData {
   status: string;
@@ -35,11 +36,13 @@ const STATUSES: { [key: string]: IStatusMetaData } = {
 export class PDFDownloader {
   _initialized = false;
   pendingDownloads: { [key: string]: boolean } = {};
+  _downloadQueue = [] as (() => void)[];
 
   constructor(
     private readonly fileSystem: FileSystemProvider,
     private readonly directory: string,
-    private readonly shouldCleanOldFiles = true
+    private readonly shouldCleanOldFiles = true,
+    private readonly shouldRunQueue = true
   ) {}
 
   async init() {
@@ -54,7 +57,26 @@ export class PDFDownloader {
     if (this.shouldCleanOldFiles) {
       this.cleanOldFiles();
     }
+
+    if (this.shouldRunQueue) {
+      this.runQueue();
+    }
+
     this._initialized = true;
+  }
+
+  /**
+   * Queue runner - every QUEUE_INTERVAL ms it runs a downloadCallback from queue
+   * Attempt at avoiding INPI's ratelimiting
+   */
+  async runQueue() {
+    const downloadCallback = this._downloadQueue.shift();
+
+    if (downloadCallback) {
+      downloadCallback();
+    }
+
+    setTimeout(() => this.runQueue(), QUEUE_INTERVAL);
   }
 
   /**
@@ -71,11 +93,16 @@ export class PDFDownloader {
   ) {
     const slug = randomId();
     this.pendingDownloads[slug] = true;
-    this.download(slug, downloadAttempts, errorCallBack);
+
+    const callback = () =>
+      this.download(0, slug, downloadAttempts, errorCallBack);
+
+    this._downloadQueue.push(callback);
     return slug;
   }
 
   async download(
+    index: number,
     slug: string,
     downloadAttempts: (() => Promise<string>)[],
     errorCallBack: (e: any) => void
@@ -84,26 +111,28 @@ export class PDFDownloader {
       await this.init();
     }
 
-    let tryIndex = 0;
-    let lastError = '';
-    while (tryIndex < downloadAttempts.length) {
-      try {
-        const currentDownload = downloadAttempts[tryIndex];
-        const file = await currentDownload();
-        await this.savePdfOnDisk(slug, file);
+    try {
+      const currentDownload = downloadAttempts[index];
+      const file = await currentDownload();
+      await this.savePdfOnDisk(slug, file);
+      this.removePendingDownload(slug);
+
+      // file successfully downloaded -> we can stop here
+      return;
+    } catch (error: any) {
+      console.log(error.toString());
+
+      const isLastAttempt = index === downloadAttempts.length;
+      if (isLastAttempt) {
         this.removePendingDownload(slug);
+        errorCallBack(error);
+      } else {
+        const callback = () =>
+          this.download(index + 1, slug, downloadAttempts, errorCallBack);
 
-        // file successfully downloaded -> we can stop here
-        return;
-      } catch (error: any) {
-        console.log(error.toString());
-        lastError = error;
+        this._downloadQueue.push(callback);
       }
-      tryIndex++;
     }
-
-    this.removePendingDownload(slug);
-    errorCallBack(lastError);
   }
 
   removePendingDownload(slug: string) {
