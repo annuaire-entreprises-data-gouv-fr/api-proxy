@@ -71,11 +71,11 @@ export class PDFDownloader {
   ) {
     const slug = randomId();
     this.pendingDownloads[slug] = true;
-    this.downloadAndRetry(slug, downloadAttempts, errorCallBack);
+    this.download(slug, downloadAttempts, errorCallBack);
     return slug;
   }
 
-  async downloadAndRetry(
+  async download(
     slug: string,
     downloadAttempts: (() => Promise<string>)[],
     errorCallBack: (e: any) => void
@@ -96,7 +96,7 @@ export class PDFDownloader {
         // file successfully downloaded -> we can stop here
         return;
       } catch (error: any) {
-        console.log('Error : ' + error.toString());
+        console.log(error.toString());
         lastError = error;
       }
       tryIndex++;

@@ -2,7 +2,7 @@ import routes from '../../../clients/urls';
 import { logWarningInSentry } from '../../sentry';
 import getPuppeteerBrowser from './browser';
 
-const EXPIRY_TIME = 10 * 60 * 1000;
+const EXPIRY_TIME = 5 * 60 * 1000;
 
 export class InpiSiteCookiesProvider {
   _cookies = '';
@@ -32,6 +32,7 @@ export class InpiSiteCookiesProvider {
 
       const browser = await getPuppeteerBrowser();
       const page = await browser.newPage();
+
       await page.setUserAgent(
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
       );
@@ -39,11 +40,11 @@ export class InpiSiteCookiesProvider {
       const login = process.env.INPI_SITE_LOGIN || '';
       const passwd = process.env.INPI_SITE_PASSWORD || '';
 
-      await page.goto(routes.rncs.portail.login);
+      await page.goto(routes.rncs.portail.login, { timeout: 5000 });
       await page.type('#login_form_Email', login);
       await page.type('#login_form_password', passwd);
 
-      await page.waitForSelector('input#login_form_licence');
+      await page.waitForSelector('input#login_form_licence', { timeout: 5000 });
       await page.evaluate(() => {
         document.getElementById('login_form_licence')?.click();
         document.getElementById('login_form_submit')?.click();
@@ -80,9 +81,6 @@ export class InpiSiteCookiesProvider {
 }
 
 const inpiSiteCookies = [
-  new InpiSiteCookiesProvider(),
-  new InpiSiteCookiesProvider(),
-  new InpiSiteCookiesProvider(),
   new InpiSiteCookiesProvider(),
   new InpiSiteCookiesProvider(),
   new InpiSiteCookiesProvider(),
