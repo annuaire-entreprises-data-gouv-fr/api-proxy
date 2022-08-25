@@ -5,17 +5,17 @@
 import {
   formatFirstNames,
   formatNameFull,
-} from "../../../../utils/helpers/formatters";
-import { IRNCSRepresentantResponse, IRNCSResponseDossier } from "..";
-import { IDirigeant } from "../../../../models/imr";
-import { logWarningInSentry } from "../../../../utils/sentry";
+} from '../../../../utils/helpers/formatters';
+import { IRNCSRepresentantResponse, IRNCSResponseDossier } from '..';
+import { IDirigeant } from '../../../../models/imr';
+import { logWarningInSentry } from '../../../../utils/sentry';
 
 export const extractRepresentants = (dossier: IRNCSResponseDossier) => {
   const representantsObject = dossier?.representants?.representant;
 
   if (!representantsObject) {
     if (!dossier.identite || !dossier.identite.identite_PP) {
-      logWarningInSentry("No Dirigeant found", { siren: dossier["@_siren"] });
+      logWarningInSentry('No Dirigeant found', { siren: dossier['@_siren'] });
       return [];
     }
     const representantEI = extractDirigeantFromIdentite(dossier);
@@ -47,24 +47,24 @@ const mapToDomainDirigeant = (
   } = dirigeant;
 
   const qualite = (qualites || {}).qualite;
-  const roles = Array.isArray(qualite) ? qualite.join(", ") : qualite;
+  const roles = Array.isArray(qualite) ? qualite.join(', ') : qualite;
 
-  if (type === "P.Physique") {
+  if (type === 'P.Physique') {
     return {
       sexe: null,
-      prenom: formatFirstNames((prenoms || "").split(" "), 0),
+      prenom: formatFirstNames(prenoms || ''),
       nom: formatNameFull(nom_patronymique, nom_usage),
-      role: roles || "",
-      lieuNaissance: (lieu_naiss || "") + ", " + (code_pays_naiss || ""),
-      dateNaissance: (dat_naiss || "").toString().slice(0, 4),
+      role: roles || '',
+      lieuNaissance: (lieu_naiss || '') + ', ' + (code_pays_naiss || ''),
+      dateNaissance: (dat_naiss || '').toString().slice(0, 4),
     };
   } else {
-    const sirenAsString = (siren || "").toString();
+    const sirenAsString = (siren || '').toString();
     return {
       siren: sirenAsString,
-      denomination: denomination || "",
-      role: roles || "",
-      natureJuridique: form_jur || "",
+      denomination: denomination || '',
+      role: roles || '',
+      natureJuridique: form_jur || '',
     };
   }
 };
@@ -91,10 +91,10 @@ const mapToDomainFromIdentite = (
 
   return {
     sexe: null,
-    prenom: formatFirstNames((prenom || "").split(" "), 0),
+    prenom: formatFirstNames(prenom || ''),
     nom: formatNameFull(nom_patronymique, nom_usage),
-    role: "Représentant Légal",
-    lieuNaissance: (lieu_naiss || "") + ", " + (pays_naiss || ""),
-    dateNaissance: (dat_naiss || "").toString().slice(0, 4),
+    role: 'Représentant Légal',
+    lieuNaissance: (lieu_naiss || '') + ', ' + (pays_naiss || ''),
+    dateNaissance: (dat_naiss || '').toString().slice(0, 4),
   };
 };
