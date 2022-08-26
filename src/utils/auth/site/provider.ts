@@ -2,7 +2,7 @@ import routes from '../../../clients/urls';
 import { logWarningInSentry } from '../../sentry';
 import getPuppeteerBrowser from './browser';
 
-const EXPIRY_TIME = 5 * 60 * 1000;
+const EXPIRY_TIME = 10 * 60 * 1000;
 
 export class InpiSiteCookiesProvider {
   _cookies = '';
@@ -27,11 +27,10 @@ export class InpiSiteCookiesProvider {
     }
 
     this._refreshing = true;
+    const browser = await getPuppeteerBrowser();
+    const page = await browser.newPage();
     try {
       logWarningInSentry('InpiSiteAuthProvider: cookie refresh initiated');
-
-      const browser = await getPuppeteerBrowser();
-      const page = await browser.newPage();
 
       await page.setUserAgent(
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36'
@@ -72,6 +71,7 @@ export class InpiSiteCookiesProvider {
       });
     } finally {
       this._refreshing = false;
+      await page.close();
     }
   }
 
@@ -80,27 +80,6 @@ export class InpiSiteCookiesProvider {
   }
 }
 
-const inpiSiteCookies = [
-  new InpiSiteCookiesProvider(),
-  new InpiSiteCookiesProvider(),
-  new InpiSiteCookiesProvider(),
-  new InpiSiteCookiesProvider(),
-];
+const inpiSiteCookies = new InpiSiteCookiesProvider();
 
-const getRandomInpiSiteCookieProvider = () => {
-  // select only live cookies
-  let liveCookies = inpiSiteCookies.filter(
-    (provider) => !provider.isRefreshing()
-  );
-
-  // in case all cookies are refreshing, we dont filter
-  if (liveCookies.length === 0) {
-    liveCookies = inpiSiteCookies;
-  }
-
-  // math.random is in [0, 1[ so random index will be in [0, inpiSiteCookies.length[
-  const randomIndex = Math.floor(Math.random() * liveCookies.length);
-  return liveCookies[randomIndex];
-};
-
-export default getRandomInpiSiteCookieProvider;
+export default inpiSiteCookies;

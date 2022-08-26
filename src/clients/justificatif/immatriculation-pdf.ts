@@ -4,7 +4,7 @@ import pdfDownloader from '../../utils/download-manager';
 import constants from '../../constants';
 import { httpGet } from '../../utils/network';
 import logErrorInSentry, { logWarningInSentry } from '../../utils/sentry';
-import getRandomInpiSiteCookieProvider from '../../utils/auth/site/provider';
+import inpiSiteCookies from '../../utils/auth/site/provider';
 
 interface IDownloadArgs {
   siren: Siren;
@@ -15,14 +15,11 @@ const downloadImmatriculationPdf = async ({
   siren,
   useCookie = true,
 }: IDownloadArgs): Promise<string> => {
-  let cookieProvider = null;
-
   const urlPdf = `${routes.rncs.portail.pdf}?format=pdf&ids=["${siren}"]`;
 
   let cookies = '';
   if (useCookie) {
-    cookieProvider = getRandomInpiSiteCookieProvider();
-    cookies = (await cookieProvider.getCookies()) || '';
+    cookies = await inpiSiteCookies.getCookies();
   }
 
   const response = await httpGet(urlPdf, {

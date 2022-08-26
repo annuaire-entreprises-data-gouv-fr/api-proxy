@@ -42,6 +42,8 @@
     "helmet": "^5.0.2",
     "jsdom": "^19.0.0",
     "puppeteer": "^16.2.0",
+    "puppeteer-extra": "^3.3.4",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
     "typescript": "^4.6.4",
     "uninstall": "^0.0.0",
     "yauzl": "^2.10.0"

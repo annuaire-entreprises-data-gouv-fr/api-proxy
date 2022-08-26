@@ -3,19 +3,29 @@ import fileSystemMockup from '../file-system/mockup';
 
 describe('Init', () => {
   test('Fails if no directory is provided', () => {
-    const pdfDownloader = new PDFDownloader(fileSystemMockup, '', false);
+    const pdfDownloader = new PDFDownloader(fileSystemMockup, '', false, false);
     expect(pdfDownloader.init()).rejects.toThrow(Error);
     expect(pdfDownloader._initialized).toBe(false);
   });
   test('Succeed if a directory is provided', () => {
-    const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
+    const pdfDownloader = new PDFDownloader(
+      fileSystemMockup,
+      '/tmp',
+      false,
+      false
+    );
     expect(pdfDownloader.init()).resolves.toBe(undefined);
     expect(pdfDownloader._initialized).toBe(true);
   });
 });
 
 describe('CreateJob', () => {
-  const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
+  const pdfDownloader = new PDFDownloader(
+    fileSystemMockup,
+    '/tmp',
+    false,
+    false
+  );
 
   test('Returns JobId', async () => {
     await pdfDownloader.init();
@@ -35,7 +45,12 @@ describe('CreateJob', () => {
 
 describe('getDownloadStatus', () => {
   test('status pending', async () => {
-    const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
+    const pdfDownloader = new PDFDownloader(
+      fileSystemMockup,
+      '/tmp',
+      false,
+      false
+    );
     await pdfDownloader.init();
     const jobId = pdfDownloader.createJob(
       [
@@ -50,7 +65,12 @@ describe('getDownloadStatus', () => {
     expect(status.status).toBe('pending');
   });
   test('status downloaded', async () => {
-    const pdfDownloader = new PDFDownloader(fileSystemMockup, '/tmp', false);
+    const pdfDownloader = new PDFDownloader(
+      fileSystemMockup,
+      '/tmp',
+      false,
+      false
+    );
     await pdfDownloader.init();
     const jobId = pdfDownloader.createJob(
       [
