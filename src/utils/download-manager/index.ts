@@ -91,6 +91,10 @@ export class PDFDownloader {
     downloadAttempts: (() => Promise<string>)[],
     errorCallBack: (e: any) => void
   ) {
+    if (!this._initialized) {
+      this.init();
+    }
+
     const slug = randomId();
     this.pendingDownloads[slug] = true;
 
@@ -107,10 +111,6 @@ export class PDFDownloader {
     downloadAttempts: (() => Promise<string>)[],
     errorCallBack: (e: any) => void
   ) {
-    if (!this._initialized) {
-      await this.init();
-    }
-
     try {
       const currentDownload = downloadAttempts[index];
       const file = await currentDownload();
@@ -122,8 +122,8 @@ export class PDFDownloader {
     } catch (error: any) {
       console.log(error.toString());
 
-      const isLastAttempt = index === downloadAttempts.length;
-      if (isLastAttempt) {
+      const wasLastAttempt = index === downloadAttempts.length - 1;
+      if (wasLastAttempt) {
         this.removePendingDownload(slug);
         errorCallBack(error);
       } else {

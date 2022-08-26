@@ -11,7 +11,7 @@ puppeteer.use(StealthPlugin());
 let instance = null as Browser | null;
 
 const getBrowserInstance = async () => {
-  if (!instance) instance = await puppeteer.launch();
+  if (!instance) instance = await puppeteer.launch({ headless: true });
   return instance;
 };
 
