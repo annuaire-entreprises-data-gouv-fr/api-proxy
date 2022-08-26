@@ -80,6 +80,17 @@ export class InpiSiteCookiesProvider {
   }
 }
 
-const inpiSiteCookies = new InpiSiteCookiesProvider();
+const inpiSiteCookies = [
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+  new InpiSiteCookiesProvider(),
+];
 
-export default inpiSiteCookies;
+const randomInpiSiteCookieProvider = () => {
+  // math.random is in [0, 1[ so random index will be in [0, inpiSiteCookies.length[
+  const randomIndex = Math.floor(Math.random() * inpiSiteCookies.length);
+  return inpiSiteCookies[randomIndex];
+};
+
+export default randomInpiSiteCookieProvider;

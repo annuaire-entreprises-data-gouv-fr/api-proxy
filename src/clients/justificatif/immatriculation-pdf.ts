@@ -4,7 +4,7 @@ import pdfDownloader from '../../utils/download-manager';
 import constants from '../../constants';
 import { httpGet } from '../../utils/network';
 import logErrorInSentry, { logWarningInSentry } from '../../utils/sentry';
-import inpiSiteCookies from '../../utils/auth/site/provider';
+import randomInpiSiteCookieProvider from '../../utils/auth/site/provider';
 
 interface IDownloadArgs {
   siren: Siren;
@@ -19,7 +19,8 @@ const downloadImmatriculationPdf = async ({
 
   let cookies = '';
   if (useCookie) {
-    cookies = await inpiSiteCookies.getCookies();
+    const cookieProvider = randomInpiSiteCookieProvider();
+    cookies = await cookieProvider.getCookies();
   }
 
   const response = await httpGet(urlPdf, {
