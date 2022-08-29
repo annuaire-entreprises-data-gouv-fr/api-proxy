@@ -2,7 +2,7 @@ import routes from '../../../clients/urls';
 import { logWarningInSentry } from '../../sentry';
 import getPuppeteerBrowser from './browser';
 
-const EXPIRY_TIME = 10 * 60 * 1000;
+const EXPIRY_TIME = 20 * 60 * 1000;
 
 export class InpiSiteCookiesProvider {
   _cookies = '';
@@ -81,8 +81,6 @@ export class InpiSiteCookiesProvider {
 }
 
 const inpiSiteCookies = [
-  new InpiSiteCookiesProvider(),
-  new InpiSiteCookiesProvider(),
   new InpiSiteCookiesProvider(),
   new InpiSiteCookiesProvider(),
 ];
