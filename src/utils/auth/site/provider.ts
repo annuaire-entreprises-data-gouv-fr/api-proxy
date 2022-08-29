@@ -2,33 +2,29 @@ import routes from '../../../clients/urls';
 import { logWarningInSentry } from '../../sentry';
 import getPuppeteerBrowser from './browser';
 
-const EXPIRY_TIME = 20 * 60 * 1000;
+const DEFAULT_REFRESH = 20 * 60 * 1000;
+const RETRY_REFRESH = 3 * 60 * 1000;
 
-export class InpiSiteCookiesProvider {
+class InpiSiteCookiesProvider {
   _cookies = '';
-  _refreshing = false;
+  _init = false;
   _lastRefresh = 0;
 
   async getCookies() {
-    const isCookieOutdated =
-      this._lastRefresh + EXPIRY_TIME < new Date().getTime();
-
-    if (!this._cookies || isCookieOutdated) {
-      await this.refreshCookies();
+    if (!this._init) {
+      // start refresh loop
+      this.refreshCookies();
+      this._init = true;
     }
 
     return this._cookies;
   }
 
   async refreshCookies() {
-    if (this._refreshing) {
-      // abort as refresh is already on-going
-      return;
-    }
-
-    this._refreshing = true;
     const browser = await getPuppeteerBrowser();
     const page = await browser.newPage();
+    let nextRefresh = DEFAULT_REFRESH;
+
     try {
       logWarningInSentry('InpiSiteAuthProvider: cookie refresh initiated');
 
@@ -69,26 +65,16 @@ export class InpiSiteCookiesProvider {
       logWarningInSentry('InpiSiteAuthProvider: cookie refresh failed', {
         details: error.toString(),
       });
+
+      // refresh failed so we retry refresh sooner
+      nextRefresh = RETRY_REFRESH;
     } finally {
-      this._refreshing = false;
+      setTimeout(() => this.refreshCookies(), nextRefresh);
       await page.close();
     }
   }
-
-  isRefreshing() {
-    return this._refreshing;
-  }
 }
 
-const inpiSiteCookies = [
-  new InpiSiteCookiesProvider(),
-  new InpiSiteCookiesProvider(),
-];
+const inpiSiteCookies = new InpiSiteCookiesProvider();
 
-const randomInpiSiteCookieProvider = () => {
-  // math.random is in [0, 1[ so random index will be in [0, inpiSiteCookies.length[
-  const randomIndex = Math.floor(Math.random() * inpiSiteCookies.length);
-  return inpiSiteCookies[randomIndex];
-};
-
-export default randomInpiSiteCookieProvider;
+export default inpiSiteCookies;

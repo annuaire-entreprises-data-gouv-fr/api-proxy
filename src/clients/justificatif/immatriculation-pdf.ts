@@ -4,7 +4,7 @@ import pdfDownloader from '../../utils/download-manager';
 import constants from '../../constants';
 import { httpGet } from '../../utils/network';
 import logErrorInSentry, { logWarningInSentry } from '../../utils/sentry';
-import randomInpiSiteCookieProvider from '../../utils/auth/site/provider';
+import inpiSiteCookies from '../../utils/auth/site/provider';
 
 interface IDownloadArgs {
   siren: Siren;
@@ -19,8 +19,7 @@ const downloadImmatriculationPdf = async ({
 
   let cookies = '';
   if (useCookie) {
-    const cookieProvider = randomInpiSiteCookieProvider();
-    cookies = await cookieProvider.getCookies();
+    cookies = await inpiSiteCookies.getCookies();
   }
 
   const response = await httpGet(urlPdf, {
@@ -37,6 +36,10 @@ const downloadImmatriculationPdf = async ({
   const { data } = response;
   if (!data) {
     throw new Error('response is empty');
+  }
+
+  if (!useCookie) {
+    logWarningInSentry('Download manager : download fallbacked on public PDF');
   }
   return data;
 };
