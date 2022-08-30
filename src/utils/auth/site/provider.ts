@@ -2,8 +2,8 @@ import routes from '../../../clients/urls';
 import { logWarningInSentry } from '../../sentry';
 import getPuppeteerBrowser from './browser';
 
-const DEFAULT_REFRESH = 20 * 60 * 1000;
-const RETRY_REFRESH = 3 * 60 * 1000;
+const DEFAULT_REFRESH = 2 * 60 * 60 * 1000;
+const RETRY_REFRESH = 20 * 60 * 1000;
 
 class InpiSiteCookiesProvider {
   _cookies = '';
