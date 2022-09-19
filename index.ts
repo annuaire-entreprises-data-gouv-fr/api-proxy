@@ -36,10 +36,11 @@ if (useSentry) {
       new Tracing.Integrations.Express({ app }),
     ],
 
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    tracesSampleRate: 1.0,
+    tracesSampler: (samplingContext) => {
+      const path = samplingContext?.location?.pathname || '';
+
+      return path.indexOf('/status') === -1;
+    },
   });
 
   // The request handler must be the first middleware on the app
