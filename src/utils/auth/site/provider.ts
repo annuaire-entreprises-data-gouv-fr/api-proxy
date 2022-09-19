@@ -13,7 +13,7 @@ class InpiSiteCookiesProvider {
   async getCookies() {
     if (!this._init) {
       // start refresh loop
-      this.refreshCookies();
+      // this.refreshCookies();
       this._init = true;
     }
 

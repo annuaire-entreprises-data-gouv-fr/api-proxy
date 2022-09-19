@@ -62,10 +62,10 @@ app.get('/', (req: Request, res: Response) => {
  */
 app.get('/imr/:siren', imrController);
 
-/**
- * KBIS
- */
-app.use('/document', documentRouter);
+// /**
+//  * KBIS
+//  */
+// app.use('/document', documentRouter);
 
 /**
  * Status
