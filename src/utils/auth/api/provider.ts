@@ -9,11 +9,11 @@ dotenv.config();
 
 class InpiAPIAuthProvider {
   cookies = [
-    new APICookie(process.env.INPI_LOGIN, process.env.INPI_PASSWORD),
-    new APICookie(process.env.INPI_LOGIN_2, process.env.INPI_PASSWORD_2),
-    new APICookie(process.env.INPI_LOGIN_3, process.env.INPI_PASSWORD_3),
-    new APICookie(process.env.INPI_LOGIN_5, process.env.INPI_PASSWORD_5),
-    new APICookie(process.env.INPI_LOGIN_6, process.env.INPI_PASSWORD_6),
+    // new APICookie(process.env.INPI_LOGIN, process.env.INPI_PASSWORD),
+    // new APICookie(process.env.INPI_LOGIN_2, process.env.INPI_PASSWORD_2),
+    // new APICookie(process.env.INPI_LOGIN_3, process.env.INPI_PASSWORD_3),
+    new APICookie(process.env.INPI_LOGIN_4, process.env.INPI_PASSWORD_4),
+    // new APICookie(process.env.INPI_LOGIN_5, process.env.INPI_PASSWORD_5),
   ];
 
   private client = async (
