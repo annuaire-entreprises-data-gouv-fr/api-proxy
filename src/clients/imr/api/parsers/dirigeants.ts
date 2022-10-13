@@ -6,6 +6,8 @@ import {
   formatFirstNames,
   formatNameFull,
 } from '../../../../utils/helpers/formatters';
+import { formatINPIDateField } from '../../helper';
+
 import { IRNCSRepresentantResponse, IRNCSResponseDossier } from '..';
 import { IDirigeant } from '../../../../models/imr';
 import { logWarningInSentry } from '../../../../utils/sentry';
@@ -56,7 +58,7 @@ const mapToDomainDirigeant = (
       nom: formatNameFull(nom_patronymique, nom_usage),
       role: roles || '',
       lieuNaissance: (lieu_naiss || '') + ', ' + (code_pays_naiss || ''),
-      dateNaissance: (dat_naiss || '').toString().slice(0, 4),
+      dateNaissance: formatINPIDateField(dat_naiss || ''),
     };
   } else {
     const sirenAsString = (siren || '').toString();
