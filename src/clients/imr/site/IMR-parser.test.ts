@@ -254,17 +254,17 @@ describe('IMR HTML parser', () => {
         {
           denomination: 'PRICEWATERHOUSECOOPERS AUDIT ',
           natureJuridique: '',
-          role: 'SA <br> ',
+          role: 'SA ',
           siren: '',
         },
         {
-          denomination: 'ERNST &amp; YOUNG AUDIT <br> ',
+          denomination: 'ERNST &amp; YOUNG AUDIT ',
           natureJuridique: '',
           role: 'Commissaire aux comptes titulaire',
           siren: '',
         },
         {
-          denomination: 'AUDITEX <br> ',
+          denomination: 'AUDITEX ',
           natureJuridique: '',
           role: 'Commissaire aux comptes suppléant',
           siren: '',
