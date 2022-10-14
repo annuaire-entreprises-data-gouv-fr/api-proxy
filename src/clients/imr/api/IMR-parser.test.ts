@@ -11,7 +11,6 @@ describe('IMR XML parser', () => {
       'utf-8'
     );
 
-    console.log('ok');
     const result = extractIMRFromXml(okXML, dummySiren);
     expect(result).toEqual({
       identite: {
