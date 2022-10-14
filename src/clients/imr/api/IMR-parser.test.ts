@@ -11,6 +11,7 @@ describe('IMR XML parser', () => {
       'utf-8'
     );
 
+    console.log('ok');
     const result = extractIMRFromXml(okXML, dummySiren);
     expect(result).toEqual({
       identite: {
@@ -37,7 +38,8 @@ describe('IMR XML parser', () => {
           nom: 'Sacquet',
           role: 'Président',
           lieuNaissance: 'La Comté, Terre du Milieu',
-          dateNaissance: '2000-01-01',
+          dateNaissancePartial: '2000-01',
+          dateNaissanceFull: '2000-01-01',
           sexe: null,
         },
       ],
@@ -77,7 +79,8 @@ describe('IMR XML parser', () => {
           nom: 'Sacquet',
           role: 'Président',
           lieuNaissance: 'La Comté, Terre du Milieu',
-          dateNaissance: '2000-01-01',
+          dateNaissancePartial: '2000-01',
+          dateNaissanceFull: '2000-01-01',
           sexe: null,
         },
         {

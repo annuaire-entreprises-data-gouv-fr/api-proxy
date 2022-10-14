@@ -5,11 +5,11 @@
 import {
   formatFloatFr,
   formatIntFr,
-} from "../../../../utils/helpers/formatters";
-import { IRNCSIdentiteResponse, IRNCSResponseDossier } from "..";
-import { formatINPIDateField } from "../../helper";
-import { IIdentite } from "../../../../models/imr";
-import { libelleFromCodeGreffe } from "../../../../utils/helpers/labels";
+} from '../../../../utils/helpers/formatters';
+import { IRNCSIdentiteResponse, IRNCSResponseDossier } from '..';
+import { formatINPIDateField } from '../../helper';
+import { IIdentite } from '../../../../models/imr';
+import { libelleFromCodeGreffe } from '../../../../utils/helpers/labels';
 
 export const extractIdentite = (dossierPrincipal: IRNCSResponseDossier) => {
   return mapToDomainIdentite(dossierPrincipal.identite, dossierPrincipal);
@@ -32,19 +32,19 @@ const mapToDomainIdentite = (
 
   const isPP = !identite_PM;
 
-  const codeGreffe = dossier["@_code_greffe"];
+  const codeGreffe = dossier['@_code_greffe'];
   const greffe = libelleFromCodeGreffe(codeGreffe);
   const dateImmatriculation = dat_1ere_immat
     ? formatINPIDateField(dat_1ere_immat)
     : dat_immat
     ? formatINPIDateField(dat_immat)
-    : "";
+    : '';
 
   const infosIdentite = {
     greffe,
     codeGreffe, //'7501',
-    numeroRCS: `${formatIntFr(dossier["@_siren"])} rcs ${greffe}`,
-    numGestion: dossier["@_num_gestion"], // '2020B02214',
+    numeroRCS: `${formatIntFr(dossier['@_siren'])} rcs ${greffe}`,
+    numGestion: dossier['@_num_gestion'], // '2020B02214',
     dateImmatriculation,
     dateDebutActiv: formatINPIDateField(date_debut_activ),
     dateGreffe: formatINPIDateField(date_greffe),
@@ -55,16 +55,16 @@ const mapToDomainIdentite = (
     const { prenom, nom_patronymique } = identite_PP;
 
     const denominationPP =
-      prenom || nom_patronymique ? `${prenom} ${nom_patronymique}` : "";
+      prenom || nom_patronymique ? `${prenom} ${nom_patronymique}` : '';
 
     return {
       ...infosIdentite,
       denomination: denominationPP,
       isPersonneMorale: false,
-      dureePersonneMorale: "",
-      dateClotureExercice: "",
-      capital: "",
-      libelleNatureJuridique: "Entreprise individuelle",
+      dureePersonneMorale: '',
+      dateClotureExercice: '',
+      capital: '',
+      libelleNatureJuridique: 'Entreprise individuelle',
     };
   } else {
     const {
@@ -80,20 +80,20 @@ const mapToDomainIdentite = (
 
     const capital =
       isPP || !montant_cap
-        ? ""
+        ? ''
         : `${formatFloatFr(montant_cap)} ${devise_cap} (${
-            type_cap === "F" ? "fixe" : "variable"
+            type_cap === 'F' ? 'fixe' : 'variable'
           })`;
 
-    const denominationPM = denomination + (sigle ? `(${sigle})` : "");
+    const denominationPM = denomination + (sigle ? `(${sigle})` : '');
     return {
       ...infosIdentite,
       denomination: denominationPM,
-      dureePersonneMorale: duree_pm ? `${duree_pm} ans` : "",
-      dateClotureExercice: dat_cloture_exer || "",
+      dureePersonneMorale: duree_pm ? `${duree_pm} ans` : '',
+      dateClotureExercice: dat_cloture_exer || '',
       capital,
       isPersonneMorale: true,
-      libelleNatureJuridique: form_jur || "",
+      libelleNatureJuridique: form_jur || '',
     };
   }
 };

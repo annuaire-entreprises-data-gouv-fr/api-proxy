@@ -6,7 +6,7 @@ import {
   formatFirstNames,
   formatNameFull,
 } from '../../../../utils/helpers/formatters';
-import { formatINPIDateField } from '../../helper';
+import { formatINPIDateField, formatINPIDateFieldPartial } from '../../helper';
 
 import { IRNCSRepresentantResponse, IRNCSResponseDossier } from '..';
 import { IDirigeant } from '../../../../models/imr';
@@ -35,16 +35,16 @@ const mapToDomainDirigeant = (
   dirigeant: IRNCSRepresentantResponse
 ): IDirigeant => {
   const {
-    prenoms,
+    prenoms = '',
     nom_patronymique,
     nom_usage,
-    lieu_naiss,
-    code_pays_naiss,
-    dat_naiss,
+    lieu_naiss = '',
+    code_pays_naiss = '',
+    dat_naiss = '',
     qualites,
-    form_jur,
+    form_jur = '',
     siren,
-    denomination,
+    denomination = '',
     type,
   } = dirigeant;
 
@@ -54,19 +54,20 @@ const mapToDomainDirigeant = (
   if (type === 'P.Physique') {
     return {
       sexe: null,
-      prenom: formatFirstNames(prenoms || ''),
+      prenom: formatFirstNames(prenoms),
       nom: formatNameFull(nom_patronymique, nom_usage),
       role: roles || '',
-      lieuNaissance: (lieu_naiss || '') + ', ' + (code_pays_naiss || ''),
-      dateNaissance: formatINPIDateField(dat_naiss || ''),
+      lieuNaissance: lieu_naiss + ', ' + code_pays_naiss,
+      dateNaissancePartial: formatINPIDateFieldPartial(dat_naiss),
+      dateNaissanceFull: formatINPIDateField(dat_naiss),
     };
   } else {
     const sirenAsString = (siren || '').toString();
     return {
       siren: sirenAsString,
-      denomination: denomination || '',
+      denomination: denomination,
       role: roles || '',
-      natureJuridique: form_jur || '',
+      natureJuridique: form_jur,
     };
   }
 };
@@ -84,19 +85,20 @@ const mapToDomainFromIdentite = (
     identite_PP: {
       nom_patronymique,
       nom_usage,
-      prenom,
-      dat_naiss,
-      lieu_naiss,
-      pays_naiss,
+      prenom = '',
+      dat_naiss = '',
+      lieu_naiss = '',
+      pays_naiss = '',
     },
   } = dossierPrincipal.identite;
 
   return {
     sexe: null,
-    prenom: formatFirstNames(prenom || ''),
+    prenom: formatFirstNames(prenom),
     nom: formatNameFull(nom_patronymique, nom_usage),
     role: 'Représentant Légal',
-    lieuNaissance: (lieu_naiss || '') + ', ' + (pays_naiss || ''),
-    dateNaissance: (dat_naiss || '').toString().slice(0, 4),
+    lieuNaissance: lieu_naiss + ', ' + pays_naiss,
+    dateNaissancePartial: formatINPIDateFieldPartial(dat_naiss),
+    dateNaissanceFull: formatINPIDateField(dat_naiss),
   };
 };

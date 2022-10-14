@@ -8,7 +8,8 @@ export interface IEtatCivil {
   nom: string;
   prenom: string;
   role: string;
-  dateNaissance: string;
+  dateNaissanceFull: string;
+  dateNaissancePartial: string;
   lieuNaissance: string;
 }
 
@@ -16,7 +17,7 @@ export interface IBeneficiaire {
   type: string;
   nom: string;
   prenoms: string;
-  dateNaissance: string;
+  dateNaissancePartial: string;
   nationalite: string;
   dateGreffe: string;
 }

@@ -33,7 +33,8 @@ describe('IMR HTML parser', () => {
       beneficiaires: [],
       dirigeants: [
         {
-          dateNaissance: '10/1991',
+          dateNaissancePartial: '1991-10',
+          dateNaissanceFull: '',
           lieuNaissance: null,
           nom: 'Xxx Yyy',
           prenom: '',
@@ -72,7 +73,7 @@ describe('IMR HTML parser', () => {
       beneficiaires: [
         {
           dateGreffe: '',
-          dateNaissance: '07/1990',
+          dateNaissancePartial: '1990-07',
           type: '',
           nom: 'Xxx Yyy',
           prenoms: '',
@@ -81,7 +82,8 @@ describe('IMR HTML parser', () => {
       ],
       dirigeants: [
         {
-          dateNaissance: '07/1990',
+          dateNaissancePartial: '1990-07',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Xxx Yyy',
           prenom: '',
@@ -119,7 +121,8 @@ describe('IMR HTML parser', () => {
       beneficiaires: [],
       dirigeants: [
         {
-          dateNaissance: '02/1990',
+          dateNaissanceFull: '',
+          dateNaissancePartial: '1990-02',
           lieuNaissance: '',
           nom: 'Xxx Yyy',
           prenom: '',
@@ -140,7 +143,8 @@ describe('IMR HTML parser', () => {
     expect(result).toEqual({
       dirigeants: [
         {
-          dateNaissance: '10/1958',
+          dateNaissancePartial: '1958-10',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Schnepp Gilles',
           prenom: '',
@@ -148,7 +152,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '12/1964',
+          dateNaissancePartial: '1964-12',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Bernard De Saint Affrique Antoine',
           prenom: '',
@@ -156,7 +161,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '07/1969',
+          dateNaissancePartial: '1969-07',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Timuray Serpil',
           prenom: '',
@@ -164,7 +170,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '07/1962',
+          dateNaissancePartial: '1962-07',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Molitor Bettina (Theissig)',
           prenom: '',
@@ -172,7 +179,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '10/1954',
+          dateNaissancePartial: '1954-10',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Zinsou-derlin Lionel',
           prenom: '',
@@ -180,7 +188,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '05/1971',
+          dateNaissancePartial: '1971-05',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Olivier Gaëlle',
           prenom: '',
@@ -188,7 +197,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '09/1957',
+          dateNaissancePartial: '1957-09',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Severino Jean-michel Marie Fernand',
           prenom: '',
@@ -196,7 +206,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '01/1960',
+          dateNaissancePartial: '1960-01',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Lejeune Clara (Gaymard)',
           prenom: '',
@@ -204,7 +215,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '07/1958',
+          dateNaissanceFull: '',
+          dateNaissancePartial: '1958-07',
           lieuNaissance: '',
           nom: 'Barilla Guido Maria',
           prenom: '',
@@ -212,7 +224,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '01/1964',
+          dateNaissancePartial: '1964-01',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Faber Emmanuel',
           prenom: '',
@@ -220,7 +233,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '10/1958',
+          dateNaissancePartial: '1958-10',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Schnepp Gilles',
           prenom: '',
@@ -228,7 +242,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '11/1951',
+          dateNaissancePartial: '1951-11',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Landel Michel Marie',
           prenom: '',
@@ -236,7 +251,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '12/1971',
+          dateNaissancePartial: '1971-12',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Cabanis Cécile Marie',
           prenom: '',
@@ -244,7 +260,8 @@ describe('IMR HTML parser', () => {
           sexe: null,
         },
         {
-          dateNaissance: '08/1967',
+          dateNaissancePartial: '1967-08',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Boutebba Frédéric',
           prenom: '',
@@ -270,7 +287,8 @@ describe('IMR HTML parser', () => {
           siren: '',
         },
         {
-          dateNaissance: '05/1965',
+          dateNaissancePartial: '1965-05',
+          dateNaissanceFull: '',
           lieuNaissance: '',
           nom: 'Georghiou Jean-christophe',
           prenom: '',
@@ -298,7 +316,7 @@ describe('IMR HTML parser', () => {
       beneficiaires: [
         {
           dateGreffe: '',
-          dateNaissance: '01/1967',
+          dateNaissancePartial: '1967-01',
           nationalite: 'Française',
           nom: 'Penchienati Veronique Bianca',
           prenoms: '',

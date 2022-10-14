@@ -1,4 +1,5 @@
 import { IEtatCivil, IPersonneMorale } from '../../../../models/imr';
+import { formatINPIDateFieldPartial } from '../../helper';
 import {
   cleanTextFromHtml,
   extractFromHtmlBlock,
@@ -32,7 +33,7 @@ const parseDirigeants = (dirigeantsHtml: Element) => {
     } else {
       // personne physique
       const { nom, prenom, role } = parseNameAndRole(firstBloc.text);
-      const dateNaissance = thirdBloc.text.trim();
+      const dateNaissanceMMYYYY = thirdBloc.text.trim();
       const nomComplet = secondBloc.label ? `${nom} (${secondBloc.text})` : nom;
 
       dirigeants.push({
@@ -40,7 +41,8 @@ const parseDirigeants = (dirigeantsHtml: Element) => {
         prenom: prenom,
         role,
         sexe: null,
-        dateNaissance,
+        dateNaissancePartial: formatINPIDateFieldPartial(dateNaissanceMMYYYY),
+        dateNaissanceFull: '',
         lieuNaissance: '',
       });
     }

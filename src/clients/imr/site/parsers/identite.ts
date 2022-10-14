@@ -1,5 +1,5 @@
 import { escapeTerm } from '../../../../utils/helpers/formatters';
-import { formatINPIDateField } from '../../helper';
+import { formatINPIDateField, formatINPIDateFieldPartial } from '../../helper';
 import { extractFromHtmlBlock, parseNameAndRole } from './helpers';
 
 const parseIdentiteBlocks = (identiteHtml: Element) => {
@@ -68,13 +68,17 @@ export const extractDirigeantFromIdentite = (identiteHtml: Element) => {
     parsedBlocks[escapeTerm('Nom, Prénom(s)')] || ''
   );
 
+  const dateNaissanceMMYYYY =
+    parsedBlocks['Date de naissance (mm/aaaa)'] || null;
+
   return {
     sexe: null,
     prenom: prenom,
     nom: nom,
     role: 'Représentant Légal',
     lieuNaissance: null,
-    dateNaissance: parsedBlocks['Date de naissance (mm/aaaa)'] || null,
+    dateNaissancePartial: formatINPIDateFieldPartial(dateNaissanceMMYYYY),
+    dateNaissanceFull: '',
   };
 };
 
