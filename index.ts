@@ -4,9 +4,9 @@ import { imrController } from './src/controllers/imr';
 import { errorHandler } from './src/controllers/errorHandler';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
-import documentRouter from './src/routes/document';
 import helmet from 'helmet';
 import statusRouter from './src/routes/status';
+import { clientAssociation } from './src/clients/association';
 
 dotenv.config();
 
@@ -71,6 +71,11 @@ app.get('/imr/:siren', imrController);
  * Status
  */
 app.use('/status', statusRouter);
+
+/**
+ * Association
+ */
+app.use('/association/:rna', clientAssociation);
 
 /**
  * Error handling
