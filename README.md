@@ -1,11 +1,10 @@
-# Proxy de l'API RNCS
+# Proxy API
 
-[![Pre-merge checks](https://github.com/etalab/rncs-api-proxy/actions/workflows/pre-merge.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/pre-merge.yml)
-[![Deploy - Staging](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml)
-[![Deploy - Production](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml)
+[![Pre-merge checks](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/pre-merge.yml)
+[![Deploy - Staging](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml)
+[![Deploy - Production](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml)
 
-Ce proxy permet de dezipper et convertir la réponse XML de l'API RNCS de l'Inpi, en une réponse Json, consommable par les services d'Etalab.
-
+Ce proxy permet de proxifier certains appels a des API utilisées par l'Annuaire des Entreprises.
 
 ## Architecture du service 🏗
 
@@ -17,7 +16,7 @@ Ce repository fait partie d'un ensemble de services qui constituent l'[Annuaire 
 | L’API du Moteur de recherche   | [par ici 👉](https://github.com/etalab/annuaire-entreprises-search-api)   |
 | L‘API de redondance de Sirene  | [par ici 👉](https://github.com/etalab/annuaire-entreprises-sirene-api)   |
 | L‘infra du moteur de recherche | [par ici 👉](https://github.com/etalab/annuaire-entreprises-search-infra) |
-| L’API de proxy du RNCS         | [par ici 👉](https://github.com/etalab/rncs-api-proxy)                    |
+| L’API de proxy du RNCS         | [par ici 👉](https://github.com/etalab/annuaire-entreprises-api-proxy)                    |
 
 ## Installation
 
@@ -75,9 +74,9 @@ Le déploiement se fait par [Github action](https://github.com/etalab/rncs-api-p
 
 A chaque "merge" sur master : 
 
-- Laissez le déploiement se faire automatiquement sur staging via l'action [deploy-staging](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml)
+- Laissez le déploiement se faire automatiquement sur staging via l'action [deploy-staging](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml)
 - Vérifiez vos changements sur staging
-- Lancez manuellement le déploiement sur la production : sur [deploy-production](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml) et cliquez sur "Run workflow" -> "Run workflow"
+- Lancez manuellement le déploiement sur la production : sur [deploy-production](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-production.yml) et cliquez sur "Run workflow" -> "Run workflow"
 
 NB: Si plusieurs déploiements sont déclenchés en même temps, seul le premier va jusqu'au bout. Les autres sont automatiquement interrompus.
 
