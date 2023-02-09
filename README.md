@@ -1,8 +1,8 @@
 # Proxy API
 
-[![Pre-merge checks](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/pre-merge.yml)
-[![Deploy - Staging](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-staging.yml)
-[![Deploy - Production](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/etalab/rncs-api-proxy/actions/workflows/deploy-production.yml)
+[![Pre-merge checks](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml)
+[![Deploy - Staging](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml)
+[![Deploy - Production](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-proxy/actions/workflows/deploy-production.yml)
 
 Ce proxy permet de proxifier certains appels a des API utilisées par l'Annuaire des Entreprises.
 
@@ -16,7 +16,7 @@ Ce repository fait partie d'un ensemble de services qui constituent l'[Annuaire 
 | L’API du Moteur de recherche   | [par ici 👉](https://github.com/etalab/annuaire-entreprises-search-api)   |
 | L‘API de redondance de Sirene  | [par ici 👉](https://github.com/etalab/annuaire-entreprises-sirene-api)   |
 | L‘infra du moteur de recherche | [par ici 👉](https://github.com/etalab/annuaire-entreprises-search-infra) |
-| Le proxy API du site           | [par ici 👉](https://github.com/etalab/annuaire-entreprises-api-proxy)                    |
+| Le proxy API du site           | [par ici 👉](https://github.com/etalab/annuaire-entreprises-api-proxy)    |
 
 ## Installation
 
@@ -49,7 +49,7 @@ https://rncs-proxy.api.gouv.fr/document/justificatif/job/status
 // download an existing file with the slug given on job creation
 https://rncs-proxy.api.gouv.fr/document/downloads/:slug
 
-// status 
+// status
 https://rncs-proxy.api.gouv.fr/status/imr/api
 https://rncs-proxy.api.gouv.fr/status/imr/site
 ```
@@ -70,9 +70,9 @@ npm run test
 
 ### Deploiement
 
-Le déploiement se fait par [Github action](https://github.com/etalab/rncs-api-proxy/actions)
+Le déploiement se fait par [Github action](https://github.com/etalab/annuaire-entreprises-proxy/actions)
 
-A chaque "merge" sur master : 
+A chaque "merge" sur master :
 
 - Laissez le déploiement se faire automatiquement sur staging via l'action [deploy-staging](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml)
 - Vérifiez vos changements sur staging
