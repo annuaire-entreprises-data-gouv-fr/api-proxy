@@ -2,11 +2,11 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import { imrController } from './src/controllers/imr';
 import { errorHandler } from './src/controllers/errorHandler';
+import { associationController } from './src/controllers/association';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import helmet from 'helmet';
 import statusRouter from './src/routes/status';
-import { clientAssociation } from './src/clients/association';
 
 dotenv.config();
 
@@ -75,7 +75,7 @@ app.use('/status', statusRouter);
 /**
  * Association
  */
-app.use('/association/:rna', clientAssociation);
+app.use('/association/:rna', associationController);
 
 /**
  * Error handling
