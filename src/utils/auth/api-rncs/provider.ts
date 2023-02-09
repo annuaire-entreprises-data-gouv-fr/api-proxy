@@ -1,4 +1,4 @@
-import { httpGet } from '../../../utils/network';
+import { httpGet } from '../../network';
 import { HttpUnauthorizedError } from '../../../http-exceptions';
 import { AxiosRequestConfig } from 'axios';
 import constants from '../../../constants';

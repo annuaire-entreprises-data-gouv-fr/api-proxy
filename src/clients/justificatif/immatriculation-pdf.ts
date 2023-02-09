@@ -15,7 +15,7 @@ const downloadImmatriculationPdf = async ({
   siren,
   useCookie = true,
 }: IDownloadArgs): Promise<string> => {
-  const urlPdf = `${routes.rncs.portail.pdf}?format=pdf&ids=["${siren}"]`;
+  const urlPdf = `${routes.portail.pdf}?format=pdf&ids=["${siren}"]`;
 
   let cookies = '';
   if (useCookie) {

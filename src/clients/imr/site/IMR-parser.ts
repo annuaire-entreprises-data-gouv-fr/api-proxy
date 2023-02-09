@@ -2,7 +2,7 @@ import { JSDOM } from 'jsdom';
 import { IBeneficiaire, IDirigeant, IIdentite } from '../../../models/imr';
 import { Siren } from '../../../models/siren-and-siret';
 
-import { InvalidFormatError } from '../api/IMR-parser';
+import { InvalidFormatError } from '../api-rncs/IMR-parser';
 import parseBeneficiaires from './parsers/beneficiaires';
 import parseDirigeants from './parsers/dirigeants';
 import parseIdentite, {

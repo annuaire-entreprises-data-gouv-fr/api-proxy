@@ -1,7 +1,8 @@
-import { fetchRNCSImmatriculationFromSite } from '../clients/imr/site';
-import { fetchRNCSImmatriculationFromAPI } from '../clients/imr/api';
 import { Siren } from './siren-and-siret';
 import { HttpNotFound, HttpServerError } from '../http-exceptions';
+import { fetchImmatriculationFromAPIRNCS } from '../clients/imr/api-rncs';
+import { fetchImmatriculationFromSite } from '../clients/imr/site';
+import { fetchImmatriculationFromAPIRNE } from '../clients/imr/api-rne';
 
 export interface IEtatCivil {
   sexe: 'M' | 'F' | null;
@@ -48,7 +49,7 @@ export interface IPersonneMorale {
 
 export type IDirigeant = IEtatCivil | IPersonneMorale;
 
-export interface IImmatriculationRNCS {
+export interface IImmatriculation {
   siren: Siren;
   identite: IIdentite;
   dirigeants: IDirigeant[];
@@ -64,28 +65,38 @@ export interface IImmatriculationRNCS {
  * @param siren
  * @returns
  */
-const fetchRNCSImmatriculation = async (
+const fetchImmatriculation = async (
   siren: Siren
-): Promise<IImmatriculationRNCS> => {
+): Promise<IImmatriculation> => {
   try {
-    return await fetchRNCSImmatriculationFromAPI(siren);
-  } catch (error) {
-    if (error instanceof HttpNotFound) {
-      throw error;
+    return await fetchImmatriculationFromAPIRNE(siren);
+  } catch (errorAPIRNE) {
+    if (errorAPIRNE instanceof HttpNotFound) {
+      throw errorAPIRNE;
     }
+
     try {
-      return await fetchRNCSImmatriculationFromSite(siren);
-    } catch (fallbackError) {
-      if (fallbackError instanceof HttpNotFound) {
-        throw fallbackError;
+      return await fetchImmatriculationFromAPIRNCS(siren);
+    } catch (errorAPIRNCS) {
+      if (errorAPIRNCS instanceof HttpNotFound) {
+        throw errorAPIRNCS;
       }
-      throw new HttpServerError(`API : ${error} | Site : ${fallbackError}`);
+      try {
+        return await fetchImmatriculationFromSite(siren);
+      } catch (fallbackError) {
+        if (fallbackError instanceof HttpNotFound) {
+          throw fallbackError;
+        }
+        throw new HttpServerError(
+          `API RNE: ${errorAPIRNE} | API RNCS : ${errorAPIRNCS} | Site : ${fallbackError}`
+        );
+      }
     }
   }
 };
 
 export {
-  fetchRNCSImmatriculation,
-  fetchRNCSImmatriculationFromSite,
-  fetchRNCSImmatriculationFromAPI,
+  fetchImmatriculation,
+  fetchImmatriculationFromSite,
+  fetchImmatriculationFromAPIRNCS,
 };
