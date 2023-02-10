@@ -1,3 +1,4 @@
+import constants from '../../../constants';
 import { HttpNotFound } from '../../../http-exceptions';
 import { IImmatriculationRne } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
@@ -9,7 +10,8 @@ import { IRNEResponse } from './interface';
 
 export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
   const response = await authApiRneClient(
-    routes.inpi.api.rne.cmc.companies + siren
+    routes.inpi.api.rne.cmc.companies + siren,
+    { timeout: constants.timeout.M }
   );
   const data = response.data as IRNEResponse;
 
