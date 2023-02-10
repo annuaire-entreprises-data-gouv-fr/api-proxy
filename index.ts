@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { imrController } from './src/controllers/imr';
+import { imrController, rneController } from './src/controllers/inpi';
 import { errorHandler } from './src/controllers/errorHandler';
 import { associationController } from './src/controllers/association';
 import * as Sentry from '@sentry/node';
@@ -61,6 +61,11 @@ app.get('/', (req: Request, res: Response) => {
  * IMR
  */
 app.get('/imr/:siren', imrController);
+
+/**
+ * RNE
+ */
+app.get('/rne/:siren', rneController);
 
 // /**
 //  * KBIS

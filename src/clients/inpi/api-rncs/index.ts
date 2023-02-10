@@ -1,9 +1,9 @@
-import { IImmatriculationRNCS } from '../../../models/imr';
 import { Siren } from '../../../models/siren-and-siret';
 import routes from '../../urls';
-import { authApiClient } from '../../../utils/auth/api';
+import { authApiRncsClient } from '../../../utils/auth/api-rncs';
 import { extractIMRFromXml } from './IMR-parser';
 import { unzipTwiceIMR } from './unzipper';
+import { IImmatriculation } from '../../../models/imr';
 
 export interface IRNCSResponse {
   fichier: {
@@ -96,10 +96,13 @@ export interface IRNCSIdentiteResponse {
   };
 }
 
-export const fetchRNCSImmatriculationFromAPI = async (siren: Siren) => {
-  const response = await authApiClient(routes.rncs.api.imr.get + siren, {
-    responseType: 'arraybuffer',
-  });
+export const fetchImmatriculationFromAPIRNCS = async (siren: Siren) => {
+  const response = await authApiRncsClient(
+    routes.inpi.api.rncs.imr.get + siren,
+    {
+      responseType: 'arraybuffer',
+    }
+  );
   const data = await response.data;
   const IMRBuffer = Buffer.from(new Uint8Array(data));
   const xmlResponse = await unzipTwiceIMR(IMRBuffer, siren);
@@ -109,7 +112,7 @@ export const fetchRNCSImmatriculationFromAPI = async (siren: Siren) => {
 const mapToDomainObject = (
   xmlResponse: string,
   siren: Siren
-): IImmatriculationRNCS => {
+): IImmatriculation => {
   const { dirigeants, beneficiaires, identite } = extractIMRFromXml(
     xmlResponse,
     siren

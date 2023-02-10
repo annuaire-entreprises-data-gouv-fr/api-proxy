@@ -1,15 +1,15 @@
-import { IImmatriculationRNCS } from '../../../models/imr';
+import { IImmatriculation } from '../../../models/imr';
 import { Siren } from '../../../models/siren-and-siret';
 import routes from '../../urls';
 import { httpGet } from '../../../utils/network';
 import { extractIMRFromHtml } from './IMR-parser';
 import constants from '../../../constants';
 
-export const fetchRNCSImmatriculationFromSite = async (
+export const fetchImmatriculationFromSite = async (
   siren: Siren
-): Promise<IImmatriculationRNCS> => {
-  const response = await httpGet(routes.rncs.portail.entreprise + siren, {
-    timeout: constants.siteTimeout,
+): Promise<IImmatriculation> => {
+  const response = await httpGet(routes.inpi.portail.entreprise + siren, {
+    timeout: constants.timeout.L,
   });
 
   return {

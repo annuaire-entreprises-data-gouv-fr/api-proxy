@@ -10,7 +10,7 @@ export class APICookie {
   async authenticateAndGet() {
     try {
       const response = await httpClient({
-        url: routes.rncs.api.login,
+        url: routes.inpi.api.rncs.login,
         method: 'POST',
         headers: {
           login: this.login,

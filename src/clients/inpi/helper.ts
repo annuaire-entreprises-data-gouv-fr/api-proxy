@@ -7,6 +7,7 @@ export const formatINPIDateField = (unformatted: string | number): string => {
   if (!unformatted) {
     return '';
   }
+
   if (typeof unformatted === 'number') {
     // YYYYMMDD as number
     const YYYYMMDD = unformatted.toString();

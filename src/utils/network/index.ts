@@ -20,7 +20,7 @@ axios.interceptors.response.use(logInterceptor, errorInterceptor);
  */
 const httpClient = (config: AxiosRequestConfig): Promise<AxiosResponse> => {
   return axios({
-    timeout: constants.defaultTimeout,
+    timeout: constants.timeout.S,
     ...config,
   });
 };

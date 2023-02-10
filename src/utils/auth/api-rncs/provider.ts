@@ -1,4 +1,4 @@
-import { httpGet } from '../../../utils/network';
+import { httpGet } from '../../network';
 import { HttpUnauthorizedError } from '../../../http-exceptions';
 import { AxiosRequestConfig } from 'axios';
 import constants from '../../../constants';
@@ -22,7 +22,7 @@ class InpiAPIAuthProvider {
     options?: AxiosRequestConfig
   ) => {
     return await httpGet(route, {
-      timeout: constants.defaultTimeout,
+      timeout: constants.timeout.S,
       headers: { Cookie: cookie },
       ...options,
     });

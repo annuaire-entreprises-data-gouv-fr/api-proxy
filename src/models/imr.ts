@@ -1,7 +1,7 @@
-import { fetchRNCSImmatriculationFromSite } from '../clients/imr/site';
-import { fetchRNCSImmatriculationFromAPI } from '../clients/imr/api';
 import { Siren } from './siren-and-siret';
 import { HttpNotFound, HttpServerError } from '../http-exceptions';
+import { fetchImmatriculationFromAPIRNCS } from '../clients/inpi/api-rncs';
+import { fetchImmatriculationFromSite } from '../clients/inpi/site';
 
 export interface IEtatCivil {
   sexe: 'M' | 'F' | null;
@@ -21,6 +21,7 @@ export interface IBeneficiaire {
   nationalite: string;
   dateGreffe: string;
 }
+
 export interface IIdentite {
   denomination: string;
   codeGreffe: string;
@@ -48,7 +49,7 @@ export interface IPersonneMorale {
 
 export type IDirigeant = IEtatCivil | IPersonneMorale;
 
-export interface IImmatriculationRNCS {
+export interface IImmatriculation {
   siren: Siren;
   identite: IIdentite;
   dirigeants: IDirigeant[];
@@ -64,28 +65,30 @@ export interface IImmatriculationRNCS {
  * @param siren
  * @returns
  */
-const fetchRNCSImmatriculation = async (
+const fetchImmatriculation = async (
   siren: Siren
-): Promise<IImmatriculationRNCS> => {
+): Promise<IImmatriculation> => {
   try {
-    return await fetchRNCSImmatriculationFromAPI(siren);
-  } catch (error) {
-    if (error instanceof HttpNotFound) {
-      throw error;
+    return await fetchImmatriculationFromAPIRNCS(siren);
+  } catch (errorAPIRNCS) {
+    if (errorAPIRNCS instanceof HttpNotFound) {
+      throw errorAPIRNCS;
     }
     try {
-      return await fetchRNCSImmatriculationFromSite(siren);
+      return await fetchImmatriculationFromSite(siren);
     } catch (fallbackError) {
       if (fallbackError instanceof HttpNotFound) {
         throw fallbackError;
       }
-      throw new HttpServerError(`API : ${error} | Site : ${fallbackError}`);
+      throw new HttpServerError(
+        `API RNCS : ${errorAPIRNCS} | Site : ${fallbackError}`
+      );
     }
   }
 };
 
 export {
-  fetchRNCSImmatriculation,
-  fetchRNCSImmatriculationFromSite,
-  fetchRNCSImmatriculationFromAPI,
+  fetchImmatriculation,
+  fetchImmatriculationFromSite,
+  fetchImmatriculationFromAPIRNCS,
 };
