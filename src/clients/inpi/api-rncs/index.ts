@@ -97,9 +97,12 @@ export interface IRNCSIdentiteResponse {
 }
 
 export const fetchImmatriculationFromAPIRNCS = async (siren: Siren) => {
-  const response = await authApiRncsClient(routes.api.rncs.imr.get + siren, {
-    responseType: 'arraybuffer',
-  });
+  const response = await authApiRncsClient(
+    routes.inpi.api.rncs.imr.get + siren,
+    {
+      responseType: 'arraybuffer',
+    }
+  );
   const data = await response.data;
   const IMRBuffer = Buffer.from(new Uint8Array(data));
   const xmlResponse = await unzipTwiceIMR(IMRBuffer, siren);

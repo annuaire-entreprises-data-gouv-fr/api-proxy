@@ -1,10 +1,9 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { imrController } from './src/controllers/imr';
+import { imrController, rneController } from './src/controllers/inpi';
 import { errorHandler } from './src/controllers/errorHandler';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
-import documentRouter from './src/routes/document';
 import helmet from 'helmet';
 import statusRouter from './src/routes/status';
 
@@ -61,6 +60,11 @@ app.get('/', (req: Request, res: Response) => {
  * IMR
  */
 app.get('/imr/:siren', imrController);
+
+/**
+ * RNE
+ */
+app.get('/rne/:siren', rneController);
 
 // /**
 //  * KBIS

@@ -9,6 +9,7 @@ const statusRouter = express.Router();
 
 statusRouter
   .get('/imr/site', siteImrStatusController)
-  .get('/imr/api', apiImrStatusController);
+  .get('/imr/api', apiImrStatusController)
+  .get('/rne/api', apiImrStatusController);
 
 export default statusRouter;

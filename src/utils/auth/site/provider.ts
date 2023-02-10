@@ -1,4 +1,5 @@
 import routes from '../../../clients/urls';
+import constants from '../../../constants';
 import { logWarningInSentry } from '../../sentry';
 import getPuppeteerBrowser from './browser';
 
@@ -35,11 +36,15 @@ class InpiSiteCookiesProvider {
       const login = process.env.INPI_SITE_LOGIN || '';
       const passwd = process.env.INPI_SITE_PASSWORD || '';
 
-      await page.goto(routes.rncs.portail.login, { timeout: 5000 });
+      await page.goto(routes.inpi.portail.login, {
+        timeout: constants.timeout.L,
+      });
       await page.type('#login_form_Email', login);
       await page.type('#login_form_password', passwd);
 
-      await page.waitForSelector('input#login_form_licence', { timeout: 5000 });
+      await page.waitForSelector('input#login_form_licence', {
+        timeout: constants.timeout.L,
+      });
       await page.evaluate(() => {
         document.getElementById('login_form_licence')?.click();
         document.getElementById('login_form_submit')?.click();
@@ -47,7 +52,9 @@ class InpiSiteCookiesProvider {
 
       let success = false;
       try {
-        await page.waitForSelector('.alert.alert-success', { timeout: 5000 });
+        await page.waitForSelector('.alert.alert-success', {
+          timeout: constants.timeout.L,
+        });
         success = true;
       } catch {
         throw new Error('login on data.inpi.fr failed');

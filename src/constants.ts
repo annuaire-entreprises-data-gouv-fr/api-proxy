@@ -1,7 +1,13 @@
 const constants = {
-  defaultTimeout: 1500,
-  siteTimeout: 4000,
-  pdfTimeout: 30000,
+  timeout: {
+    XS: 850,
+    S: 1500,
+    M: 3000,
+    L: 5000,
+    XL: 10000,
+    XXL: 20000,
+    XXXL: 30000,
+  },
 };
 
 export default constants;

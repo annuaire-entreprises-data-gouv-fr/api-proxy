@@ -22,7 +22,7 @@ class InpiAPIAuthProvider {
     options?: AxiosRequestConfig
   ) => {
     return await httpGet(route, {
-      timeout: constants.defaultTimeout,
+      timeout: constants.timeout.S,
       headers: { Cookie: cookie },
       ...options,
     });

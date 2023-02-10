@@ -8,8 +8,8 @@ import constants from '../../../constants';
 export const fetchImmatriculationFromSite = async (
   siren: Siren
 ): Promise<IImmatriculation> => {
-  const response = await httpGet(routes.portail.entreprise + siren, {
-    timeout: constants.siteTimeout,
+  const response = await httpGet(routes.inpi.portail.entreprise + siren, {
+    timeout: constants.timeout.L,
   });
 
   return {

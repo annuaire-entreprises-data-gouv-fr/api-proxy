@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 import routes from '../../../clients/urls';
+import constants from '../../../constants';
 import { HttpUnauthorizedError } from '../../../http-exceptions';
 import httpClient, { httpGet } from '../../network';
 
@@ -9,10 +10,14 @@ const getToken = async () => {
   try {
     const response = await httpClient({
       method: 'POST',
-      url: routes.api.rne.login,
+      url: routes.inpi.api.rne.login,
       data: {
         username: process.env.RNE_LOGIN,
-        password: process.env.RNE_LOGIN,
+        password: process.env.RNE_PASSWORD,
+      },
+      timeout: constants.timeout.XL,
+      headers: {
+        'Content-Type': 'application/json',
       },
     });
     return response.data.token;

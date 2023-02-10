@@ -1,8 +1,7 @@
 import { Siren } from './siren-and-siret';
 import { HttpNotFound, HttpServerError } from '../http-exceptions';
-import { fetchImmatriculationFromAPIRNCS } from '../clients/imr/api-rncs';
-import { fetchImmatriculationFromSite } from '../clients/imr/site';
-import { fetchImmatriculationFromAPIRNE } from '../clients/imr/api-rne';
+import { fetchImmatriculationFromAPIRNCS } from '../clients/inpi/api-rncs';
+import { fetchImmatriculationFromSite } from '../clients/inpi/site';
 
 export interface IEtatCivil {
   sexe: 'M' | 'F' | null;
@@ -22,6 +21,7 @@ export interface IBeneficiaire {
   nationalite: string;
   dateGreffe: string;
 }
+
 export interface IIdentite {
   denomination: string;
   codeGreffe: string;
@@ -69,28 +69,20 @@ const fetchImmatriculation = async (
   siren: Siren
 ): Promise<IImmatriculation> => {
   try {
-    return await fetchImmatriculationFromAPIRNE(siren);
-  } catch (errorAPIRNE) {
-    if (errorAPIRNE instanceof HttpNotFound) {
-      throw errorAPIRNE;
+    return await fetchImmatriculationFromAPIRNCS(siren);
+  } catch (errorAPIRNCS) {
+    if (errorAPIRNCS instanceof HttpNotFound) {
+      throw errorAPIRNCS;
     }
-
     try {
-      return await fetchImmatriculationFromAPIRNCS(siren);
-    } catch (errorAPIRNCS) {
-      if (errorAPIRNCS instanceof HttpNotFound) {
-        throw errorAPIRNCS;
+      return await fetchImmatriculationFromSite(siren);
+    } catch (fallbackError) {
+      if (fallbackError instanceof HttpNotFound) {
+        throw fallbackError;
       }
-      try {
-        return await fetchImmatriculationFromSite(siren);
-      } catch (fallbackError) {
-        if (fallbackError instanceof HttpNotFound) {
-          throw fallbackError;
-        }
-        throw new HttpServerError(
-          `API RNE: ${errorAPIRNE} | API RNCS : ${errorAPIRNCS} | Site : ${fallbackError}`
-        );
-      }
+      throw new HttpServerError(
+        `API RNCS : ${errorAPIRNCS} | Site : ${fallbackError}`
+      );
     }
   }
 };
