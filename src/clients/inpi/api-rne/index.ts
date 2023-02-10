@@ -40,8 +40,6 @@ const mapPersonneMoraleToDomainObject = (
     dateClotureExerciceSocial = '',
   } = pm?.identite.description || {};
 
-  console.log(pm);
-
   const {
     denomination = '',
     formeJuridique = '',

@@ -8,7 +8,7 @@ import { fetchImmatriculationFromAPIRNE } from '../clients/inpi/api-rne';
 
 export const apiImrStatusController = async (req: Request, res: Response) => {
   try {
-    const dummySiren = verifySiren('880878145');
+    const dummySiren = verifySiren('552032534');
     await fetchImmatriculationFromAPIRNCS(dummySiren);
     res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
@@ -19,7 +19,7 @@ export const apiImrStatusController = async (req: Request, res: Response) => {
 
 export const siteImrStatusController = async (req: Request, res: Response) => {
   try {
-    const dummySiren = verifySiren('880878145');
+    const dummySiren = verifySiren('552032534');
     await fetchImmatriculationFromSite(dummySiren);
     res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
@@ -30,7 +30,7 @@ export const siteImrStatusController = async (req: Request, res: Response) => {
 
 export const apiRneStatusController = async (req: Request, res: Response) => {
   try {
-    const dummySiren = verifySiren('880878145');
+    const dummySiren = verifySiren('552032534');
     await fetchImmatriculationFromAPIRNE(dummySiren);
     res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
