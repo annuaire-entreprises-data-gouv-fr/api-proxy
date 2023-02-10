@@ -1,11 +1,11 @@
 {
-  "name": "rncs-api-proxy",
+  "name": "annuaire-entreprises-api-proxy",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/etalab/rncs-api-proxy.git"
+    "url": "git+https://github.com/etalab/annuaire-entreprises-api-proxy.git"
   },
   "engines": {
     "node": ">=16.4",
@@ -14,9 +14,9 @@
   "author": "Etalab",
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/etalab/rncs-api-proxy/issues"
+    "url": "https://github.com/etalab/annuaire-entreprises-api-proxy/issues"
   },
-  "homepage": "https://github.com/etalab/rncs-api-proxy#readme",
+  "homepage": "https://github.com/etalab/annuaire-entreprises-api-proxy#readme",
   "scripts": {
     "dev": "nodemon index.ts",
     "start": "node dist/index.js",

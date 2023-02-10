@@ -24,6 +24,7 @@ const routes = {
       },
     },
   },
+  association: 'https://siva-integ1.cegedim.cloud/apim/api-asso/api/structure/',
 };
 
 export default routes;
