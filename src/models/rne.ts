@@ -55,7 +55,7 @@ const fetchRne = async (siren: Siren): Promise<IImmatriculationRne> => {
         throw fallbackError;
       }
       throw new HttpServerError(
-        `API RNE: ${errorAPIRNE} | Site : ${fallbackError}`
+        `API RNE: ${errorAPIRNE} | Site fallback failed`
       );
     }
   }

@@ -17,7 +17,10 @@ export const extractRepresentants = (dossier: IRNCSResponseDossier) => {
 
   if (!representantsObject) {
     if (!dossier.identite || !dossier.identite.identite_PP) {
-      logWarningInSentry('No Dirigeant found', { siren: dossier['@_siren'] });
+      logWarningInSentry('API RNCS Inconsistency', {
+        siren: dossier['@_siren'],
+        details: 'No Dirigeant found',
+      });
       return [];
     }
     const representantEI = extractDirigeantFromIdentite(dossier);

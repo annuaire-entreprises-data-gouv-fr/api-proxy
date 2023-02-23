@@ -81,7 +81,7 @@ const fetchImmatriculation = async (
         throw fallbackError;
       }
       throw new HttpServerError(
-        `API RNCS : ${errorAPIRNCS} | Site : ${fallbackError}`
+        `API RNCS : ${errorAPIRNCS} | Site fallback failed`
       );
     }
   }

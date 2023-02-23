@@ -62,7 +62,10 @@ const extractDossierPrincipal = (
     });
 
   if (principaux.length === 0) {
-    logWarningInSentry('No inscription principale', { siren });
+    logWarningInSentry('API RNCS Inconsistency', {
+      siren,
+      details: 'No inscription principale found',
+    });
     return dossiers[0];
   }
 
