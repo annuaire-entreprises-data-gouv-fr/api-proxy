@@ -46,7 +46,7 @@ const parseDirigeants = (dirigeantsHtml: Element) => {
         dirigeants.push(current);
       }
       current = {
-        denomination: text,
+        denomination: (text || '').replace('&amp;', '&'),
         siren: '',
         natureJuridique: '',
         role: '',

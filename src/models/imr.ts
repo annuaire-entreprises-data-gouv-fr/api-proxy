@@ -76,8 +76,6 @@ const fetchImmatriculation = async (
   siren: Siren
 ): Promise<IImmatriculation> => {
   try {
-    return await fetchImmatriculationFromSite(siren);
-
     return await fetchImmatriculationFromAPIRNCS(siren);
   } catch (errorAPIRNCS) {
     if (errorAPIRNCS instanceof HttpNotFound) {
