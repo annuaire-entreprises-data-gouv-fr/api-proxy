@@ -123,6 +123,7 @@ const mapToDomainObject = (
     dirigeants,
     beneficiaires,
     identite,
+    observations: [],
     metadata: {
       isFallback: false,
     },

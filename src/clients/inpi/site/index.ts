@@ -15,6 +15,7 @@ export const fetchImmatriculationFromSite = async (
   return {
     siren,
     ...extractIMRFromHtml(response.data, siren),
+    observations: [],
     metadata: {
       isFallback: true,
     },

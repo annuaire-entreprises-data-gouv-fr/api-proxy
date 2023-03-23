@@ -1,6 +1,6 @@
 import { escapeTerm } from '../../../../utils/helpers/formatters';
-import { formatINPIDateField, formatINPIDateFieldPartial } from '../../helper';
-import { extractFromHtmlBlock, parseNameAndRole } from './helpers';
+import { formatINPIDateField } from '../../helper';
+import { extractFromHtmlBlock } from './helpers';
 
 const parseIdentiteBlocks = (identiteHtml: Element) => {
   const blocsHtml = identiteHtml.querySelectorAll('div.bloc-detail-notice');
@@ -25,13 +25,8 @@ const parseIdentite = (identiteHtml: Element, radiationText: string) => {
   if (!!get('Dénomination')) {
     // personne morale
     return {
-      greffe: null,
-      codeGreffe: null,
-      numeroRCS: null,
-      numGestion: get('N° de gestion'),
       dateImmatriculation: getDate("Date d'immatriculation"),
       dateDebutActiv: getDate('Début d’activité'),
-      dateGreffe: null,
       dateRadiation: formatINPIDateField(radiationDate) || null,
       dateCessationActivite: getDate("Date de cessation d'activité"),
       denomination: get('Dénomination'),
@@ -40,16 +35,12 @@ const parseIdentite = (identiteHtml: Element, radiationText: string) => {
       capital: get('Capital social').trim(),
       isPersonneMorale: true,
       libelleNatureJuridique: get('Forme juridique'),
+      natureEntreprise: get("Nature de l'entreprise"),
     };
   } else {
     return {
-      greffe: null,
-      codeGreffe: null,
-      numeroRCS: null,
-      numGestion: get('N° de gestion'),
       dateImmatriculation: getDate("Date d'immatriculation"),
       dateDebutActiv: getDate('Début d’activité'),
-      dateGreffe: null,
       dateRadiation: formatINPIDateField(radiationDate) || null,
       dateCessationActivite: getDate("Date de cessation d'activité"),
       denomination: get('Nom, Prénom(s)'),
@@ -58,27 +49,24 @@ const parseIdentite = (identiteHtml: Element, radiationText: string) => {
       capital: null,
       isPersonneMorale: false,
       libelleNatureJuridique: 'Entreprise individuelle',
+      natureEntreprise: get("Nature de l'entreprise"),
     };
   }
 };
 
 export const extractDirigeantFromIdentite = (identiteHtml: Element) => {
   const parsedBlocks = parseIdentiteBlocks(identiteHtml);
-  const { nom, prenom } = parseNameAndRole(
+  const [nom = '', prenom = ''] = (
     parsedBlocks[escapeTerm('Nom, Prénom(s)')] || ''
-  );
-
-  const dateNaissanceMMYYYY =
-    parsedBlocks['Date de naissance (mm/aaaa)'] || null;
+  ).split(',');
 
   return {
-    sexe: null,
-    prenom: prenom,
-    nom: nom,
+    prenom: prenom.replace('&nbsp;', '').trim(),
+    nom: nom.trim(),
     role: 'Représentant Légal',
     lieuNaissance: null,
-    dateNaissancePartial: formatINPIDateFieldPartial(dateNaissanceMMYYYY),
-    dateNaissanceFull: '',
+    dateNaissancePartial: '',
+    dateNaissanceFull: null,
   };
 };
 

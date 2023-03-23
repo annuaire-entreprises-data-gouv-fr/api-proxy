@@ -2,25 +2,17 @@
 // Identite / Immatriculation
 //==============
 
-import {
-  formatFloatFr,
-  formatIntFr,
-} from '../../../../utils/helpers/formatters';
+import { formatFloatFr } from '../../../../utils/helpers/formatters';
 import { IRNCSIdentiteResponse, IRNCSResponseDossier } from '..';
 import { formatINPIDateField } from '../../helper';
 import { IIdentite } from '../../../../models/imr';
-import { libelleFromCodeGreffe } from '../../../../utils/helpers/labels';
 
 export const extractIdentite = (dossierPrincipal: IRNCSResponseDossier) => {
-  return mapToDomainIdentite(dossierPrincipal.identite, dossierPrincipal);
+  return mapToDomainIdentite(dossierPrincipal.identite);
 };
 
-const mapToDomainIdentite = (
-  identite: IRNCSIdentiteResponse,
-  dossier: IRNCSResponseDossier
-): IIdentite => {
+const mapToDomainIdentite = (identite: IRNCSIdentiteResponse): IIdentite => {
   const {
-    date_greffe,
     dat_immat,
     date_debut_activ,
     dat_1ere_immat,
@@ -32,8 +24,6 @@ const mapToDomainIdentite = (
 
   const isPP = !identite_PM;
 
-  const codeGreffe = dossier['@_code_greffe'];
-  const greffe = libelleFromCodeGreffe(codeGreffe);
   const dateImmatriculation = dat_1ere_immat
     ? formatINPIDateField(dat_1ere_immat)
     : dat_immat
@@ -41,13 +31,8 @@ const mapToDomainIdentite = (
     : '';
 
   const infosIdentite = {
-    greffe,
-    codeGreffe, //'7501',
-    numeroRCS: `${formatIntFr(dossier['@_siren'])} rcs ${greffe}`,
-    numGestion: dossier['@_num_gestion'], // '2020B02214',
     dateImmatriculation,
     dateDebutActiv: formatINPIDateField(date_debut_activ),
-    dateGreffe: formatINPIDateField(date_greffe),
     dateRadiation: formatINPIDateField(dat_rad),
     dateCessationActivite: formatINPIDateField(dat_cessat_activite),
   };
@@ -65,6 +50,7 @@ const mapToDomainIdentite = (
       dateClotureExercice: '',
       capital: '',
       libelleNatureJuridique: 'Entreprise individuelle',
+      natureEntreprise: '',
     };
   } else {
     const {
@@ -94,6 +80,7 @@ const mapToDomainIdentite = (
       capital,
       isPersonneMorale: true,
       libelleNatureJuridique: form_jur || '',
+      natureEntreprise: '',
     };
   }
 };
