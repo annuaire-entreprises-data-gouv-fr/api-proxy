@@ -2,6 +2,7 @@ import { Siren } from './siren-and-siret';
 import { HttpNotFound, HttpServerError } from '../http-exceptions';
 import { fetchImmatriculationFromAPIRNCS } from '../clients/inpi/api-rncs';
 import { fetchImmatriculationFromSite } from '../clients/inpi/site';
+import { logWarningInSentry } from '../utils/sentry';
 
 export interface IEtatCivil {
   nom: string;
@@ -87,15 +88,26 @@ const fetchImmatriculation = async (
       if (fallbackError instanceof HttpNotFound) {
         throw fallbackError;
       }
-      throw new HttpServerError(
-        `API RNCS : ${errorAPIRNCS} | Site fallback failed`
-      );
+      throw new HttpServerError(`API RNCS and Site fallback failed`);
     }
   }
+};
+
+/**
+ * Log warning in sentry if siren is in RNCS
+ * @param siren
+ */
+const isInRNCSCheck = async (siren: Siren): Promise<void> => {
+  try {
+    await fetchImmatriculationFromAPIRNCS(siren);
+    logWarningInSentry('Not found in RNCS', { siren });
+    // eslint-disable-next-line no-empty
+  } catch {}
 };
 
 export {
   fetchImmatriculation,
   fetchImmatriculationFromSite,
   fetchImmatriculationFromAPIRNCS,
+  isInRNCSCheck,
 };

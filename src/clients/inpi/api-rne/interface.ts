@@ -1,27 +1,3 @@
-interface IRNEIndividu {
-  descriptionPersonne: {
-    dateDeNaissance: string;
-    nom: string;
-    prenoms: string[];
-    nomUsage: string;
-    nationalite: string;
-    genre?: string;
-  };
-  entreprise?: object;
-  adresseEntreprise?: {
-    pays: string;
-    codePostal: string;
-    commune: string;
-    codeInseeCommune: string;
-    voie: string;
-  };
-  representant?: {
-    descriptionPersonne: object;
-    adresseDomicile: object;
-  };
-  beneficiaireEffectif: boolean;
-}
-
 interface IRNEIdentitePM {
   entreprise: {
     siren: string;
@@ -47,6 +23,14 @@ interface IRNEIdentitePM {
 }
 interface IRNEIdentitePP {
   entrepreneur: IRNEEntrepreneur;
+  entreprise: {
+    siren: string;
+    formeJuridique: string;
+    codeApe: string;
+    dateImmat: string;
+    dateRad: string;
+    dateDebutActiv: string;
+  };
 }
 
 interface IRNEEntrepreneur {
@@ -92,9 +76,9 @@ export interface IRNEResponse {
     evenementCessation: string | null;
     natureCessation: string | null;
     succursaleOuFiliale: 'AVEC_ETABLISSEMENT';
-    formeExerciceActivitePrincipale: 'COMMERCIALE';
     indicateurPoursuiteCessation: string | null;
     content: {
+      formeExerciceActivitePrincipale: string;
       natureCreation: {
         dateCreation: string | null;
         societeEtrangere: boolean;
@@ -111,8 +95,10 @@ export interface IRNEResponse {
         identite: IRNEIdentitePM;
         adresseEntreprise: IRNEAdresse;
         detailCessationEntreprise: IRNECessation;
+        beneficiairesEffectifs: any[];
+        observations: any[];
         composition: {
-          pouvoirs: IRNEIndividu[];
+          pouvoirs: any[];
         };
       };
       personnePhysique?: {
@@ -120,7 +106,7 @@ export interface IRNEResponse {
         adresseEntreprise: IRNEAdresse;
         detailCessationEntreprise: IRNECessation;
         composition: {
-          pouvoirs: IRNEIndividu[];
+          pouvoirs: any[];
         };
       };
     };

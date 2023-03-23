@@ -1,9 +1,14 @@
 import constants from '../../../constants';
 import { HttpNotFound } from '../../../http-exceptions';
-import { IImmatriculationRne } from '../../../models/rne';
+import {
+  IImmatriculation,
+  IPersonneMorale,
+  IEtatCivil,
+} from '../../../models/imr';
 import { Siren } from '../../../models/siren-and-siret';
 import { authApiRneClient } from '../../../utils/auth/api-rne';
 import { formatFloatFr } from '../../../utils/helpers/formatters';
+import { libelleFromCategoriesJuridiques } from '../../../utils/helpers/labels';
 import routes from '../../urls';
 import { formatINPIDateField } from '../helper';
 import { IRNEResponse } from './interface';
@@ -18,12 +23,14 @@ export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
   if (data.formality.content.personnePhysique) {
     return mapPersonnePhysiqueToDomainObject(
       data.formality.content.personnePhysique,
+      data.formality.content.formeExerciceActivitePrincipale,
       siren
     );
   }
   if (data.formality.content.personneMorale) {
     return mapPersonneMoraleToDomainObject(
       data.formality.content.personneMorale,
+      data.formality.content.formeExerciceActivitePrincipale,
       siren
     );
   }
@@ -32,8 +39,9 @@ export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
 
 const mapPersonneMoraleToDomainObject = (
   pm: IRNEResponse['formality']['content']['personneMorale'],
+  natureEntreprise = '',
   siren: Siren
-): IImmatriculationRne => {
+): IImmatriculation => {
   const {
     montantCapital = 0,
     deviseCapital = '€',
@@ -74,8 +82,54 @@ const mapPersonneMoraleToDomainObject = (
       dateClotureExercice: dateClotureExerciceSocial,
       dureePersonneMorale: duree ? `${duree.toString()} ans` : '',
       capital,
-      codeNatureJuridique: formeJuridique,
+      libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
+      natureEntreprise,
     },
+    dirigeants:
+      pm?.composition?.pouvoirs.map((p) => {
+        if (!!p.individu) {
+          const {
+            nom = '',
+            prenoms = [],
+            dateDeNaissance = '',
+          } = p.individu?.descriptionPersonne || {};
+          return {
+            nom,
+            prenom: prenoms[0],
+            role: '',
+            dateNaissancePartial: dateDeNaissance,
+          } as IEtatCivil;
+        } else {
+          const {
+            siren = '',
+            denomination = '',
+            roleEntreprise = '',
+            formeJuridique = '',
+          } = p.entreprise || {};
+
+          return {
+            siren,
+            denomination,
+            natureJuridique: formeJuridique,
+            role: roleEntreprise,
+          } as IPersonneMorale;
+        }
+      }) || [],
+    beneficiaires:
+      pm?.beneficiairesEffectifs.map((b) => {
+        const {
+          dateDeNaissance = '',
+          nom = '',
+          prenoms = '',
+        } = b?.beneficiaire?.descriptionPersonne || {};
+        return {
+          type: '',
+          nom,
+          prenoms: prenoms.join(', '),
+          dateNaissancePartial: dateDeNaissance,
+        };
+      }) || [],
+    observations: [],
     metadata: {
       isFallback: false,
     },
@@ -83,16 +137,22 @@ const mapPersonneMoraleToDomainObject = (
 };
 
 const mapPersonnePhysiqueToDomainObject = (
-  pm: IRNEResponse['formality']['content']['personnePhysique'],
+  pp: IRNEResponse['formality']['content']['personnePhysique'],
+  natureEntreprise = '',
   siren: Siren
-): IImmatriculationRne => {
-  const formeJuridique = '1000';
+): IImmatriculation => {
+  const {
+    dateImmat = '',
+    formeJuridique = '',
+    dateRad = '',
+    dateDebutActiv = '',
+  } = pp?.identite?.entreprise || {};
 
   const {
     prenoms = [''],
     nomUsage = '',
     nom = '',
-  } = pm?.identite.entrepreneur?.descriptionPersonne || {};
+  } = pp?.identite.entrepreneur?.descriptionPersonne || {};
   const prenom = prenoms[0];
 
   const denomination = `${prenom} ${
@@ -103,16 +163,27 @@ const mapPersonnePhysiqueToDomainObject = (
     siren,
     identite: {
       denomination: denomination || '',
-      dateImmatriculation: '',
-      dateDebutActiv: '',
-      dateRadiation: '',
+      dateImmatriculation: formatINPIDateField(dateImmat || '').split('T')[0],
+      dateDebutActiv,
+      dateRadiation: dateRad,
       dateCessationActivite: '',
       isPersonneMorale: false,
       dateClotureExercice: '',
       dureePersonneMorale: '',
       capital: '',
-      codeNatureJuridique: formeJuridique,
+      libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
+      natureEntreprise,
     },
+    dirigeants: [
+      {
+        nom,
+        prenom,
+        role: '',
+        dateNaissancePartial: '',
+      },
+    ],
+    beneficiaires: [],
+    observations: [],
     metadata: {
       isFallback: false,
     },
