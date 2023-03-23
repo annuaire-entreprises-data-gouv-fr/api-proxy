@@ -41,8 +41,11 @@ export const parseNameAndRole = (rawNameAndRole = '') => {
   if (!name && !firstName) {
     response.nom = rawNameAndRole;
   } else {
-    response.nom = name.toUpperCase().trim();
-    response.prenom = firstName.toUpperCase().trim().replaceAll(' , ', ', ');
+    response.nom = (name || '').toUpperCase().trim();
+    response.prenom = (firstName || '')
+      .toUpperCase()
+      .trim()
+      .replaceAll(' , ', ', ');
   }
 
   return response;

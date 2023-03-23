@@ -32,7 +32,7 @@ const parseIdentite = (identiteHtml: Element, radiationText: string) => {
       denomination: get('Dénomination'),
       dureePersonneMorale: get('Durée de la personne morale'),
       dateClotureExercice: get('Date de clôture'),
-      capital: get('Capital social').trim(),
+      capital: (get('Capital social') || '').trim(),
       isPersonneMorale: true,
       libelleNatureJuridique: get('Forme juridique'),
       natureEntreprise: get("Nature de l'entreprise"),
