@@ -1,5 +1,3 @@
-import { capitalize } from '../../../../utils/helpers/formatters';
-
 export const cleanTextFromHtml = (raw = '') =>
   raw.replace('\n', '').replace(/\s+/g, ' ').replace('<br>', '').trim();
 
@@ -36,22 +34,16 @@ export const parseNameAndRole = (rawNameAndRole = '') => {
     return response;
   }
 
-  const nameAndRole = rawNameAndRole
-    .replaceAll('\n', '')
-    .replaceAll(/\s+/g, ' ')
-    .replaceAll('<br>', ' ')
-    .replace(')', '')
-    .split('(')
-    .map((word) => word.trim());
+  const [nameRaw, firstName] = rawNameAndRole.split('</span>');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_spanPrefix, name] = nameRaw.split('class="inpi-bold">');
 
-  response.role = nameAndRole.length > 1 ? nameAndRole[1] : '';
-
-  response.nom = (nameAndRole[0] || '')
-    .split(' ')
-    .map((w) => capitalize(w))
-    .join(' ');
-
-  response.prenom = '';
+  if (!name && !firstName) {
+    response.nom = rawNameAndRole;
+  } else {
+    response.nom = name.toUpperCase().trim();
+    response.prenom = firstName.toUpperCase().trim().replaceAll(' , ', ', ');
+  }
 
   return response;
 };

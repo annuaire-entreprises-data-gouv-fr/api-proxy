@@ -1,52 +1,62 @@
 import { IEtatCivil, IPersonneMorale } from '../../../../models/imr';
 import { formatINPIDateFieldPartial } from '../../helper';
-import {
-  cleanTextFromHtml,
-  extractFromHtmlBlock,
-  parseNameAndRole,
-} from './helpers';
+import { extractFromHtmlBlock, parseNameAndRole } from './helpers';
 
 const parseDirigeants = (dirigeantsHtml: Element) => {
   const dirigeants = [] as (IEtatCivil | IPersonneMorale)[];
 
   // parse each sub section and look for a dirigeant
-  const blocsHtml = dirigeantsHtml.querySelectorAll('div.col-12.col-md-4');
+  const blocsHtml = dirigeantsHtml.querySelectorAll('div.col-12');
 
-  for (let i = 0; i < blocsHtml.length; i += 3) {
-    // every dirigeant is composed of three blocks
-    const firstBloc = extractFromHtmlBlock(blocsHtml[i]);
-    const secondBloc = extractFromHtmlBlock(blocsHtml[i + 1]);
-    const thirdBloc = extractFromHtmlBlock(blocsHtml[i + 2]);
+  let current = {} as any;
 
-    if (firstBloc.label === 'Dénomination') {
-      // personne morale
-      const companyName = cleanTextFromHtml(firstBloc.text).split('(');
-      const denomination = companyName[0] || '';
-      const role = companyName[1].replace(')', '') || '';
+  for (let i = 0; i < blocsHtml.length; i++) {
+    const { label, text } = extractFromHtmlBlock(blocsHtml[i]);
 
-      dirigeants.push({
-        denomination,
+    if (label.indexOf('Nom,') === 0) {
+      if (i !== 0) {
+        dirigeants.push(current);
+      }
+      const { nom, prenom } = parseNameAndRole(text);
+      current = {
+        nom,
+        prenom,
+        role: '',
+        dateNaissancePartial: '',
+      };
+    }
+
+    if (label.indexOf('Nom d') === 0) {
+      const nomUsage = (text || '').toUpperCase();
+      if (current.nom) {
+        current.nom = `${nomUsage} (${current.nom})`;
+      } else {
+        current.nom = nomUsage;
+      }
+    }
+    if (label.indexOf('Qualité') === 0) {
+      current.role = text;
+    }
+    if (label.indexOf('Date de naissance') === 0) {
+      current.dateNaissancePartial = formatINPIDateFieldPartial(text);
+    }
+
+    if (label.indexOf('Dénomination') === 0) {
+      if (i !== 0) {
+        dirigeants.push(current);
+      }
+      current = {
+        denomination: text,
         siren: '',
         natureJuridique: '',
-        role,
-      });
-    } else {
-      // personne physique
-      const { nom, prenom, role } = parseNameAndRole(firstBloc.text);
-      const dateNaissanceMMYYYY = thirdBloc.text.trim();
-      const nomComplet = secondBloc.label ? `${nom} (${secondBloc.text})` : nom;
-
-      dirigeants.push({
-        nom: nomComplet,
-        prenom: prenom,
-        role,
-        sexe: null,
-        dateNaissancePartial: formatINPIDateFieldPartial(dateNaissanceMMYYYY),
-        dateNaissanceFull: '',
-        lieuNaissance: '',
-      });
+        role: '',
+      };
     }
   }
+  if (current) {
+    dirigeants.push(current);
+  }
+
   return dirigeants;
 };
 

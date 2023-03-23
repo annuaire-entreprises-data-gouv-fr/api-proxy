@@ -6,7 +6,7 @@ import {
   formatFirstNames,
   formatNameFull,
 } from '../../../../utils/helpers/formatters';
-import { formatINPIDateField, formatINPIDateFieldPartial } from '../../helper';
+import { formatINPIDateFieldPartial } from '../../helper';
 
 import { IRNCSRepresentantResponse, IRNCSResponseDossier } from '..';
 import { IDirigeant } from '../../../../models/imr';
@@ -41,8 +41,6 @@ const mapToDomainDirigeant = (
     prenoms = '',
     nom_patronymique,
     nom_usage,
-    lieu_naiss = '',
-    code_pays_naiss = '',
     dat_naiss = '',
     qualites,
     form_jur = '',
@@ -56,13 +54,10 @@ const mapToDomainDirigeant = (
 
   if (type === 'P.Physique') {
     return {
-      sexe: null,
       prenom: formatFirstNames(prenoms),
       nom: formatNameFull(nom_patronymique, nom_usage),
       role: roles || '',
-      lieuNaissance: lieu_naiss + ', ' + code_pays_naiss,
       dateNaissancePartial: formatINPIDateFieldPartial(dat_naiss),
-      dateNaissanceFull: formatINPIDateField(dat_naiss),
     };
   } else {
     const sirenAsString = (siren || '').toString();
@@ -85,23 +80,13 @@ const mapToDomainFromIdentite = (
   dossierPrincipal: IRNCSResponseDossier
 ): IDirigeant => {
   const {
-    identite_PP: {
-      nom_patronymique,
-      nom_usage,
-      prenom = '',
-      dat_naiss = '',
-      lieu_naiss = '',
-      pays_naiss = '',
-    },
+    identite_PP: { nom_patronymique, nom_usage, prenom = '', dat_naiss = '' },
   } = dossierPrincipal.identite;
 
   return {
-    sexe: null,
     prenom: formatFirstNames(prenom),
     nom: formatNameFull(nom_patronymique, nom_usage),
     role: 'Représentant Légal',
-    lieuNaissance: lieu_naiss + ', ' + pays_naiss,
     dateNaissancePartial: formatINPIDateFieldPartial(dat_naiss),
-    dateNaissanceFull: formatINPIDateField(dat_naiss),
   };
 };

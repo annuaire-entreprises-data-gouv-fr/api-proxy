@@ -1,5 +1,4 @@
 import { IBeneficiaire } from '../../../../models/imr';
-import { capitalize } from '../../../../utils/helpers/formatters';
 import { formatINPIDateFieldPartial } from '../../helper';
 import { extractFromHtmlBlock, parseNameAndRole } from './helpers';
 
@@ -32,8 +31,6 @@ const parseBeneficiaires = (beneficiairesHtml: Element) => {
       nom: nom,
       prenoms: prenom,
       dateNaissancePartial: formatINPIDateFieldPartial(dateMMDDDD),
-      nationalite: capitalize(parsedBlocs['Nationalité'] || ''),
-      dateGreffe: '',
     });
   }
   return beneficiaires;

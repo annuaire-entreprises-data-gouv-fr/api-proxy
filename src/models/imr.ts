@@ -4,13 +4,13 @@ import { fetchImmatriculationFromAPIRNCS } from '../clients/inpi/api-rncs';
 import { fetchImmatriculationFromSite } from '../clients/inpi/site';
 
 export interface IEtatCivil {
-  sexe: 'M' | 'F' | null;
   nom: string;
   prenom: string;
   role: string;
-  dateNaissanceFull: string;
   dateNaissancePartial: string;
-  lieuNaissance: string;
+  // sexe: string;
+  // dateNaissanceFull: string;
+  // lieuNaissance: string;
 }
 
 export interface IBeneficiaire {
@@ -18,17 +18,19 @@ export interface IBeneficiaire {
   nom: string;
   prenoms: string;
   dateNaissancePartial: string;
-  nationalite: string;
-  dateGreffe: string;
+  // nationalite: string;
+  // dateGreffe: string;
 }
 
 export interface IIdentite {
+  // codeGreffe: string;
+  // greffe: string;
+  // numeroRCS: string;
+  // numGestion: string;
+  // dateGreffe: string;
+
   denomination: string;
-  codeGreffe: string;
-  greffe: string;
-  numeroRCS: string;
-  numGestion: string;
-  dateGreffe: string;
+  natureEntreprise: string;
   dateImmatriculation: string;
   dateDebutActiv: string;
   dateRadiation: string;
@@ -47,6 +49,10 @@ export interface IPersonneMorale {
   role: string;
 }
 
+export interface IObservation {
+  test: string;
+}
+
 export type IDirigeant = IEtatCivil | IPersonneMorale;
 
 export interface IImmatriculation {
@@ -54,6 +60,7 @@ export interface IImmatriculation {
   identite: IIdentite;
   dirigeants: IDirigeant[];
   beneficiaires: IBeneficiaire[];
+  observations: IObservation[];
   metadata: {
     isFallback: boolean;
   };
@@ -69,6 +76,8 @@ const fetchImmatriculation = async (
   siren: Siren
 ): Promise<IImmatriculation> => {
   try {
+    return await fetchImmatriculationFromSite(siren);
+
     return await fetchImmatriculationFromAPIRNCS(siren);
   } catch (errorAPIRNCS) {
     if (errorAPIRNCS instanceof HttpNotFound) {
