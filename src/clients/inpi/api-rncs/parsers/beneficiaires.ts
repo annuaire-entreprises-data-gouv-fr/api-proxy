@@ -34,6 +34,7 @@ const mapToDomainBeneficiaires = (
     nom_naissance,
     prenoms = '',
     date_naissance = '',
+    nationalite,
   } = beneficiaire;
 
   return {
@@ -41,5 +42,6 @@ const mapToDomainBeneficiaires = (
     nom: formatNameFull(nom_naissance, ''),
     prenoms: formatFirstNames(prenoms),
     dateNaissancePartial: formatINPIDateFieldPartial(date_naissance),
+    nationalite,
   };
 };

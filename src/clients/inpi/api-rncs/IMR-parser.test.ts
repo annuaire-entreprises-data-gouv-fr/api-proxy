@@ -33,6 +33,7 @@ describe('IMR XML parser', () => {
           nom: 'Sacquet',
           role: 'Président',
           dateNaissancePartial: '2000-01',
+          dateNaissanceFull: '2000-01-01',
         },
       ],
     });
@@ -67,6 +68,7 @@ describe('IMR XML parser', () => {
           nom: 'Sacquet',
           role: 'Président',
           dateNaissancePartial: '2000-01',
+          dateNaissanceFull: '2000-01-01',
         },
         {
           denomination: 'Nazgul SAS',

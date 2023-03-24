@@ -8,7 +8,11 @@ import {
 import { Siren } from '../../../models/siren-and-siret';
 import { authApiRneClient } from '../../../utils/auth/api-rne';
 import { formatFloatFr } from '../../../utils/helpers/formatters';
-import { libelleFromCategoriesJuridiques } from '../../../utils/helpers/labels';
+import {
+  libelleFromCategoriesJuridiques,
+  libelleFromCodeNatureEntreprise,
+  libelleFromCodeRoleEntreprise,
+} from '../../../utils/helpers/labels';
 import routes from '../../urls';
 import { formatINPIDateField } from '../helper';
 import { IRNEResponse } from './interface';
@@ -83,7 +87,7 @@ const mapPersonneMoraleToDomainObject = (
       dureePersonneMorale: duree ? `${duree.toString()} ans` : '',
       capital,
       libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
-      natureEntreprise,
+      natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
     },
     dirigeants:
       pm?.composition?.pouvoirs.map((p) => {
@@ -98,6 +102,7 @@ const mapPersonneMoraleToDomainObject = (
             prenom: prenoms[0],
             role: '',
             dateNaissancePartial: dateDeNaissance,
+            dateNaissanceFull: '',
           } as IEtatCivil;
         } else {
           const {
@@ -111,7 +116,7 @@ const mapPersonneMoraleToDomainObject = (
             siren,
             denomination,
             natureJuridique: formeJuridique,
-            role: roleEntreprise,
+            role: libelleFromCodeRoleEntreprise(roleEntreprise),
           } as IPersonneMorale;
         }
       }) || [],
@@ -121,12 +126,14 @@ const mapPersonneMoraleToDomainObject = (
           dateDeNaissance = '',
           nom = '',
           prenoms = '',
+          nationalite,
         } = b?.beneficiaire?.descriptionPersonne || {};
         return {
           type: '',
           nom,
           prenoms: prenoms.join(', '),
           dateNaissancePartial: dateDeNaissance,
+          nationalite,
         };
       }) || [],
     observations: [],
@@ -172,7 +179,7 @@ const mapPersonnePhysiqueToDomainObject = (
       dureePersonneMorale: '',
       capital: '',
       libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
-      natureEntreprise,
+      natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
     },
     dirigeants: [
       {
@@ -180,6 +187,7 @@ const mapPersonnePhysiqueToDomainObject = (
         prenom,
         role: '',
         dateNaissancePartial: '',
+        dateNaissanceFull: '',
       },
     ],
     beneficiaires: [],

@@ -6,7 +6,7 @@ import {
   formatFirstNames,
   formatNameFull,
 } from '../../../../utils/helpers/formatters';
-import { formatINPIDateFieldPartial } from '../../helper';
+import { formatINPIDateField, formatINPIDateFieldPartial } from '../../helper';
 
 import { IRNCSRepresentantResponse, IRNCSResponseDossier } from '..';
 import { IDirigeant } from '../../../../models/imr';
@@ -58,6 +58,7 @@ const mapToDomainDirigeant = (
       nom: formatNameFull(nom_patronymique, nom_usage),
       role: roles || '',
       dateNaissancePartial: formatINPIDateFieldPartial(dat_naiss),
+      dateNaissanceFull: formatINPIDateField(dat_naiss),
     };
   } else {
     const sirenAsString = (siren || '').toString();
@@ -88,5 +89,6 @@ const mapToDomainFromIdentite = (
     nom: formatNameFull(nom_patronymique, nom_usage),
     role: 'Représentant Légal',
     dateNaissancePartial: formatINPIDateFieldPartial(dat_naiss),
+    dateNaissanceFull: formatINPIDateField(dat_naiss),
   };
 };

@@ -9,8 +9,8 @@ export interface IEtatCivil {
   prenom: string;
   role: string;
   dateNaissancePartial: string;
+  dateNaissanceFull: string;
   // sexe: string;
-  // dateNaissanceFull: string;
   // lieuNaissance: string;
 }
 
@@ -19,7 +19,7 @@ export interface IBeneficiaire {
   nom: string;
   prenoms: string;
   dateNaissancePartial: string;
-  // nationalite: string;
+  nationalite: string;
   // dateGreffe: string;
 }
 
@@ -100,7 +100,7 @@ const fetchImmatriculation = async (
 const isInRNCSCheck = async (siren: Siren): Promise<void> => {
   try {
     await fetchImmatriculationFromAPIRNCS(siren);
-    logWarningInSentry('Not found in RNCS', { siren });
+    logWarningInSentry('Should not be found RNCS', { siren });
     // eslint-disable-next-line no-empty
   } catch {}
 };

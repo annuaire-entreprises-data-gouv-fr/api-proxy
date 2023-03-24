@@ -31,6 +31,7 @@ const parseBeneficiaires = (beneficiairesHtml: Element) => {
       nom: nom,
       prenoms: prenom,
       dateNaissancePartial: formatINPIDateFieldPartial(dateMMDDDD),
+      nationalite: '',
     });
   }
   return beneficiaires;
