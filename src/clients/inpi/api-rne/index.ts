@@ -60,7 +60,6 @@ const mapPersonneMoraleToDomainObject = (
     dateImmat = '',
     nomCommercial = '',
     sigle = '',
-    dateRad = '',
     dateDebutActiv = '',
   } = pm?.identite.entreprise || {};
 
@@ -80,7 +79,9 @@ const mapPersonneMoraleToDomainObject = (
       denomination: denominationComplete,
       dateImmatriculation: formatINPIDateField(dateImmat || '').split('T')[0],
       dateDebutActiv: dateDebutActiv,
-      dateRadiation: dateRad,
+      dateRadiation: formatINPIDateField(
+        (pm?.detailCessationEntreprise?.dateRadiation || '').split('T')[0]
+      ),
       dateCessationActivite: '',
       isPersonneMorale: true,
       dateClotureExercice: dateClotureExerciceSocial,
@@ -128,6 +129,7 @@ const mapPersonneMoraleToDomainObject = (
           prenoms = '',
           nationalite,
         } = b?.beneficiaire?.descriptionPersonne || {};
+        console.log(b.beneficiaire);
         return {
           type: '',
           nom,
@@ -136,7 +138,15 @@ const mapPersonneMoraleToDomainObject = (
           nationalite,
         };
       }) || [],
-    observations: [],
+    observations:
+      pm?.observations?.rcs.map((o) => {
+        const { numObservation = '', texte = '', dateAjout = '' } = o || {};
+        return {
+          numObservation,
+          description: texte.trimStart().trimEnd(),
+          dateAjout: formatINPIDateField(dateAjout),
+        };
+      }) || [],
     metadata: {
       isFallback: false,
     },
@@ -151,7 +161,6 @@ const mapPersonnePhysiqueToDomainObject = (
   const {
     dateImmat = '',
     formeJuridique = '',
-    dateRad = '',
     dateDebutActiv = '',
   } = pp?.identite?.entreprise || {};
 
@@ -172,7 +181,9 @@ const mapPersonnePhysiqueToDomainObject = (
       denomination: denomination || '',
       dateImmatriculation: formatINPIDateField(dateImmat || '').split('T')[0],
       dateDebutActiv,
-      dateRadiation: dateRad,
+      dateRadiation: formatINPIDateField(
+        (pp?.detailCessationEntreprise?.dateRadiation || '').split('T')[0]
+      ),
       dateCessationActivite: '',
       isPersonneMorale: false,
       dateClotureExercice: '',

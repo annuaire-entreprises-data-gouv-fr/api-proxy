@@ -51,7 +51,9 @@ export interface IPersonneMorale {
 }
 
 export interface IObservation {
-  test: string;
+  numObservation: string;
+  dateAjout: string;
+  description: string;
 }
 
 export type IDirigeant = IEtatCivil | IPersonneMorale;

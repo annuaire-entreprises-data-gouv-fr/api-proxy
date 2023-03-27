@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import {
   HttpForbiddenError,
   HttpNotFound,
@@ -8,32 +8,36 @@ import {
   HttpUnauthorizedError,
 } from '../../http-exceptions';
 
+const getStatus = (response?: AxiosResponse, message?: string) => {
+  if (response?.status) {
+    return response.status;
+  }
+  if ((message || '').indexOf('timeout of') > -1) {
+    return 408;
+  }
+  return 500;
+};
+
 const errorInterceptor = (error: AxiosError) => {
-  const { config, response, message } = error;
+  const { config, response, message } = error || {};
 
-  const log = `status=${response?.status || 500} request=${config?.url || ''}`;
-  console.log(log);
+  console.log(config, response, message);
 
-  if (!response) {
-    if (message) {
-      if (message.indexOf('timeout of') > -1) {
-        throw new HttpTimeoutError(`${message} while querying ${config.url}`);
-      } else {
-        throw new HttpServerError(message);
-      }
-    } else {
-      throw new HttpServerError(
-        `Unknown server error while querying ${config.url}.`
-      );
-    }
+  const url = config?.url || 'an unknown url';
+  const status = getStatus(response, message);
+  const statusText = response?.statusText;
+
+  if (status !== 404) {
+    const log = `status=${status} request=${url || ''}`;
+    console.error(log);
   }
 
-  switch (response.status) {
+  switch (status) {
     case 429: {
-      throw new HttpTooManyRequests(response.statusText || 'Too many requests');
+      throw new HttpTooManyRequests(statusText || 'Too many requests');
     }
     case 404: {
-      throw new HttpNotFound(response.statusText || 'Not Found');
+      throw new HttpNotFound(statusText || 'Not Found');
     }
     case 403: {
       throw new HttpForbiddenError('Forbidden');
@@ -46,7 +50,9 @@ const errorInterceptor = (error: AxiosError) => {
     }
     default:
       throw new HttpServerError(
-        `Unknown server error while querying ${config.url}. ${response.statusText} ${message}`
+        `Unknown server error while querying ${url}. ${statusText || ''} ${
+          message || ''
+        }`
       );
   }
 };

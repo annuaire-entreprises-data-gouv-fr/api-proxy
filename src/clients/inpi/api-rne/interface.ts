@@ -58,14 +58,6 @@ interface IRNEAdresse {
   entrepriseDomiciliataire: string | null;
 }
 
-interface IRNECessation {
-  motifCessation: string | null;
-  dateEffet: string | null;
-  dateMiseEnSommeil: string | null;
-  typeDissolution: string | null;
-  motifDisparition: string | null;
-}
-
 export interface IRNEResponse {
   siren: string;
   createdAt: string;
@@ -94,9 +86,9 @@ export interface IRNEResponse {
       personneMorale?: {
         identite: IRNEIdentitePM;
         adresseEntreprise: IRNEAdresse;
-        detailCessationEntreprise: IRNECessation;
+        detailCessationEntreprise: any;
         beneficiairesEffectifs: any[];
-        observations: any[];
+        observations: { rcs: any[] };
         composition: {
           pouvoirs: any[];
         };
@@ -104,7 +96,7 @@ export interface IRNEResponse {
       personnePhysique?: {
         identite: IRNEIdentitePP;
         adresseEntreprise: IRNEAdresse;
-        detailCessationEntreprise: IRNECessation;
+        detailCessationEntreprise: any;
         composition: {
           pouvoirs: any[];
         };
