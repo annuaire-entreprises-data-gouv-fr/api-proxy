@@ -29,7 +29,9 @@ const fetchRne = async (siren: Siren): Promise<IImmatriculation> => {
       if (fallbackError instanceof HttpNotFound) {
         throw fallbackError;
       }
-      throw new HttpServerError(`API RNE and Site fallback failed`);
+      throw new HttpServerError(
+        `API RNE and Site failed : ${errorAPIRNE} | ${fallbackError}`
+      );
     }
   }
 };
