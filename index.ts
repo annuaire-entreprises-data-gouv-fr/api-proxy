@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { imrController, rneController } from './src/controllers/inpi';
+import { rneController } from './src/controllers/inpi';
 import { errorHandler } from './src/controllers/errorHandler';
 import { associationController } from './src/controllers/association';
 import * as Sentry from '@sentry/node';
@@ -57,11 +57,6 @@ if (useSentry) {
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Server is up and running' });
 });
-
-/**
- * IMR
- */
-app.get('/imr/:siren', imrController);
 
 /**
  * RNE

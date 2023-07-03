@@ -1,17 +1,23 @@
 import { JSDOM } from 'jsdom';
-import { IBeneficiaire, IDirigeant, IIdentite } from '../../../models/imr';
+import { IBeneficiaire, IDirigeant, IIdentite } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
 
-import { InvalidFormatError } from '../api-rncs/IMR-parser';
 import parseBeneficiaires from './parsers/beneficiaires';
 import parseDirigeants from './parsers/dirigeants';
 import parseIdentite, {
   extractDirigeantFromIdentite,
 } from './parsers/identite';
+import { HttpServerError } from '../../../http-exceptions';
+
+export class InvalidFormatError extends HttpServerError {
+  constructor(message: string) {
+    super('Unable to parse HTML :' + message);
+  }
+}
 
 const clean = (raw = '') => raw.replace('\n', '').replace(/\s+/g, ' ').trim();
 
-const extractIMRFromHtml = (
+const extractImmatriculationFromHtml = (
   html: string,
   _siren: Siren
 ): {
@@ -77,4 +83,4 @@ const extractIMRFromHtml = (
   return response;
 };
 
-export { extractIMRFromHtml };
+export { extractImmatriculationFromHtml };

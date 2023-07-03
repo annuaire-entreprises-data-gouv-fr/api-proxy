@@ -1,8 +1,8 @@
-import { IImmatriculation } from '../../../models/imr';
+import { IImmatriculation } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
 import routes from '../../urls';
 import { httpGet } from '../../../utils/network';
-import { extractIMRFromHtml } from './IMR-parser';
+import { extractImmatriculationFromHtml } from './html-parser';
 import constants from '../../../constants';
 
 export const fetchImmatriculationFromSite = async (
@@ -14,7 +14,7 @@ export const fetchImmatriculationFromSite = async (
 
   return {
     siren,
-    ...extractIMRFromHtml(response.data, siren),
+    ...extractImmatriculationFromHtml(response.data, siren),
     observations: [],
     metadata: {
       isFallback: true,

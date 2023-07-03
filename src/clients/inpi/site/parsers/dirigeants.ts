@@ -1,4 +1,4 @@
-import { IEtatCivil, IPersonneMorale } from '../../../../models/imr';
+import { IEtatCivil, IPersonneMorale } from '../../../../models/rne';
 import { formatINPIDateFieldPartial } from '../../helper';
 import { extractFromHtmlBlock, parseNameAndRole } from './helpers';
 

@@ -39,8 +39,6 @@ L’API est protégée en appel par un header `X-API-Key`
 Une fois doté de ce header vous pouvez appeler les routes suivantes :
 
 ```
-// get IMR as json response
-https://rncs-proxy.api.gouv.fr/imr/:siren
 
 // create a PDF download job
 https://rncs-proxy.api.gouv.fr/document/justificatif/job/:siren

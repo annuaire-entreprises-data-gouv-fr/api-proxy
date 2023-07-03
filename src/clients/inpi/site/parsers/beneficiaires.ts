@@ -1,4 +1,4 @@
-import { IBeneficiaire } from '../../../../models/imr';
+import { IBeneficiaire } from '../../../../models/rne';
 import { formatINPIDateFieldPartial } from '../../helper';
 import { extractFromHtmlBlock, parseNameAndRole } from './helpers';
 

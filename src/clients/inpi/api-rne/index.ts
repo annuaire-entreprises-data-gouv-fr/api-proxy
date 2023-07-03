@@ -4,7 +4,7 @@ import {
   IImmatriculation,
   IPersonneMorale,
   IEtatCivil,
-} from '../../../models/imr';
+} from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
 import { authApiRneClient } from '../../../utils/auth/api-rne';
 import { formatFloatFr } from '../../../utils/helpers/formatters';
