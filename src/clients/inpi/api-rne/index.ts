@@ -91,7 +91,7 @@ const mapPersonneMoraleToDomainObject = (
       natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
     },
     dirigeants:
-      pm?.composition?.pouvoirs.map((p) => {
+      (pm?.composition?.pouvoirs || []).map((p) => {
         if (!!p.individu) {
           const {
             nom = '',
@@ -122,7 +122,7 @@ const mapPersonneMoraleToDomainObject = (
         }
       }) || [],
     beneficiaires:
-      pm?.beneficiairesEffectifs.map((b) => {
+      (pm?.beneficiairesEffectifs || []).map((b) => {
         const {
           dateDeNaissance = '',
           nom = '',
@@ -139,7 +139,7 @@ const mapPersonneMoraleToDomainObject = (
         };
       }) || [],
     observations:
-      pm?.observations?.rcs.map((o) => {
+      (pm?.observations?.rcs || []).map((o) => {
         const { numObservation = '', texte = '', dateAjout = '' } = o || {};
         return {
           numObservation,
