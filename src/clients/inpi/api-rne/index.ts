@@ -129,7 +129,7 @@ const mapPersonneMoraleToDomainObject = (
           prenoms = '',
           nationalite,
         } = b?.beneficiaire?.descriptionPersonne || {};
-        console.log(b.beneficiaire);
+
         return {
           type: '',
           nom,

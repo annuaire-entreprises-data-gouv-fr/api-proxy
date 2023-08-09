@@ -1,30 +1,44 @@
 import { AxiosRequestConfig } from 'axios';
 import routes from '../../../clients/urls';
 import constants from '../../../constants';
-import { HttpUnauthorizedError } from '../../../http-exceptions';
+import {
+  HttpTooManyRequests,
+  HttpUnauthorizedError,
+} from '../../../http-exceptions';
 import httpClient, { httpGet } from '../../network';
 
 let _token = '';
 
 const getToken = async () => {
-  try {
-    const response = await httpClient({
-      method: 'POST',
-      url: routes.inpi.api.rne.login,
-      data: {
-        username: process.env.RNE_LOGIN,
-        password: process.env.RNE_PASSWORD,
-      },
-      timeout: constants.timeout.XL,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    return response.data.token;
-  } catch (e) {
-    console.log(e);
-    throw e;
-  }
+  const authPairs = [
+    {
+      username: process.env.RNE_LOGIN,
+      password: process.env.RNE_PASSWORD,
+    },
+    {
+      username: process.env.RNE_LOGIN_2,
+      password: process.env.RNE_PASSWORD_2,
+    },
+  ];
+
+  const shuffleIdx = Math.round(Math.random() * (authPairs.length - 1));
+  const { username, password } = authPairs[shuffleIdx];
+
+  console.log(authPairs, shuffleIdx);
+
+  const response = await httpClient({
+    method: 'POST',
+    url: routes.inpi.api.rne.login,
+    data: {
+      username,
+      password,
+    },
+    timeout: constants.timeout.XL,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return response.data.token;
 };
 
 const authApiRneClient = async (
@@ -43,7 +57,10 @@ const authApiRneClient = async (
     }
     return await callback();
   } catch (e: any) {
-    if (e instanceof HttpUnauthorizedError) {
+    if (
+      e instanceof HttpUnauthorizedError ||
+      e instanceof HttpTooManyRequests
+    ) {
       _token = await getToken();
       return await callback();
     } else {

@@ -68,7 +68,6 @@ class InpiSiteCookiesProvider {
       }
       this._lastRefresh = new Date().getTime();
     } catch (error: any) {
-      console.log(error);
       logWarningInSentry('InpiSiteAuthProvider: cookie refresh failed', {
         details: error.toString(),
       });
