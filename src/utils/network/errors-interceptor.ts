@@ -48,7 +48,7 @@ const errorInterceptor = (error: AxiosError) => {
       throw new HttpTimeoutError('Timeout');
     }
     default:
-      if ((message || '').indexOf('timeout of') > -1) {
+      if ((message || '').indexOf('ECONNRESET') > -1) {
         throw new HttpConnectionReset(
           `ECONNRESET  while querying ${url}. ${statusText || ''} ${
             message || ''
