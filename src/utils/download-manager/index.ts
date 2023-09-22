@@ -120,8 +120,6 @@ export class PDFDownloader {
       // file successfully downloaded -> we can stop here
       return;
     } catch (error: any) {
-      console.log(error.toString());
-
       const wasLastAttempt = index === downloadAttempts.length - 1;
       if (wasLastAttempt) {
         this.removePendingDownload(slug);
