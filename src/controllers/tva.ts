@@ -8,8 +8,13 @@ export const tvaController = async (
 ) => {
   try {
     const slug = req.params?.slug;
-    const tvaResponse = await clientTVAVies(slug);
-    res.status(200).json(tvaResponse);
+    try {
+      const tvaResponse = await clientTVAVies(slug);
+      res.status(200).json(tvaResponse);
+    } catch {
+      const tvaResponse = await clientTVAVies(slug);
+      res.status(200).json(tvaResponse);
+    }
   } catch (e) {
     next(e);
   }
