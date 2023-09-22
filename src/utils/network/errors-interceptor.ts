@@ -1,5 +1,6 @@
 import { AxiosError, AxiosResponse } from 'axios';
 import {
+  HttpConnectionReset,
   HttpForbiddenError,
   HttpNotFound,
   HttpServerError,
@@ -47,6 +48,13 @@ const errorInterceptor = (error: AxiosError) => {
       throw new HttpTimeoutError('Timeout');
     }
     default:
+      if ((message || '').indexOf('timeout of') > -1) {
+        throw new HttpConnectionReset(
+          `ECONNRESET  while querying ${url}. ${statusText || ''} ${
+            message || ''
+          }`
+        );
+      }
       throw new HttpServerError(
         `Unknown server error while querying ${url}. ${statusText || ''} ${
           message || ''

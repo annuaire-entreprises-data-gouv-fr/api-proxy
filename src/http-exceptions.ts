@@ -24,6 +24,12 @@ export class HttpNotFound extends HttpError {
   }
 }
 
+export class HttpConnectionReset extends HttpError {
+  constructor(public message: string) {
+    super(message, 500);
+  }
+}
+
 export class HttpServerError extends HttpError {
   constructor(public message: string) {
     super(message, 500);
