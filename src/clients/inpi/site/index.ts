@@ -9,7 +9,7 @@ export const fetchImmatriculationFromSite = async (
   siren: Siren
 ): Promise<IImmatriculation> => {
   const response = await httpGet(routes.inpi.portail.entreprise + siren, {
-    timeout: constants.timeout.XXXL,
+    timeout: constants.timeout.XXXXL,
   });
 
   return {
