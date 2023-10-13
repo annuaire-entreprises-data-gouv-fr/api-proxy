@@ -1,5 +1,0 @@
-{
-  "yaml.schemas": {
-    "https://json.schemastore.org/github-workflow.json": "file:///Users/xavierjouppe/Documents/Code_projects/annuaire-entreprises-api-proxy/.github/workflows/deploy.yml"
-  }
-}
