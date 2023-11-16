@@ -1,6 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { rneController } from './src/controllers/inpi';
+import { rneController } from './src/controllers/rne';
 import { errorHandler } from './src/controllers/errorHandler';
 import { associationController } from './src/controllers/association';
 import * as Sentry from '@sentry/node';
@@ -8,6 +8,10 @@ import * as Tracing from '@sentry/tracing';
 import helmet from 'helmet';
 import statusRouter from './src/routes/status';
 import { tvaController } from './src/controllers/tva';
+import {
+  rneActesDownloadController,
+  rneListActesController,
+} from './src/controllers/rne-actes';
 
 dotenv.config();
 
@@ -62,6 +66,12 @@ app.get('/', (req: Request, res: Response) => {
  * RNE
  */
 app.get('/rne/:siren', rneController);
+
+/**
+ * RNE
+ */
+app.get('/rne/actes/:siren', rneListActesController);
+app.get('/rne/actes/download/:id', rneActesDownloadController);
 
 // /**
 //  * KBIS

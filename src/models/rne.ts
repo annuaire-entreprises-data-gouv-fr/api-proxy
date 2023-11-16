@@ -3,6 +3,17 @@ import { HttpNotFound, HttpServerError } from '../http-exceptions';
 import { fetchImmatriculationFromSite } from '../clients/inpi/site';
 import { fetchImmatriculationFromAPIRNE } from '../clients/inpi/api-rne';
 
+interface IActe {
+  id: string;
+  dateDepot: string;
+}
+
+export interface IActes {
+  actes: IActe[];
+  bilans: IActe[];
+  bilansSaisis: IActe[];
+}
+
 export interface IEtatCivil {
   nom: string;
   prenom: string;

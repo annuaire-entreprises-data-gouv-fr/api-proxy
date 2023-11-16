@@ -24,8 +24,6 @@ const getToken = async () => {
   const shuffleIdx = Math.round(Math.random() * (authPairs.length - 1));
   const { username, password } = authPairs[shuffleIdx];
 
-  console.log(authPairs, shuffleIdx);
-
   const response = await httpClient({
     method: 'POST',
     url: routes.inpi.api.rne.login,
@@ -33,7 +31,7 @@ const getToken = async () => {
       username,
       password,
     },
-    timeout: constants.timeout.XL,
+    timeout: constants.timeout.XXL,
     headers: {
       'Content-Type': 'application/json',
     },

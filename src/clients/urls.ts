@@ -15,6 +15,9 @@ const routes = {
           companies:
             'https://registre-national-entreprises.inpi.fr/api/companies/',
         },
+        actes: {
+          download: 'https://registre-national-entreprises.inpi.fr/api/actes/',
+        },
       },
     },
   },
