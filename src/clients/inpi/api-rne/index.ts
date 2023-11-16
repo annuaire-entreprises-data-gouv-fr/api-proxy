@@ -22,6 +22,7 @@ export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
     routes.inpi.api.rne.cmc.companies + siren,
     { timeout: constants.timeout.XXXL }
   );
+
   const data = response.data as IRNEResponse;
 
   if (data.formality.content.personnePhysique) {

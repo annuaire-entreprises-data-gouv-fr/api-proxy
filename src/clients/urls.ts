@@ -1,6 +1,5 @@
 const routes = {
   association: 'https://siva-integ1.cegedim.cloud/apim/api-asso/api/structure/',
-  tva: 'https://ec.europa.eu/taxation_customs/vies/rest-api/ms/FR/vat/',
   inpi: {
     portail: {
       entreprise: 'https://data.inpi.fr/entreprises/',

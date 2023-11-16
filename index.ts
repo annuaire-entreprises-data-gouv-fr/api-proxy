@@ -7,7 +7,6 @@ import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import helmet from 'helmet';
 import statusRouter from './src/routes/status';
-import { tvaController } from './src/controllers/tva';
 import {
   rneActesDownloadController,
   rneListActesController,
@@ -87,11 +86,6 @@ app.use('/status', statusRouter);
  * Association
  */
 app.use('/association/:rna', associationController);
-
-/**
- * TVA
- */
-app.use('/tva/:slug', tvaController);
 
 /**
  * Error handling
