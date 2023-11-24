@@ -16,6 +16,7 @@ type IActesRNEResponse = {
     confidentiality: string; //'Public',
     typeRdd: {
       typeActe: string; //"Copie des statuts";
+      decision: string; //" Modification relative aux dirigeants d'une société Modification des statuts"
     }[];
   }[];
   bilans: {
@@ -60,6 +61,7 @@ const mapToDomainObject = (response: IActesRNEResponse): IActes => {
       return {
         id: a.id,
         dateDepot: a.dateDepot,
+        actes: a.typeRdd.map((t) => t.typeActe),
       };
     }),
     bilans: response.actes.map((a) => {
