@@ -1,10 +1,10 @@
 import constants from '../../../constants';
-import { IActes } from '../../../models/rne';
+import { IDocuments } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
 import { authApiRneClient } from '../../../utils/auth/api-rne';
 import routes from '../../urls';
 
-type IActesRNEResponse = {
+type IDocumentsRNEResponse = {
   actes: {
     updatedAt: string; //'2023-10-17T22:37:22+02:00',
     id: string; //'63df98a28eded29cb31823ee',
@@ -46,16 +46,18 @@ type IActesRNEResponse = {
   }[];
 };
 
-export const listActesRne = async (siren: Siren) => {
+export const listDocumentsRne = async (siren: Siren) => {
   const response = await authApiRneClient(
     routes.inpi.api.rne.cmc.companies + siren + '/attachments',
     { timeout: constants.timeout.XXXL }
   );
 
-  return mapToDomainObject(response.data as IActesRNEResponse);
+  return mapToDomainObject(response.data as IDocumentsRNEResponse);
 };
 
-const mapToDomainObject = (response: IActesRNEResponse): IActes => {
+const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {
+  console.log(response.bilans);
+  console.log(response.bilansSaisis);
   return {
     actes: response.actes.map((a) => {
       return {
@@ -64,16 +66,12 @@ const mapToDomainObject = (response: IActesRNEResponse): IActes => {
         actes: a.typeRdd.map((t) => t.typeActe),
       };
     }),
-    bilans: response.actes.map((a) => {
+    bilans: response.bilans.map((a) => {
       return {
         id: a.id,
         dateDepot: a.dateDepot,
-      };
-    }),
-    bilansSaisis: response.actes.map((a) => {
-      return {
-        id: a.id,
-        dateDepot: a.dateDepot,
+        dateCloture: a.dateCloture,
+        typeBilan: a.typeBilan,
       };
     }),
   };

@@ -7,10 +7,11 @@ import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 import helmet from 'helmet';
 import statusRouter from './src/routes/status';
+import { rneListDocumentsController } from './src/controllers/rne-document';
 import {
-  rneActesDownloadController,
-  rneListActesController,
-} from './src/controllers/rne-actes';
+  rneActeDownloadController,
+  rneBilanDownloadController,
+} from './src/controllers/rne-download';
 
 dotenv.config();
 
@@ -66,16 +67,14 @@ app.get('/', (req: Request, res: Response) => {
  */
 app.get('/rne/:siren', rneController);
 
-/**
- * RNE
- */
-app.get('/rne/actes/:siren', rneListActesController);
-app.get('/rne/actes/download/:id', rneActesDownloadController);
+// list documents
+app.get('/rne/documents/:siren', rneListDocumentsController);
 
-// /**
-//  * KBIS
-//  */
-// app.use('/document', documentRouter);
+// download an acte
+app.get('/rne/download/acte/:id', rneActeDownloadController);
+
+// download a bilan
+app.get('/rne/download/bilan/:id', rneBilanDownloadController);
 
 /**
  * Status

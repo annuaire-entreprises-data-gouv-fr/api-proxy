@@ -9,10 +9,16 @@ interface IActe {
   actes?: string[];
 }
 
-export interface IActes {
+interface IBilan {
+  id: string;
+  dateDepot: string;
+  typeBilan: string;
+  dateCloture: string;
+}
+
+export interface IDocuments {
   actes: IActe[];
-  bilans: IActe[];
-  bilansSaisis: IActe[];
+  bilans: IBilan[];
 }
 
 export interface IEtatCivil {
