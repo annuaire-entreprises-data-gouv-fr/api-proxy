@@ -56,22 +56,20 @@ export const listDocumentsRne = async (siren: Siren) => {
 };
 
 const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {
-  console.log(response.bilans);
-  console.log(response.bilansSaisis);
   return {
     actes: response.actes.map((a) => {
       return {
-        id: a.id,
-        dateDepot: a.dateDepot,
-        actes: a.typeRdd.map((t) => t.typeActe),
+        id: a.id || '',
+        dateDepot: a.dateDepot || '',
+        actes: (a?.typeRdd || []).map((t) => t.typeActe),
       };
     }),
     bilans: response.bilans.map((a) => {
       return {
-        id: a.id,
-        dateDepot: a.dateDepot,
-        dateCloture: a.dateCloture,
-        typeBilan: a.typeBilan,
+        id: a.id || '',
+        dateDepot: a.dateDepot || '',
+        dateCloture: a.dateCloture || '',
+        typeBilan: a.typeBilan || '',
       };
     }),
   };
