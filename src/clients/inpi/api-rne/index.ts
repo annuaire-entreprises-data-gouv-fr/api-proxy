@@ -11,11 +11,16 @@ import { formatFloatFr } from '../../../utils/helpers/formatters';
 import {
   libelleFromCategoriesJuridiques,
   libelleFromCodeNatureEntreprise,
-  libelleFromCodeRoleEntreprise,
+  libelleFromCodeRoleDirigeant,
 } from '../../../utils/helpers/labels';
+import { logWarningInSentry } from '../../../utils/sentry';
 import routes from '../../urls';
 import { formatINPIDateField } from '../helper';
-import { IRNEResponse } from './interface';
+import {
+  IRNEPersonneMorale,
+  IRNEPersonnePhysique,
+  IRNEResponse,
+} from './interface';
 
 export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
   const response = await authApiRneClient(
@@ -32,18 +37,26 @@ export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
       siren
     );
   }
-  if (data.formality.content.personneMorale) {
+
+  const { personneMorale, exploitation } = data.formality.content;
+
+  if (personneMorale || exploitation) {
     return mapPersonneMoraleToDomainObject(
-      data.formality.content.personneMorale,
+      (personneMorale || exploitation) as IRNEPersonneMorale,
       data.formality.content.formeExerciceActivitePrincipale,
       siren
     );
   }
+
+  logWarningInSentry('RNE : no personne moral nor personne physique found', {
+    siren,
+  });
+
   throw new HttpNotFound(siren);
 };
 
 const mapPersonneMoraleToDomainObject = (
-  pm: IRNEResponse['formality']['content']['personneMorale'],
+  pm: IRNEPersonneMorale,
   natureEntreprise = '',
   siren: Siren
 ): IImmatriculation => {
@@ -91,37 +104,7 @@ const mapPersonneMoraleToDomainObject = (
       libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
       natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
     },
-    dirigeants:
-      (pm?.composition?.pouvoirs || []).map((p) => {
-        if (!!p.individu) {
-          const {
-            nom = '',
-            prenoms = [],
-            dateDeNaissance = '',
-          } = p.individu?.descriptionPersonne || {};
-          return {
-            nom,
-            prenom: prenoms[0],
-            role: '',
-            dateNaissancePartial: dateDeNaissance,
-            dateNaissanceFull: '',
-          } as IEtatCivil;
-        } else {
-          const {
-            siren = '',
-            denomination = '',
-            roleEntreprise = '',
-            formeJuridique = '',
-          } = p.entreprise || {};
-
-          return {
-            siren,
-            denomination,
-            natureJuridique: formeJuridique,
-            role: libelleFromCodeRoleEntreprise(roleEntreprise),
-          } as IPersonneMorale;
-        }
-      }) || [],
+    dirigeants: mapDirigeantsToDomainObject(pm.composition.pouvoirs),
     beneficiaires:
       (pm?.beneficiairesEffectifs || []).map((b) => {
         const {
@@ -155,7 +138,7 @@ const mapPersonneMoraleToDomainObject = (
 };
 
 const mapPersonnePhysiqueToDomainObject = (
-  pp: IRNEResponse['formality']['content']['personnePhysique'],
+  pp: IRNEPersonnePhysique,
   natureEntreprise = '',
   siren: Siren
 ): IImmatriculation => {
@@ -209,3 +192,44 @@ const mapPersonnePhysiqueToDomainObject = (
     },
   };
 };
+
+const mapDirigeantsToDomainObject = (
+  pouvoirs: IRNEPersonneMorale['composition']['pouvoirs'] = []
+) =>
+  pouvoirs.map((p) => {
+    if (!!p.individu) {
+      const {
+        nom = '',
+        prenoms = [],
+        dateDeNaissance = '',
+      } = p.individu?.descriptionPersonne || {};
+      const role =
+        p.libelleRoleEntreprise ||
+        libelleFromCodeRoleDirigeant(p?.individu?.descriptionPersonne.role);
+
+      return {
+        nom,
+        prenom: prenoms[0],
+        role,
+        dateNaissancePartial: dateDeNaissance,
+        dateNaissanceFull: '',
+      } as IEtatCivil;
+    } else {
+      const {
+        siren = '',
+        denomination = '',
+        roleEntreprise = '',
+        formeJuridique = '',
+      } = p.entreprise || {};
+
+      const role =
+        p.libelleRoleEntreprise || libelleFromCodeRoleDirigeant(roleEntreprise);
+
+      return {
+        siren,
+        denomination,
+        natureJuridique: formeJuridique,
+        role,
+      } as IPersonneMorale;
+    }
+  }) || [];

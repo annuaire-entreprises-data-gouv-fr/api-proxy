@@ -10,21 +10,6 @@ on:
 # For critical env variable, declare it within the action.
 env:
   node-version: 16.x
-  INPI_SITE_LOGIN: ${{ secrets.INPI_SITE_LOGIN}}
-  INPI_SITE_PASSWORD: ${{ secrets.INPI_SITE_PASSWORD}}
-  INPI_LOGIN: ${{ secrets.INPI_LOGIN}}
-  INPI_PASSWORD: ${{ secrets.INPI_PASSWORD}}
-  INPI_LOGIN_2: ${{ secrets.INPI_LOGIN}}
-  INPI_PASSWORD_2: ${{ secrets.INPI_PASSWORD}}
-  INPI_LOGIN_3: ${{ secrets.INPI_LOGIN}}
-  INPI_PASSWORD_3: ${{ secrets.INPI_PASSWORD}}
-  INPI_LOGIN_4: ${{ secrets.INPI_LOGIN}}
-  INPI_PASSWORD_4: ${{ secrets.INPI_PASSWORD}}
-  INPI_LOGIN_5: ${{ secrets.INPI_LOGIN}}
-  INPI_PASSWORD_5: ${{ secrets.INPI_PASSWORD}}
-  INPI_LOGIN_6: ${{ secrets.INPI_LOGIN}}
-  INPI_PASSWORD_6: ${{ secrets.INPI_PASSWORD}}
-  PDF_DOWNLOAD_DIRECTORY: /tmp/download
 
 jobs:
   dependencies:

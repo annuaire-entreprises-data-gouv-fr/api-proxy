@@ -1,8 +1,13 @@
 import { codesGreffes } from './codes-greffes';
 import { codesBeneficiaires } from './codes-beneficiaires';
 import { categoriesJuridiques } from './code-juridiques';
-import { codeRoleEntreprise } from './code-role-entreprise';
 import { codeNatureEntreprise } from './code-nature-entreprise';
+import { codeRolesDirigeants } from './code-roles-dirigeants';
+
+export const libelleFromCodeRoleDirigeant = (codeRole: string) => {
+  //@ts-ignore
+  return codeRolesDirigeants[codeRole] || codeRole;
+};
 
 export const libelleFromCodeGreffe = (codeGreffe: string) => {
   //@ts-ignore
@@ -17,10 +22,6 @@ export const libelleFromCodeBeneficiaires = (codeBeneficiaires: string) => {
 export const libelleFromCategoriesJuridiques = (categorie: string) =>
   //@ts-ignore
   categoriesJuridiques[categorie] || null;
-
-export const libelleFromCodeRoleEntreprise = (code: string) =>
-  //@ts-ignore
-  codeRoleEntreprise[code] || null;
 
 export const libelleFromCodeNatureEntreprise = (code: string) =>
   //@ts-ignore
