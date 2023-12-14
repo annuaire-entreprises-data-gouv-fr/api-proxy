@@ -58,23 +58,80 @@ interface IRNEAdresse {
   entrepriseDomiciliataire: string | null;
 }
 
-interface IRNEPersonneMorale {
+interface IRNEPouvoir {
+  libelleRoleEntreprise: string; // 'Commissaire aux comptes titulaire',
+  typeDePersonne: string; //'ENTREPRISE',
+  indicateurActifAgricole: boolean;
+  individu: {
+    descriptionPersonne: {
+      sirenPresent: boolean;
+      dateEffetRoleDeclarantPresent: boolean;
+      genrePresent: boolean;
+      titrePresent: boolean;
+      dateDeNaissance: string; //'1961-08';
+      dateDeNaissancePresent: boolean;
+      paysNaissancePresent: boolean;
+      lieuDeNaissancePresent: boolean;
+      codePostalNaissancePresent: boolean;
+      codeInseeGeographiquePresent: boolean;
+      situationMatrimonialePresent: boolean;
+      qualiteDeNonSedentaritePresent: boolean;
+      indicateurDeNonSedentaritePresent: boolean;
+      role: string; //'65';
+      nom: string; //'Kingo';
+      prenoms: string[];
+      nationalite: string; //'Danoise';
+      codeNationalite: string; //'DNK';
+      situationMatrimoniale: string; // '1';
+    };
+    adresseDomicile: IRNEAdresse;
+  };
+  entreprise?: {
+    roleEntreprise: string; //'71',
+    siren: string; // '387953961',
+    denomination: string; // 'Mazars et Associés',
+    formeJuridique: string; //'Société par actions simplifiée',
+    entrepriseValidated: boolean;
+    entrepriseRdd: true;
+  };
+  adresseEntreprise?: IRNEAdresse;
+  representant?: {
+    descriptionPersonne: {
+      sirenPresent: boolean;
+      dateEffetRoleDeclarantPresent: boolean;
+      genrePresent: boolean;
+      titrePresent: boolean;
+      dateDeNaissancePresent: boolean;
+      paysNaissancePresent: boolean;
+      lieuDeNaissancePresent: boolean;
+      codePostalNaissancePresent: boolean;
+      codeInseeGeographiquePresent: boolean;
+      situationMatrimonialePresent: boolean;
+      qualiteDeNonSedentaritePresent: boolean;
+      indicateurDeNonSedentaritePresent: boolean;
+    };
+    adresseDomicile: IRNEAdresse;
+    indicateurActifAgricole: boolean;
+  };
+}
+
+export interface IRNEPersonneMorale {
   identite: IRNEIdentitePM;
   adresseEntreprise: IRNEAdresse;
   detailCessationEntreprise: any;
   beneficiairesEffectifs: any[];
   observations: { rcs: any[] };
   composition: {
-    pouvoirs: any[];
+    pouvoirs: IRNEPouvoir[];
   };
 }
 
-interface IRNEPersonnePhysique {
+export interface IRNEPersonnePhysique {
   identite: IRNEIdentitePP;
   adresseEntreprise: IRNEAdresse;
   detailCessationEntreprise: any;
   composition: {
-    pouvoirs: any[];
+    pouvoirs: IRNEPouvoir[];
   };
 }
 
