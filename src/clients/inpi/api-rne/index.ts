@@ -32,6 +32,7 @@ export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
       siren
     );
   }
+
   if (data.formality.content.personneMorale) {
     return mapPersonneMoraleToDomainObject(
       data.formality.content.personneMorale,

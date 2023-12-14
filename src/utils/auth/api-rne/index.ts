@@ -19,6 +19,14 @@ const getToken = async () => {
       username: process.env.RNE_LOGIN_2,
       password: process.env.RNE_PASSWORD_2,
     },
+    {
+      username: process.env.RNE_LOGIN_3,
+      password: process.env.RNE_PASSWORD_3,
+    },
+    {
+      username: process.env.RNE_LOGIN_4,
+      password: process.env.RNE_PASSWORD_4,
+    },
   ];
 
   const shuffleIdx = Math.round(Math.random() * (authPairs.length - 1));
