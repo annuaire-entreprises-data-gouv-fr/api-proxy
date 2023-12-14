@@ -58,6 +58,26 @@ interface IRNEAdresse {
   entrepriseDomiciliataire: string | null;
 }
 
+interface IRNEPersonneMorale {
+  identite: IRNEIdentitePM;
+  adresseEntreprise: IRNEAdresse;
+  detailCessationEntreprise: any;
+  beneficiairesEffectifs: any[];
+  observations: { rcs: any[] };
+  composition: {
+    pouvoirs: any[];
+  };
+}
+
+interface IRNEPersonnePhysique {
+  identite: IRNEIdentitePP;
+  adresseEntreprise: IRNEAdresse;
+  detailCessationEntreprise: any;
+  composition: {
+    pouvoirs: any[];
+  };
+}
+
 export interface IRNEResponse {
   siren: string;
   createdAt: string;
@@ -83,24 +103,9 @@ export interface IRNEResponse {
         entrepriseAgricole: boolean;
         eirl: boolean;
       };
-      personneMorale?: {
-        identite: IRNEIdentitePM;
-        adresseEntreprise: IRNEAdresse;
-        detailCessationEntreprise: any;
-        beneficiairesEffectifs: any[];
-        observations: { rcs: any[] };
-        composition: {
-          pouvoirs: any[];
-        };
-      };
-      personnePhysique?: {
-        identite: IRNEIdentitePP;
-        adresseEntreprise: IRNEAdresse;
-        detailCessationEntreprise: any;
-        composition: {
-          pouvoirs: any[];
-        };
-      };
+      personneMorale?: IRNEPersonneMorale;
+      exploitation?: IRNEPersonneMorale;
+      personnePhysique?: IRNEPersonnePhysique;
     };
   };
 }

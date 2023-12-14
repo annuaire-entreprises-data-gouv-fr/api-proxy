@@ -13,6 +13,7 @@ import {
   libelleFromCodeNatureEntreprise,
   libelleFromCodeRoleEntreprise,
 } from '../../../utils/helpers/labels';
+import { logWarningInSentry } from '../../../utils/sentry';
 import routes from '../../urls';
 import { formatINPIDateField } from '../helper';
 import { IRNEResponse } from './interface';
@@ -33,13 +34,20 @@ export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
     );
   }
 
-  if (data.formality.content.personneMorale) {
+  const { personneMorale, exploitation } = data.formality.content;
+
+  if (personneMorale || exploitation) {
     return mapPersonneMoraleToDomainObject(
-      data.formality.content.personneMorale,
+      personneMorale || exploitation,
       data.formality.content.formeExerciceActivitePrincipale,
       siren
     );
   }
+
+  logWarningInSentry('RNE : no personne moral nor personne physique found', {
+    siren,
+  });
+
   throw new HttpNotFound(siren);
 };
 
