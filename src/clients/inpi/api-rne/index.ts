@@ -179,7 +179,7 @@ const mapPersonnePhysiqueToDomainObject = (
     dirigeants: [
       {
         nom,
-        prenom,
+        prenom: prenoms.join(', '),
         role: '',
         dateNaissancePartial: '',
         dateNaissanceFull: '',
@@ -201,15 +201,21 @@ const mapDirigeantsToDomainObject = (
       const {
         nom = '',
         prenoms = [],
+        nomUsage = '',
         dateDeNaissance = '',
       } = p.individu?.descriptionPersonne || {};
+
+      const nomComplet = `${
+        nomUsage && nom ? `${nomUsage} (${nom})` : `${nomUsage || nom || ''}`
+      }`;
+
       const role =
         p.libelleRoleEntreprise ||
         libelleFromCodeRoleDirigeant(p?.individu?.descriptionPersonne.role);
 
       return {
-        nom,
-        prenom: prenoms[0],
+        nom: nomComplet,
+        prenom: prenoms.join(', '),
         role,
         dateNaissancePartial: dateDeNaissance,
         dateNaissanceFull: '',

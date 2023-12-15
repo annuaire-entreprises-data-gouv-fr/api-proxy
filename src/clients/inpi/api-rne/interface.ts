@@ -80,6 +80,7 @@ interface IRNEPouvoir {
       role: string; //'65';
       nom: string; //'Kingo';
       prenoms: string[];
+      nomUsage: string;
       nationalite: string; //'Danoise';
       codeNationalite: string; //'DNK';
       situationMatrimoniale: string; // '1';
