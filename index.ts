@@ -12,6 +12,7 @@ import {
   rneActeDownloadController,
   rneBilanDownloadController,
 } from './src/controllers/rne-download';
+import { tvaController } from './src/controllers/tva';
 
 dotenv.config();
 
@@ -85,6 +86,11 @@ app.use('/status', statusRouter);
  * Association
  */
 app.use('/association/:rna', associationController);
+
+/**
+ * TVA
+ */
+app.use('/tva/:tvaNumber', tvaController);
 
 /**
  * Error handling
