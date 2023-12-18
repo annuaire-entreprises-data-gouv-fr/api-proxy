@@ -3,15 +3,32 @@ import {
   NotASiretError,
   NotLuhnValidSirenError,
   NotLuhnValidSiretError,
-} from "./siren-and-siret-exceptions";
+} from './siren-and-siret-exceptions';
 
 /**
  * Siren and siret types
  */
 type Brand<K, T> = K & { __brand: T };
 
-export type Siren = Brand<string, "Siren">;
-export type Siret = Brand<string, "Siren">;
+export type TVANumber = Brand<string, 'TVANumber'>;
+
+export const isTVANumber = (slug: string): slug is TVANumber => {
+  return !!slug.match(/^\d{11}$/g);
+};
+
+/**
+ * throw an exception if a string is not a TVA Number
+ * */
+export const verifyTVANumber = (slug: string): TVANumber => {
+  if (!isTVANumber(slug)) {
+    throw new Error('Not a valid TVANumber');
+  } else {
+    return slug;
+  }
+};
+
+export type Siren = Brand<string, 'Siren'>;
+export type Siret = Brand<string, 'Siren'>;
 
 export const isSiren = (slug: string): slug is Siren => {
   if (!hasSirenFormat(slug) || !isLuhnValid(slug)) {
@@ -79,7 +96,7 @@ const luhnChecksum = (str: string) => {
 
 export const isLuhnValid = (str: string) => {
   // La poste siren and siret are the only exceptions to Luhn's formula
-  if (str.indexOf("356000000") === 0) {
+  if (str.indexOf('356000000') === 0) {
     return true;
   }
   return luhnChecksum(str) % 10 == 0;
@@ -93,8 +110,8 @@ export const hasSirenFormat = (str: string) => !!str.match(/^\d{9}$/g);
 
 export const hasSiretFormat = (str: string) => !!str.match(/^\d{14}$/g);
 
-export const formatSiret = (siret = "") => {
-  return siret.replace(/(\d{3})/g, "$1 ").replace(/(\s)(?=(\d{2})$)/g, "");
+export const formatSiret = (siret = '') => {
+  return siret.replace(/(\d{3})/g, '$1 ').replace(/(\s)(?=(\d{2})$)/g, '');
 };
 
 export const extractSirenFromSiret = (siret: string) => {
