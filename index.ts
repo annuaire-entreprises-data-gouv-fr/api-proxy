@@ -88,7 +88,7 @@ app.use('/status', statusRouter);
 app.use('/association/:rna', associationController);
 
 /**
- * Association
+ * TVA
  */
 app.use('/tva/:tvaNumber', tvaController);
 
