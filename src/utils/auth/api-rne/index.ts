@@ -6,11 +6,13 @@ import {
   HttpUnauthorizedError,
 } from '../../../http-exceptions';
 import httpClient, { httpGet } from '../../network';
+import { logWarningInSentry } from '../../sentry';
 
 let _token = '';
+let _currentAccountIndex = 0;
 
-const getToken = async () => {
-  const authPairs = [
+const refreshToken = async (shouldRotateAccount = false) => {
+  const accounts = [
     {
       username: process.env.RNE_LOGIN,
       password: process.env.RNE_PASSWORD,
@@ -29,8 +31,13 @@ const getToken = async () => {
     },
   ];
 
-  const shuffleIdx = Math.round(Math.random() * (authPairs.length - 1));
-  const { username, password } = authPairs[shuffleIdx];
+  if (shouldRotateAccount) {
+    _currentAccountIndex = (_currentAccountIndex + 1) % accounts.length;
+
+    logWarningInSentry('Rotating RNE account');
+  }
+
+  const { username, password } = accounts[_currentAccountIndex];
 
   const response = await httpClient({
     method: 'POST',
@@ -59,15 +66,17 @@ const authApiRneClient = async (
 
   try {
     if (!_token) {
-      _token = await getToken();
+      _token = await refreshToken();
     }
     return await callback();
   } catch (e: any) {
-    if (
-      e instanceof HttpUnauthorizedError ||
-      e instanceof HttpTooManyRequests
-    ) {
-      _token = await getToken();
+    console.log(e);
+    if (e instanceof HttpTooManyRequests) {
+      const shouldRotateAccount = true;
+      _token = await refreshToken(shouldRotateAccount);
+    }
+    if (e instanceof HttpUnauthorizedError) {
+      _token = await refreshToken();
       return await callback();
     } else {
       throw e;
