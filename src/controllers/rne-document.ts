@@ -1,4 +1,5 @@
 import { listDocumentsRne } from '../clients/inpi/api-rne-documents';
+import { HttpNotFound } from '../http-exceptions';
 import { verifySiren } from '../models/siren-and-siret';
 import { Request, Response, NextFunction } from 'express';
 
@@ -12,6 +13,13 @@ export const rneListDocumentsController = async (
     const documents = await listDocumentsRne(siren);
     res.status(200).json(documents);
   } catch (e) {
-    next(e);
+    if (e instanceof HttpNotFound) {
+      res.status(200).json({
+        actes: [],
+        bilans: [],
+      });
+    } else {
+      next(e);
+    }
   }
 };
