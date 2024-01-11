@@ -106,7 +106,7 @@ const mapPersonneMoraleToDomainObject = (
       libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
       natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
     },
-    dirigeants: mapDirigeantsToDomainObject(pm.composition.pouvoirs),
+    dirigeants: mapDirigeantsToDomainObject(pm?.composition?.pouvoirs),
     beneficiaires:
       (pm?.beneficiairesEffectifs || []).map((b) => {
         const {
