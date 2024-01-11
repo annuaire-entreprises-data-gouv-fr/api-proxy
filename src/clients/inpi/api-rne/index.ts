@@ -96,7 +96,9 @@ const mapPersonneMoraleToDomainObject = (
       dateRadiation: formatINPIDateField(
         (pm?.detailCessationEntreprise?.dateRadiation || '').split('T')[0]
       ),
-      dateCessationActivite: '',
+      dateCessationActivite: (
+        pm?.detailCessationEntreprise?.dateCessationTotaleActivite || ''
+      ).split('T')[0],
       isPersonneMorale: true,
       dateClotureExercice: dateClotureExerciceSocial,
       dureePersonneMorale: duree ? `${duree.toString()} ans` : '',
@@ -168,7 +170,9 @@ const mapPersonnePhysiqueToDomainObject = (
       dateRadiation: formatINPIDateField(
         (pp?.detailCessationEntreprise?.dateRadiation || '').split('T')[0]
       ),
-      dateCessationActivite: '',
+      dateCessationActivite: (
+        pp?.detailCessationEntreprise?.dateCessationTotaleActivite || ''
+      ).split('T')[0],
       isPersonneMorale: false,
       dateClotureExercice: '',
       dureePersonneMorale: '',

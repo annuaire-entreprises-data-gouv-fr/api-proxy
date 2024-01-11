@@ -57,14 +57,14 @@ export const listDocumentsRne = async (siren: Siren) => {
 
 const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {
   return {
-    actes: response.actes.map((a) => {
+    actes: (response?.actes || []).map((a) => {
       return {
         id: a.id || '',
         dateDepot: a.dateDepot || '',
         actes: (a?.typeRdd || []).map((t) => t.typeActe),
       };
     }),
-    bilans: response.bilans.map((a) => {
+    bilans: (response?.bilans || []).map((a) => {
       return {
         id: a.id || '',
         dateDepot: a.dateDepot || '',
