@@ -29,6 +29,10 @@ const refreshToken = async (shouldRotateAccount = false) => {
       username: process.env.RNE_LOGIN_4,
       password: process.env.RNE_PASSWORD_4,
     },
+    {
+      username: process.env.RNE_LOGIN_5,
+      password: process.env.RNE_PASSWORD_5,
+    },
   ];
 
   if (shouldRotateAccount) {
