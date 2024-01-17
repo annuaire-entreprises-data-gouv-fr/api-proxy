@@ -70,13 +70,21 @@ const authApiRneClient = async (
     }
     return await callback();
   } catch (e: any) {
-    console.log(e);
-    if (e instanceof HttpTooManyRequests) {
+    /**
+     * Either INPI returns too many requests or unauthorized
+     *
+     * Unauthorized can either be
+     * - token needs to be refresh
+     * - account is blocked
+     *
+     * In both case rotating account is safer
+     */
+    if (
+      e instanceof HttpTooManyRequests ||
+      e instanceof HttpUnauthorizedError
+    ) {
       const shouldRotateAccount = true;
       _token = await refreshToken(shouldRotateAccount);
-    }
-    if (e instanceof HttpUnauthorizedError) {
-      _token = await refreshToken();
       return await callback();
     } else {
       throw e;
