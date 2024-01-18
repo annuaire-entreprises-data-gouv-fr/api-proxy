@@ -11,7 +11,7 @@ import { logWarningInSentry } from '../../sentry';
 let _token = '';
 let _currentAccountIndex = 0;
 
-const refreshToken = async (shouldRotateAccount = false, e: any) => {
+const refreshToken = async (shouldRotateAccount = false, e = {}) => {
   const accounts = [
     {
       username: process.env.RNE_LOGIN,
