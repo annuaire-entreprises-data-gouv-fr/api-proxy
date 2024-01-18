@@ -11,7 +11,7 @@ import { logWarningInSentry } from '../../sentry';
 let _token = '';
 let _currentAccountIndex = 0;
 
-const refreshToken = async (shouldRotateAccount = false) => {
+const refreshToken = async (shouldRotateAccount = false, e: any) => {
   const accounts = [
     {
       username: process.env.RNE_LOGIN,
@@ -34,7 +34,9 @@ const refreshToken = async (shouldRotateAccount = false) => {
   if (shouldRotateAccount) {
     _currentAccountIndex = (_currentAccountIndex + 1) % accounts.length;
 
-    logWarningInSentry('Rotating RNE account');
+    logWarningInSentry('Rotating RNE account', {
+      details: `new pair : ${_currentAccountIndex}, cause : ${e}`,
+    });
   }
 
   const { username, password } = accounts[_currentAccountIndex];
@@ -84,7 +86,7 @@ const authApiRneClient = async (
       e instanceof HttpUnauthorizedError
     ) {
       const shouldRotateAccount = true;
-      _token = await refreshToken(shouldRotateAccount);
+      _token = await refreshToken(shouldRotateAccount, e);
       return await callback();
     } else {
       throw e;
