@@ -7,91 +7,103 @@ import {
 } from '../../../http-exceptions';
 import httpClient, { httpGet } from '../../network';
 import { logWarningInSentry } from '../../sentry';
+import dotenv from 'dotenv';
 
-let _token = '';
-let _currentAccountIndex = 0;
+dotenv.config();
 
-const refreshToken = async (shouldRotateAccount = false, e = {}) => {
-  const accounts = [
-    // {
-    //   username: process.env.RNE_LOGIN,
-    //   password: process.env.RNE_PASSWORD,
-    // },
-    {
-      username: process.env.RNE_LOGIN_2,
-      password: process.env.RNE_PASSWORD_2,
-    },
-    {
-      username: process.env.RNE_LOGIN_3,
-      password: process.env.RNE_PASSWORD_3,
-    },
-    {
-      username: process.env.RNE_LOGIN_4,
-      password: process.env.RNE_PASSWORD_4,
-    },
-  ];
+enum ECredentialType {
+  DEFAULT,
+  ACTES,
+}
 
-  if (shouldRotateAccount) {
-    _currentAccountIndex = (_currentAccountIndex + 1) % accounts.length;
+class RNEClient {
+  private _token = '';
+  private _currentAccountIndex = 0;
+  private accounts;
 
-    logWarningInSentry('Rotating RNE account', {
-      details: `new pair : ${_currentAccountIndex}, cause : ${e}`,
-    });
+  constructor(credentialType = ECredentialType.DEFAULT) {
+    this.accounts =
+      credentialType === ECredentialType.ACTES
+        ? [
+            [process.env.RNE_LOGIN_ACTES_1, process.env.RNE_PASSWORD_ACTES_1],
+            [process.env.RNE_LOGIN_ACTES_2, process.env.RNE_PASSWORD_ACTES_2],
+          ]
+        : [
+            [process.env.RNE_LOGIN, process.env.RNE_PASSWORD],
+            [process.env.RNE_LOGIN_2, process.env.RNE_PASSWORD_2],
+            [process.env.RNE_LOGIN_3, process.env.RNE_PASSWORD_3],
+            [process.env.RNE_LOGIN_4, process.env.RNE_PASSWORD_4],
+            [process.env.RNE_LOGIN_4, process.env.RNE_PASSWORD_4],
+          ];
   }
 
-  const { username, password } = accounts[_currentAccountIndex];
+  refreshToken = async (shouldRotateAccount = false, e = {}) => {
+    if (shouldRotateAccount) {
+      this._currentAccountIndex =
+        (this._currentAccountIndex + 1) % this.accounts.length;
 
-  const response = await httpClient({
-    method: 'POST',
-    url: routes.inpi.api.rne.login,
-    data: {
-      username,
-      password,
-    },
-    timeout: constants.timeout.XXL,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  return response.data.token;
-};
-
-const authApiRneClient = async (
-  route: string,
-  options?: AxiosRequestConfig
-) => {
-  const callback = () =>
-    httpGet(route, {
-      ...options,
-      headers: { ...options?.headers, Authorization: `Bearer ${_token}` },
-    });
-
-  try {
-    if (!_token) {
-      _token = await refreshToken();
+      logWarningInSentry('Rotating RNE account', {
+        details: `new pair : ${this._currentAccountIndex}, cause : ${e}`,
+      });
     }
-    return await callback();
-  } catch (e: any) {
-    /**
-     * Either INPI returns too many requests or unauthorized
-     *
-     * Unauthorized can either be
-     * - token needs to be refresh
-     * - account is blocked
-     *
-     * In both case rotating account is safer
-     */
-    if (
-      e instanceof HttpTooManyRequests ||
-      e instanceof HttpUnauthorizedError
-    ) {
-      const shouldRotateAccount = true;
-      _token = await refreshToken(shouldRotateAccount, e);
+
+    const [username, password] = this.accounts[this._currentAccountIndex];
+
+    const response = await httpClient({
+      method: 'POST',
+      url: routes.inpi.api.rne.login,
+      data: {
+        username,
+        password,
+      },
+      timeout: constants.timeout.XXL,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data.token;
+  };
+
+  get = async (route: string, options?: AxiosRequestConfig) => {
+    const callback = () =>
+      httpGet(route, {
+        ...options,
+        headers: {
+          ...options?.headers,
+          Authorization: `Bearer ${this._token}`,
+        },
+      });
+
+    try {
+      if (!this._token) {
+        this._token = await this.refreshToken();
+      }
       return await callback();
-    } else {
-      throw e;
+    } catch (e: any) {
+      /**
+       * Either INPI returns too many requests or unauthorized
+       *
+       * Unauthorized can either be
+       * - token needs to be refresh
+       * - account is blocked
+       *
+       * In both case rotating account is safer
+       */
+      if (
+        e instanceof HttpTooManyRequests ||
+        e instanceof HttpUnauthorizedError
+      ) {
+        const shouldRotateAccount = true;
+        this._token = await this.refreshToken(shouldRotateAccount, e);
+        return await callback();
+      } else {
+        throw e;
+      }
     }
-  }
-};
+  };
+}
 
-export { authApiRneClient };
+const defaultApiRneClient = new RNEClient(ECredentialType.DEFAULT);
+const actesApiRneClient = new RNEClient(ECredentialType.ACTES);
+
+export { defaultApiRneClient, actesApiRneClient };

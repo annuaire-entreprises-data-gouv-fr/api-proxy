@@ -6,7 +6,7 @@ import {
   IEtatCivil,
 } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
-import { authApiRneClient } from '../../../utils/auth/api-rne';
+import { defaultApiRneClient } from '../../../utils/auth/api-rne';
 import { formatFloatFr } from '../../../utils/helpers/formatters';
 import {
   libelleFromCategoriesJuridiques,
@@ -23,7 +23,7 @@ import {
 } from './interface';
 
 export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
-  const response = await authApiRneClient(
+  const response = await defaultApiRneClient.get(
     routes.inpi.api.rne.cmc.companies + siren,
     { timeout: constants.timeout.XXXL }
   );

@@ -1,7 +1,7 @@
 import constants from '../../../constants';
 import { IDocuments } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
-import { authApiRneClient } from '../../../utils/auth/api-rne';
+import { actesApiRneClient } from '../../../utils/auth/api-rne';
 import routes from '../../urls';
 
 type IDocumentsRNEResponse = {
@@ -47,7 +47,7 @@ type IDocumentsRNEResponse = {
 };
 
 export const listDocumentsRne = async (siren: Siren) => {
-  const response = await authApiRneClient(
+  const response = await actesApiRneClient.get(
     routes.inpi.api.rne.cmc.companies + siren + '/attachments',
     { timeout: constants.timeout.XXXL }
   );

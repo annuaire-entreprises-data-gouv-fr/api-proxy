@@ -1,10 +1,10 @@
 import constants from '../../../constants';
-import { authApiRneClient } from '../../../utils/auth/api-rne';
+import { actesApiRneClient } from '../../../utils/auth/api-rne';
 import routes from '../../urls';
 
 export const downloadActeRne = async (id: string) => {
   const url = `${routes.inpi.api.rne.download.acte}${id}/download`;
-  return await authApiRneClient(url, {
+  return await actesApiRneClient.get(url, {
     timeout: constants.timeout.XXXL,
     responseType: 'arraybuffer',
   });
@@ -12,7 +12,7 @@ export const downloadActeRne = async (id: string) => {
 
 export const downloadBilanRne = async (id: string) => {
   const url = `${routes.inpi.api.rne.download.bilan}${id}/download`;
-  return await authApiRneClient(url, {
+  return await actesApiRneClient.get(url, {
     timeout: constants.timeout.XXXL,
     responseType: 'arraybuffer',
   });
