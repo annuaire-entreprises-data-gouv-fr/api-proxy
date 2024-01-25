@@ -13,10 +13,10 @@ let _currentAccountIndex = 0;
 
 const refreshToken = async (shouldRotateAccount = false, e = {}) => {
   const accounts = [
-    // {
-    //   username: process.env.RNE_LOGIN,
-    //   password: process.env.RNE_PASSWORD,
-    // },
+    {
+      username: process.env.RNE_LOGIN,
+      password: process.env.RNE_PASSWORD,
+    },
     {
       username: process.env.RNE_LOGIN_2,
       password: process.env.RNE_PASSWORD_2,
