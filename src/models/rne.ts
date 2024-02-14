@@ -14,6 +14,7 @@ interface IBilan {
   dateDepot: string;
   typeBilan: string;
   dateCloture: string;
+  confidentiality: string;
 }
 
 export interface IDocuments {
