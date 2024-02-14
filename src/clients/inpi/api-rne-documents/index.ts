@@ -70,6 +70,7 @@ const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {
         dateDepot: a.dateDepot || '',
         dateCloture: a.dateCloture || '',
         typeBilan: a.typeBilan || '',
+        confidentiality: a.confidentiality || '',
       };
     }),
   };
