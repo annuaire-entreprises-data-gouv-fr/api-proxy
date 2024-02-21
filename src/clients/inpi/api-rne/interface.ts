@@ -119,7 +119,11 @@ interface IRNEPouvoir {
 export interface IRNEPersonneMorale {
   identite: IRNEIdentitePM;
   adresseEntreprise: IRNEAdresse;
-  detailCessationEntreprise: any;
+  detailCessationEntreprise: {
+    dateRadiation: string;
+    dateEffet: string;
+    dateCessationTotaleActivite: string;
+  };
   beneficiairesEffectifs: any[];
   observations: { rcs: any[] };
   composition: {

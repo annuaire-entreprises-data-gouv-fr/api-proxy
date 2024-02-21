@@ -94,7 +94,11 @@ const mapPersonneMoraleToDomainObject = (
       dateImmatriculation: formatINPIDateField(dateImmat || '').split('T')[0],
       dateDebutActiv: dateDebutActiv,
       dateRadiation: formatINPIDateField(
-        (pm?.detailCessationEntreprise?.dateRadiation || '').split('T')[0]
+        (
+          pm?.detailCessationEntreprise?.dateRadiation ||
+          pm?.detailCessationEntreprise?.dateEffet ||
+          ''
+        ).split('T')[0]
       ),
       dateCessationActivite: (
         pm?.detailCessationEntreprise?.dateCessationTotaleActivite || ''
