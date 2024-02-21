@@ -1,8 +1,7 @@
 # Proxy API
 
 [![Pre-merge checks](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml)
-[![Deploy - Staging](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-staging.yml)
-[![Deploy - Production](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-proxy/actions/workflows/deploy-production.yml)
+[![Deploy](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy.yml)
 
 Ce proxy permet de proxifier certains appels a des API utilisées par l'Annuaire des Entreprises.
 
