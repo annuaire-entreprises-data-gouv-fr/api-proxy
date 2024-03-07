@@ -1,21 +1,16 @@
-# Proxy API
+<h1 align="center">
+  <img src="https://github.com/etalab/annuaire-entreprises-site/blob/main/public/images/annnuaire-entreprises.svg" width="400px" />
+</h1>
 
+<a href="https://github.com/etalab/annuaire-entreprises-api-proxy/blob/main/LICENSE"><img src="https://img.shields.io/github/license/etalab/annuaire-entreprises-api-proxy.svg?color=green" alt="License Badge"></a>
 [![Pre-merge checks](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/pre-merge.yml)
 [![Deploy](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy.yml/badge.svg)](https://github.com/etalab/annuaire-entreprises-api-proxy/actions/workflows/deploy.yml)
 
-Ce proxy permet de proxifier certains appels a des API utilisées par l'Annuaire des Entreprises.
+Bienvenue sur le dépôt API Proxy du projet [Annuaire des Entreprises](https://annuaire-entreprises.data.gouv.fr).
 
 ## Architecture du service 🏗
 
-Ce repository fait partie d'un ensemble de services qui constituent l'[Annuaire des Entreprises](https://annuaire-entreprises.data.gouv.fr) :
-
-| Description                    | Accès                                                                     |
-| ------------------------------ | ------------------------------------------------------------------------- |
-| Le site Web                    | [par ici 👉](https://github.com/etalab/annuaire-entreprises-site)         |
-| L’API du Moteur de recherche   | [par ici 👉](https://github.com/etalab/annuaire-entreprises-search-api)   |
-| L‘API de redondance de Sirene  | [par ici 👉](https://github.com/etalab/annuaire-entreprises-sirene-api)   |
-| L‘infra du moteur de recherche | [par ici 👉](https://github.com/etalab/annuaire-entreprises-search-infra) |
-| Le proxy API du site           | [par ici 👉](https://github.com/etalab/annuaire-entreprises-api-proxy)    |
+Ce repository fait partie [d'un ensemble de services qui constituent l'Annuaire des Entreprises](https://github.com/etalab/annuaire-entreprises-site?tab=readme-ov-file#dépôts-liés-).
 
 ## Installation
 
