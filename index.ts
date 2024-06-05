@@ -41,12 +41,6 @@ if (useSentry) {
       // enable Express.js middleware tracing
       new Tracing.Integrations.Express({ app }),
     ],
-
-    tracesSampler: (samplingContext) => {
-      const path = samplingContext?.location?.pathname || '';
-
-      return path.indexOf('/status') === -1;
-    },
   });
 
   // The request handler must be the first middleware on the app
