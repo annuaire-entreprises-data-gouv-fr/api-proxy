@@ -35,12 +35,7 @@ if (useSentry) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
 
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({ tracing: true }),
-      // enable Express.js middleware tracing
-      new Tracing.Integrations.Express({ app }),
-    ],
+    integrations: [],
 
     tracesSampler: (samplingContext) => {
       const path = samplingContext?.location?.pathname || '';
