@@ -34,13 +34,7 @@ app.use(helmet());
 if (useSentry) {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
-
-    integrations: [
-      // enable HTTP calls tracing
-      new Sentry.Integrations.Http({ tracing: true }),
-      // enable Express.js middleware tracing
-      new Tracing.Integrations.Express({ app }),
-    ],
+    integrations: [],
   });
 
   // The request handler must be the first middleware on the app
