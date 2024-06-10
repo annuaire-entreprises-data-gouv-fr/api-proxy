@@ -39,9 +39,6 @@ if (useSentry) {
 
   // The request handler must be the first middleware on the app
   app.use(Sentry.Handlers.requestHandler());
-
-  // TracingHandler creates a trace for every incoming request
-  app.use(Sentry.Handlers.tracingHandler());
 }
 
 /**
