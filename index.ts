@@ -13,6 +13,7 @@ import {
   rneBilanDownloadController,
 } from './src/controllers/rne-download';
 import { tvaController } from './src/controllers/tva';
+import { eoriController } from './src/controllers/eori';
 
 dotenv.config();
 
@@ -76,6 +77,11 @@ app.use('/association/:rna', associationController);
  * TVA
  */
 app.use('/tva/:tvaNumber', tvaController);
+
+/**
+ * EORI
+ */
+app.use('/erori/:siret', eoriController);
 
 /**
  * Error handling
