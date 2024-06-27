@@ -72,7 +72,7 @@ const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {
                   label: t.decision,
                 };
               })
-            : { nom: a?.nomDocument, label: a?.libelle },
+            : [{ nom: a?.nomDocument, label: a?.libelle }],
       };
     }),
     bilans: (response?.bilans || []).map((a) => {

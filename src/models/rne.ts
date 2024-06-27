@@ -7,6 +7,10 @@ interface IActe {
   id: string;
   dateDepot: string;
   actes?: string[];
+  detailsDocuments: {
+    nom: string;
+    label: string;
+  }[];
 }
 
 interface IBilan {
