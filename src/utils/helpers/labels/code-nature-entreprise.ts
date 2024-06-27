@@ -14,4 +14,6 @@ export const codeNatureEntreprise = {
   ACTIVITE_DE_PROSPECTION_UNIQUEMENT_NON_COMMERCIALE:
     'Activité de prospection uniquement (non commerciale)',
   SANS_ACTIVITE: 'Sans activité',
+  // ajout non présent dans la nomenclature documenté par l'INPI au 27/06/2024
+  LIBERALE_NON_REGLEMENTEE: 'Libérale non réglementée',
 };

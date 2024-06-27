@@ -12,12 +12,14 @@ type IDocumentsRNEResponse = {
     denomination: string; //'La Cordée SAS',
     dateDepot: string; //'2018-04-10',
     numChrono: string; //'A2018/009563',
-    nomDocument: string; //'0zvyXXhek7Ua_C0022A1001L337316D20180425H041421TPIJTES003PDBOR',
     confidentiality: string; //'Public',
     typeRdd: {
       typeActe: string; //"Copie des statuts";
       decision: string; //" Modification relative aux dirigeants d'une société Modification des statuts"
     }[];
+    nomDocument: string; //'0zvyXXhek7Ua_C0022A1001L337316D20180425H041421TPIJTES003PDBOR',
+    typeDocument: string;
+    libelle: string;
   }[];
   bilans: {
     updatedAt: string; // '2023-03-20T19:19:42+01:00',
@@ -62,6 +64,15 @@ const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {
         id: a.id || '',
         dateDepot: a.dateDepot || '',
         actes: (a?.typeRdd || []).map((t) => t.typeActe),
+        detailsDocuments:
+          a?.typeRdd && a?.typeRdd.length > 0
+            ? a?.typeRdd.map((t) => {
+                return {
+                  nom: t.typeActe,
+                  label: t.decision,
+                };
+              })
+            : { nom: a?.nomDocument, label: a?.libelle },
       };
     }),
     bilans: (response?.bilans || []).map((a) => {
