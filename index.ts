@@ -81,7 +81,7 @@ app.use('/tva/:tvaNumber', tvaController);
 /**
  * EORI
  */
-app.use('/erori/:siret', eoriController);
+app.use('/eori/:siret', eoriController);
 
 /**
  * Error handling
