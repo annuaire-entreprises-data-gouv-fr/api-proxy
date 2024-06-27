@@ -6,7 +6,6 @@ import { fetchImmatriculationFromAPIRNE } from '../clients/inpi/api-rne';
 interface IActe {
   id: string;
   dateDepot: string;
-  actes?: string[];
   detailsDocuments: {
     nom: string;
     label: string;

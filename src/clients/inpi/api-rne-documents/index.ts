@@ -63,7 +63,6 @@ const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {
       return {
         id: a.id || '',
         dateDepot: a.dateDepot || '',
-        actes: (a?.typeRdd || []).map((t) => t.typeActe),
         detailsDocuments:
           a?.typeRdd && a?.typeRdd.length > 0
             ? a?.typeRdd.map((t) => {
