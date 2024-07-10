@@ -116,14 +116,14 @@ const mapPersonneMoraleToDomainObject = (
         const {
           dateDeNaissance = '',
           nom = '',
-          prenoms = '',
+          prenoms = [],
           nationalite,
         } = b?.beneficiaire?.descriptionPersonne || {};
 
         return {
           type: '',
           nom,
-          prenoms: prenoms.join(', '),
+          prenoms: (prenoms || []).join(', '),
           dateNaissancePartial: dateDeNaissance,
           nationalite,
         };
