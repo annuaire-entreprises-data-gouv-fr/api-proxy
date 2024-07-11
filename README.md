@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://github.com/annuaire-entreprises-data-gouv-fr/site/blob/main/public/images/annuaire-entreprises-square-large.gif" width="400px" />
+  <img src="https://github.com/annuaire-entreprises-data-gouv-fr/.github/assets/8900205/b1fb5c11-8199-451c-a0ac-808c9bfa97cd" width="400px" />
 </h1>
 
 <a href="https://github.com/annuaire-entreprises-data-gouv-fr/api-proxy/blob/main/LICENSE"><img src="https://img.shields.io/github/license/etalab/annuaire-entreprises-api-proxy.svg?color=green" alt="License Badge"></a>
