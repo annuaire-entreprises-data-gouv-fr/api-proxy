@@ -82,35 +82,40 @@ export interface IImmatriculation {
 }
 
 /**
- * This is the method to call in order to get RNE immatriculation
- * First call on API IMR and fallback on INPI site parser
+ * Get RNE immatriculation from API, when it works
  * @param siren
  * @returns
  */
-const fetchRne = async (siren: Siren): Promise<IImmatriculation> => {
+const fetchRneAPI = async (siren: Siren): Promise<IImmatriculation> => {
   try {
     return await fetchImmatriculationFromAPIRNE(siren);
   } catch (errorAPIRNE) {
     if (errorAPIRNE instanceof HttpNotFound) {
       throw errorAPIRNE;
     }
-
-    try {
-      return {
-        ...(await fetchImmatriculationFromSite(siren)),
-        metadata: {
-          isFallback: true,
-        },
-      };
-    } catch (fallbackError) {
-      if (fallbackError instanceof HttpNotFound) {
-        throw fallbackError;
-      }
-      throw new HttpServerError(
-        `API RNE and Site failed : ${errorAPIRNE} | ${fallbackError}`
-      );
-    }
+    throw new HttpServerError(`[RNE] API  failed : ${errorAPIRNE}`);
   }
 };
 
-export { fetchRne, fetchImmatriculationFromSite };
+/**
+ * Get INPI immatriculation from site parser
+ * @param siren
+ * @returns
+ */
+const fetchRneSite = async (siren: Siren): Promise<IImmatriculation> => {
+  try {
+    return {
+      ...(await fetchImmatriculationFromSite(siren)),
+      metadata: {
+        isFallback: true,
+      },
+    };
+  } catch (fallbackError) {
+    if (fallbackError instanceof HttpNotFound) {
+      throw fallbackError;
+    }
+    throw new HttpServerError(`[RNE] Site failed : ${fallbackError}`);
+  }
+};
+
+export { fetchRneAPI, fetchRneSite };

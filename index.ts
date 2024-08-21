@@ -1,10 +1,9 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { rneController } from './src/controllers/rne';
+import { rneControllerAPI, rneControllerSite } from './src/controllers/rne';
 import { errorHandler } from './src/controllers/errorHandler';
 import { associationController } from './src/controllers/association';
 import * as Sentry from '@sentry/node';
-import * as Tracing from '@sentry/tracing';
 import helmet from 'helmet';
 import statusRouter from './src/routes/status';
 import { rneListDocumentsController } from './src/controllers/rne-document';
@@ -52,7 +51,12 @@ app.get('/', (req: Request, res: Response) => {
 /**
  * RNE
  */
-app.get('/rne/:siren', rneController);
+app.get('/rne/:siren', rneControllerAPI);
+
+/**
+ * RNE Fallback
+ */
+app.get('/rne/fallback/:siren', rneControllerSite);
 
 // list documents
 app.get('/rne/documents/:siren', rneListDocumentsController);

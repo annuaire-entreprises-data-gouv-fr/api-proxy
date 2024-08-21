@@ -33,7 +33,6 @@ class RNEClient {
             [process.env.RNE_LOGIN_2, process.env.RNE_PASSWORD_2],
             [process.env.RNE_LOGIN_3, process.env.RNE_PASSWORD_3],
             [process.env.RNE_LOGIN_4, process.env.RNE_PASSWORD_4],
-            [process.env.RNE_LOGIN_4, process.env.RNE_PASSWORD_4],
           ];
   }
 
