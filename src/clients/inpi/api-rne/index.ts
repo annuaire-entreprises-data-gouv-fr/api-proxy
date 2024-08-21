@@ -111,23 +111,7 @@ const mapPersonneMoraleToDomainObject = (
       natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
     },
     dirigeants: mapDirigeantsToDomainObject(pm?.composition?.pouvoirs),
-    beneficiaires:
-      (pm?.beneficiairesEffectifs || []).map((b) => {
-        const {
-          dateDeNaissance = '',
-          nom = '',
-          prenoms = [],
-          nationalite,
-        } = b?.beneficiaire?.descriptionPersonne || {};
-
-        return {
-          type: '',
-          nom,
-          prenoms: (prenoms || []).join(', '),
-          dateNaissancePartial: dateDeNaissance,
-          nationalite,
-        };
-      }) || [],
+    beneficiaires: [],
     observations:
       (pm?.observations?.rcs || []).map((o) => {
         const { numObservation = '', texte = '', dateAjout = '' } = o || {};

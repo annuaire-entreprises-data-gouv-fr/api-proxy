@@ -1,13 +1,18 @@
 import { JSDOM } from 'jsdom';
-import { IBeneficiaire, IDirigeant, IIdentite } from '../../../models/rne';
+import {
+  IBeneficiaire,
+  IDirigeant,
+  IIdentite,
+  IObservation,
+} from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
 
-import parseBeneficiaires from './parsers/beneficiaires';
 import parseDirigeants from './parsers/dirigeants';
 import parseIdentite, {
   extractDirigeantFromIdentite,
 } from './parsers/identite';
 import { HttpServerError } from '../../../http-exceptions';
+import parseObservations from './parsers/observations';
 
 export class InvalidFormatError extends HttpServerError {
   constructor(message: string) {
@@ -24,6 +29,7 @@ const extractImmatriculationFromHtml = (
   dirigeants: IDirigeant[];
   beneficiaires: IBeneficiaire[];
   identite: IIdentite;
+  observations: IObservation[];
 } => {
   const dom = new JSDOM(html);
   const document = dom.window.document;
@@ -42,6 +48,7 @@ const extractImmatriculationFromHtml = (
     identite: null,
     dirigeants: [],
     beneficiaires: [],
+    observations: [],
   } as any;
 
   let rawIdentite;
@@ -62,14 +69,15 @@ const extractImmatriculationFromHtml = (
         response.dirigeants = parseDirigeants(row);
         break;
       case 'Bénéficiaires effectifs':
-        response.beneficiaires = parseBeneficiaires(row);
-        break;
-      case 'Observations':
-        response.observations = null;
         break;
       default:
     }
   }
+
+  const observationsHtml = container.querySelectorAll(
+    '#observations + div.row, #observations-other > div.row'
+  );
+  response.observations = parseObservations(observationsHtml);
 
   // EI
   if (

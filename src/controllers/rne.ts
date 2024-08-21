@@ -1,20 +1,31 @@
 import { verifySiren } from '../models/siren-and-siret';
 import { Request, Response, NextFunction } from 'express';
-import { fetchRne } from '../models/rne';
+import { fetchRneAPI, fetchRneSite } from '../models/rne';
 
-export const rneController = async (
+export const rneControllerAPI = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const siren = verifySiren(req.params.siren);
-    const rne = await fetchRne(siren);
+    const rne = await fetchRneAPI(siren);
 
-    // return partial content 206 when using site fallback
-    const status = rne?.metadata?.isFallback ? 206 : 200;
+    res.status(200).json(rne);
+  } catch (e) {
+    next(e);
+  }
+};
 
-    res.status(status).json(rne);
+export const rneControllerSite = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const siren = verifySiren(req.params.siren);
+    const rne = await fetchRneSite(siren);
+    res.status(206).json(rne);
   } catch (e) {
     next(e);
   }
