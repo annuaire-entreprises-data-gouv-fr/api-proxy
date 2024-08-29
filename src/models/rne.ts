@@ -50,7 +50,7 @@ export interface IIdentite {
   dateCessationActivite: string;
   isPersonneMorale: boolean;
   dateClotureExercice: string;
-  dureePersonneMorale: string;
+  dureePersonneMorale: number;
   capital: string;
   libelleNatureJuridique: string;
 }
