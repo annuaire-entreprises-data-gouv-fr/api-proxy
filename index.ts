@@ -13,6 +13,7 @@ import {
 } from './src/controllers/rne-download';
 import { tvaController } from './src/controllers/tva';
 import { eoriController } from './src/controllers/eori';
+import { igController } from './src/controllers/ig';
 
 dotenv.config();
 
@@ -86,6 +87,11 @@ app.use('/tva/:tvaNumber', tvaController);
  * EORI
  */
 app.use('/eori/:siret', eoriController);
+
+/**
+ * IG
+ */
+app.use('/ig/:siren', igController);
 
 /**
  * Error handling
