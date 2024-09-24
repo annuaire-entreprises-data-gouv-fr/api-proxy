@@ -151,7 +151,7 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
   return {
     siren,
     nomComplet,
-    etat: r.etat,
+    etat: r.etat === 'ACTIF' ? 'A' : 'C',
     natureJuridique,
     activitePrincipale: r.activite_naf.code,
     libelleActivitePrincipale: r.activite_naf.libelle,
