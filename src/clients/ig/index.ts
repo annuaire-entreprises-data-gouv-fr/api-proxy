@@ -1,5 +1,4 @@
 import constants from '../../constants';
-import { IIdentite } from '../../models/rne';
 import { Siren } from '../../models/siren-and-siret';
 import { formatNameFull } from '../../utils/helpers/formatters';
 import httpClient from '../../utils/network';
@@ -115,9 +114,7 @@ interface PersonneMorale {
  * Call EORI to validate a French EORI number
  * @param siret
  */
-const clientUniteLegaleIG = async (
-  siren: Siren
-): Promise<{ siren: Siren; immatriculation: IIdentite }> => {
+const clientUniteLegaleIG = async (siren: Siren) => {
   const response = await httpClient({
     url: routes.ig + siren,
     timeout: constants.timeout.XXXL,
@@ -139,7 +136,7 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
     : r?.nom +
       (r?.personne_morale?.sigle ? ` (${r?.personne_morale?.sigle})` : '');
 
-  const dateClotureExercice =
+  const dateCloture =
     r?.personne_morale?.date_cloture_exceptionnelle ??
     (r?.personne_morale?.jour_date_cloture &&
       r?.personne_morale?.mois_date_cloture)
@@ -161,20 +158,19 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
       idAssociation: r?.personne_morale?.numero_rna || null,
     },
     immatriculation: {
+      dateDebutActivite: '',
+      dateFin: '',
+      duree: 0,
+      natureEntreprise: [],
+      dateCloture,
       dateImmatriculation: r.date_immatriculation || '',
       dateRadiation: r.date_radiation || '',
-      dateDebutActiv: '',
-      dateCessationActivite: '',
       isPersonneMorale: !isEI,
-      denomination: r?.personne_morale?.denomination,
-      natureEntreprise: '',
-      dateClotureExercice,
       dureePersonneMorale: 0,
       capital: r?.personne_morale?.capital
         ? `${r?.personne_morale?.capital?.montant} ${r?.personne_morale?.capital?.devise?.code} ${r?.personne_morale?.capital?.type}`
         : '',
-      libelleNatureJuridique: natureJuridique,
-    } as IIdentite,
+    },
   };
 };
 
