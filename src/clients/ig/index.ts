@@ -166,7 +166,6 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
       dateImmatriculation: r.date_immatriculation || '',
       dateRadiation: r.date_radiation || '',
       isPersonneMorale: !isEI,
-      dureePersonneMorale: 0,
       capital: r?.personne_morale?.capital
         ? `${r?.personne_morale?.capital?.montant} ${r?.personne_morale?.capital?.devise?.code} ${r?.personne_morale?.capital?.type}`
         : '',
