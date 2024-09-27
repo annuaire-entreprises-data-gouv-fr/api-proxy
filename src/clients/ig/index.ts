@@ -119,12 +119,13 @@ const clientUniteLegaleIG = async (siren: Siren) => {
     url: routes.ig + siren,
     timeout: constants.timeout.XXXL,
   });
+
   return mapToDomainObject(response.data as IGResponse, siren);
 };
 
 const mapToDomainObject = (r: IGResponse, siren: Siren) => {
   const isEI = r.type_personne === 'PP';
-  const natureJuridique = isEI
+  const libelleNatureJuridique = isEI
     ? 'Entrepreneur individuel'
     : r?.personne_morale?.forme_juridique?.libelle;
 
@@ -149,7 +150,7 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
     siren,
     nomComplet,
     etat: r.etat === 'ACTIF' ? 'A' : 'C',
-    natureJuridique,
+    libelleNatureJuridique,
     activitePrincipale: r.activite_naf.code,
     libelleActivitePrincipale: r.activite_naf.libelle,
     dateCreation: '',
