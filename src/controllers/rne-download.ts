@@ -15,7 +15,7 @@ export const rneActeDownloadController = async (
     res.type('pdf');
     res.status(200);
     res.setHeader('content-type', 'application/pdf');
-    res.end(Buffer.from(pdf.data, 'binary'));
+    res.end(Buffer.from(pdf, 'binary'));
   } catch (e) {
     next(e);
   }
@@ -32,7 +32,7 @@ export const rneBilanDownloadController = async (
     res.type('pdf');
     res.status(200);
     res.setHeader('content-type', 'application/pdf');
-    res.end(Buffer.from(pdf.data, 'binary'));
+    res.end(Buffer.from(pdf, 'binary'));
   } catch (e) {
     next(e);
   }

@@ -23,12 +23,10 @@ import {
 } from './interface';
 
 export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
-  const response = await defaultApiRneClient.get(
+  const data = await defaultApiRneClient.get<IRNEResponse>(
     routes.inpi.api.rne.cmc.companies + siren,
     { timeout: constants.timeout.XXXL }
   );
-
-  const data = response.data as IRNEResponse;
 
   if (data.formality.content.personnePhysique) {
     return mapPersonnePhysiqueToDomainObject(

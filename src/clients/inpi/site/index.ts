@@ -8,13 +8,17 @@ import constants from '../../../constants';
 export const fetchImmatriculationFromSite = async (
   siren: Siren
 ): Promise<IImmatriculation> => {
-  const response = await httpGet(routes.inpi.portail.entreprise + siren, {
-    timeout: constants.timeout.XXXXL,
-  });
+  const response = await httpGet<string>(
+    routes.inpi.portail.entreprise + siren,
+    {
+      timeout: constants.timeout.XXXXL,
+      useCache: false,
+    }
+  );
 
   return {
     siren,
-    ...extractImmatriculationFromHtml(response.data, siren),
+    ...extractImmatriculationFromHtml(response, siren),
     metadata: {
       isFallback: true,
     },
