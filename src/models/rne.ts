@@ -88,7 +88,8 @@ export interface IImmatriculation {
  */
 const fetchRneAPI = async (siren: Siren): Promise<IImmatriculation> => {
   try {
-    return await fetchImmatriculationFromAPIRNE(siren);
+    const usecache = true;
+    return await fetchImmatriculationFromAPIRNE(siren, usecache);
   } catch (errorAPIRNE) {
     if (errorAPIRNE instanceof HttpNotFound) {
       throw errorAPIRNE;

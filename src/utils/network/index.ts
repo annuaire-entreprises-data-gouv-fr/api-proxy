@@ -1,9 +1,8 @@
 import Axios from 'axios';
 import https from 'https';
+import http from 'http';
 
 import constants from '../../constants';
-import errorInterceptor from './errors-interceptor';
-import logInterceptor from './log-interceptor';
 import { CACHE_TIMEOUT, defaultCacheConfig } from './cache-config';
 import { RedisStorage } from './storage/redis-storage';
 import {
@@ -11,6 +10,11 @@ import {
   buildStorage,
   setupCache,
 } from 'axios-cache-interceptor';
+import {
+  addStartTimeInterceptor,
+  errorInterceptor,
+  logInterceptor,
+} from './interceptors';
 
 const redisStorage = RedisStorage.isRedisEnabled
   ? new RedisStorage(CACHE_TIMEOUT)
@@ -43,7 +47,6 @@ export const axiosInstanceFactory = (
   const axiosOptions = {
     timeout,
     httpsAgent: new https.Agent(agentOptions),
-    //@ts-ignore
     httpAgent: new http.Agent(agentOptions),
   };
 

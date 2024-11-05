@@ -5,7 +5,8 @@ import { fetchImmatriculationFromAPIRNE } from '../clients/inpi/api-rne';
 export const apiRneStatusController = async (req: Request, res: Response) => {
   try {
     const dummySiren = verifySiren('552032534');
-    await fetchImmatriculationFromAPIRNE(dummySiren);
+    const useCache = false;
+    await fetchImmatriculationFromAPIRNE(dummySiren, useCache);
     res.send({ message: 'ok', status: 200 });
   } catch (e: any) {
     const status = e.status || 500;

@@ -22,10 +22,13 @@ import {
   IRNEResponse,
 } from './interface';
 
-export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
+export const fetchImmatriculationFromAPIRNE = async (
+  siren: Siren,
+  useCache = true
+) => {
   const data = await defaultApiRneClient.get<IRNEResponse>(
     routes.inpi.api.rne.cmc.companies + siren,
-    { timeout: constants.timeout.XXXL }
+    { timeout: constants.timeout.XXXL, useCache }
   );
 
   if (data.formality.content.personnePhysique) {
