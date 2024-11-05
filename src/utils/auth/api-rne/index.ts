@@ -1,11 +1,10 @@
-import { AxiosRequestConfig } from 'axios';
 import routes from '../../../clients/urls';
 import constants from '../../../constants';
 import {
   HttpTooManyRequests,
   HttpUnauthorizedError,
 } from '../../../http-exceptions';
-import httpClient, { httpGet } from '../../network';
+import httpClient, { httpGet, IDefaultRequestConfig } from '../../network';
 import { logWarningInSentry } from '../../sentry';
 import dotenv from 'dotenv';
 
@@ -48,7 +47,7 @@ class RNEClient {
 
     const [username, password] = this.accounts[this._currentAccountIndex];
 
-    const response = await httpClient({
+    const response = await httpClient<{ token: string }>({
       method: 'POST',
       url: routes.inpi.api.rne.login,
       data: {
@@ -56,21 +55,26 @@ class RNEClient {
         password,
       },
       timeout: constants.timeout.XXL,
+      useCache: false,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-    return response.data.token;
+    return response.token;
   };
 
-  get = async (route: string, options?: AxiosRequestConfig) => {
+  get = async <T>(
+    route: string,
+    options?: IDefaultRequestConfig
+  ): Promise<T> => {
     const callback = () =>
-      httpGet(route, {
+      httpGet<T>(route, {
         ...options,
         headers: {
           ...options?.headers,
           Authorization: `Bearer ${this._token}`,
         },
+        useCache: !!options?.useCache,
       });
 
     try {

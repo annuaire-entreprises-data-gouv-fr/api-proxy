@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import {
   HttpConnectionReset,
   HttpForbiddenError,
@@ -8,6 +8,40 @@ import {
   HttpTooManyRequests,
   HttpUnauthorizedError,
 } from '../../http-exceptions';
+
+/**
+ * Add startTime to request
+ * @param config
+ */
+export const addStartTimeInterceptor = (config: AxiosRequestConfig) => {
+  return {
+    ...config,
+    metadata: { startTime: new Date().getTime() },
+  };
+};
+
+/**
+ * Log into STDOUT in production
+ * @param response
+ */
+export const logInterceptor = (response: AxiosResponse<any, any>) => {
+  const endTime = new Date().getTime();
+  //@ts-ignore
+  const startTime = response?.config?.metadata?.startTime;
+
+  console.info(
+    formatLog(
+      response?.config?.url || '',
+      response?.status,
+      //@ts-ignore
+      response?.cached,
+      startTime ? endTime - startTime : undefined,
+      (response?.config?.method || '').toUpperCase()
+    )
+  );
+
+  return response;
+};
 
 const getStatus = (response?: AxiosResponse, message?: string) => {
   if (response?.status) {
@@ -19,7 +53,7 @@ const getStatus = (response?: AxiosResponse, message?: string) => {
   return 500;
 };
 
-const errorInterceptor = (error: AxiosError) => {
+export const errorInterceptor = (error: AxiosError) => {
   const { config, response, message } = error || {};
 
   const url = (config?.url || 'an unknown url').substring(0, 100);
@@ -27,8 +61,18 @@ const errorInterceptor = (error: AxiosError) => {
   const statusText = response?.statusText;
 
   if (status !== 404) {
-    const log = `status=${status} request=${url || ''}`;
-    console.error(log);
+    const endTime = new Date().getTime();
+    //@ts-ignore
+    const startTime = config?.metadata?.startTime;
+    console.error(
+      formatLog(
+        url,
+        status,
+        false,
+        startTime ? endTime - startTime : undefined,
+        error.request?.method
+      )
+    );
   }
 
   switch (status) {
@@ -63,4 +107,12 @@ const errorInterceptor = (error: AxiosError) => {
   }
 };
 
-export default errorInterceptor;
+export const formatLog = (
+  url: string,
+  status: number,
+  isFromCached = false,
+  time = -1,
+  method: string
+) => {
+  return `status=${status} time=${time} isFromCached=${isFromCached} request=${url} method=${method}`;
+};

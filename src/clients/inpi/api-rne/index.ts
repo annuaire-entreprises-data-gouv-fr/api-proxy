@@ -22,13 +22,14 @@ import {
   IRNEResponse,
 } from './interface';
 
-export const fetchImmatriculationFromAPIRNE = async (siren: Siren) => {
-  const response = await defaultApiRneClient.get(
+export const fetchImmatriculationFromAPIRNE = async (
+  siren: Siren,
+  useCache = true
+) => {
+  const data = await defaultApiRneClient.get<IRNEResponse>(
     routes.inpi.api.rne.cmc.companies + siren,
-    { timeout: constants.timeout.XXXL }
+    { timeout: constants.timeout.XXXL, useCache }
   );
-
-  const data = response.data as IRNEResponse;
 
   if (data.formality.content.personnePhysique) {
     return mapPersonnePhysiqueToDomainObject(

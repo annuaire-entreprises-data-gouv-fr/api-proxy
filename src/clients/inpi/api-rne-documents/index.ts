@@ -49,12 +49,12 @@ type IDocumentsRNEResponse = {
 };
 
 export const listDocumentsRne = async (siren: Siren) => {
-  const response = await actesApiRneClient.get(
+  const response = await actesApiRneClient.get<IDocumentsRNEResponse>(
     routes.inpi.api.rne.cmc.companies + siren + '/attachments',
     { timeout: constants.timeout.XXXL }
   );
 
-  return mapToDomainObject(response.data as IDocumentsRNEResponse);
+  return mapToDomainObject(response);
 };
 
 const mapToDomainObject = (response: IDocumentsRNEResponse): IDocuments => {

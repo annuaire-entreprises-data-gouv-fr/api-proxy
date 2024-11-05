@@ -24,7 +24,7 @@ export type IEORIValidation = {
  * @param siret
  */
 const clientEORI = async (siret: Siret): Promise<IEORIValidation | null> => {
-  const response = await httpClient({
+  const response = await httpClient<string>({
     url: routes.eori,
     method: 'POST',
     data: createSOAPRequest('FR' + siret),
@@ -32,8 +32,9 @@ const clientEORI = async (siret: Siret): Promise<IEORIValidation | null> => {
       'Content-Type': 'text/xml;charset=UTF-8',
       SOAPAction: '',
     },
+    useCache: true,
   });
-  const result = response.data.match(/<result>[\s\S]*?<\/result>/)?.[0];
+  const result = response.match(/<result>[\s\S]*?<\/result>/)?.[0];
 
   if (!result || !result.includes('<status>')) {
     return null;

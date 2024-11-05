@@ -115,12 +115,13 @@ interface PersonneMorale {
  * @param siret
  */
 const clientUniteLegaleIG = async (siren: Siren) => {
-  const response = await httpClient({
+  const response = await httpClient<IGResponse>({
     url: routes.ig + siren,
     timeout: constants.timeout.XXXL,
+    useCache: true,
   });
 
-  return mapToDomainObject(response.data as IGResponse, siren);
+  return mapToDomainObject(response, siren);
 };
 
 const mapToDomainObject = (r: IGResponse, siren: Siren) => {

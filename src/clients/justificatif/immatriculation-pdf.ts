@@ -22,7 +22,7 @@ const downloadImmatriculationPdf = async ({
     cookies = await inpiSiteCookies.getCookies();
   }
 
-  const response = await httpGet(urlPdf, {
+  const response = await httpGet<string>(urlPdf, {
     headers: {
       Cookie: cookies,
       Accept: '*/*',
@@ -30,18 +30,18 @@ const downloadImmatriculationPdf = async ({
       'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:100.0) Gecko/20100101 Firefox/100.0',
     },
+    useCache: false,
     timeout: constants.timeout.XXXL,
     responseType: 'arraybuffer',
   });
-  const { data } = response;
-  if (!data) {
+  if (!response) {
     throw new Error('response is empty');
   }
 
   if (!useCookie) {
     logWarningInSentry('Download manager : download fallbacked on public PDF');
   }
-  return data;
+  return response;
 };
 
 export const downloadImmatriculationPdfAndSaveOnDisk = (siren: Siren) => {
