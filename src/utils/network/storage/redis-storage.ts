@@ -4,14 +4,9 @@ import { redisPromiseTimeout } from './redis-timeout';
 import { logWarningInSentry } from '../../sentry';
 
 export class RedisStorage implements BuildStorage {
-  static isRedisEnabled = process.env.REDIS_ENABLED === 'enabled';
   private _client;
 
   constructor(private cache_timeout: number) {
-    if (!RedisStorage.isRedisEnabled) {
-      throw new Error('Redis is disabled');
-    }
-
     this._client = createClient({
       url: process.env.REDIS_URL,
       pingInterval: 1000,
