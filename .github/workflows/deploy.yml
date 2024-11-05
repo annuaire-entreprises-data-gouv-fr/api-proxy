@@ -10,6 +10,8 @@ jobs:
     name: Deploy - staging
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    environment:
+      name: staging
 
     steps:
       - uses: actions/checkout@v3
@@ -24,8 +26,8 @@ jobs:
           SSH_PRIVATE_KEY: ${{secrets.SSH_MACHINE_USER_PRIVATE_KEY}}
           SSH_HOST: ${{ secrets.SSH_HOST_STAGING }}
 
-      - name: Deploy to production
-        run: ssh -i ./deploy.key www-data@$SSH_HOST 'sh /opt/apps/rncs-api-proxy/rncs-api-proxy-deploy.sh'
+      - name: Deploy to staging
+        run: ssh -i ./deploy.key www-data@$SSH_HOST 'python3 /opt/scripts/app-deploy-release/deploy.py /opt/git/releases/annuaire-entreprises-api-proxy https://github.com/annuaire-entreprises-data-gouv-fr/api-proxy.git api-proxy --version main --versions_to_keep=5 1> >(tee --append /var/log/deploy_annuaire-entreprises-api-proxy)'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST_STAGING }}
 
@@ -41,6 +43,8 @@ jobs:
     name: Deploy - production
     runs-on: ubuntu-latest
     needs: [deploy-staging]
+    environment:
+      name: production
 
     steps:
       - uses: actions/checkout@v3
@@ -56,7 +60,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST_PRODUCTION }}
 
       - name: Deploy to production
-        run: ssh -i ./deploy.key www-data@$SSH_HOST 'sh /opt/apps/rncs-api-proxy/rncs-api-proxy-deploy.sh'
+        run: ssh -i ./deploy.key www-data@$SSH_HOST 'python3 /opt/scripts/app-deploy-release/deploy.py /opt/git/releases/annuaire-entreprises-api-proxy https://github.com/annuaire-entreprises-data-gouv-fr/api-proxy.git api-proxy --version main --versions_to_keep=5 1> >(tee --append /var/log/deploy_annuaire-entreprises-api-proxy)'
         env:
           SSH_HOST: ${{ secrets.SSH_HOST_PRODUCTION }}
 
