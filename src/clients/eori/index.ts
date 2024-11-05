@@ -1,3 +1,4 @@
+import constants from '../../constants';
 import { Siret } from '../../models/siren-and-siret';
 import httpClient from '../../utils/network';
 import routes from '../urls';
@@ -32,6 +33,7 @@ const clientEORI = async (siret: Siret): Promise<IEORIValidation | null> => {
       'Content-Type': 'text/xml;charset=UTF-8',
       SOAPAction: '',
     },
+    timeout: constants.timeout.XXL,
     useCache: true,
   });
   const result = response.match(/<result>[\s\S]*?<\/result>/)?.[0];
