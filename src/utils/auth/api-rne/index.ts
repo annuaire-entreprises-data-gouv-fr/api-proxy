@@ -74,7 +74,7 @@ class RNEClient {
           ...options?.headers,
           Authorization: `Bearer ${this._token}`,
         },
-        useCache: true,
+        useCache: !!options?.useCache,
       });
 
     try {
