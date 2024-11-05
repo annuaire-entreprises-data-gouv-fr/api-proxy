@@ -10,6 +10,8 @@ jobs:
     name: Deploy - staging
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    environment:
+      name: staging
 
     steps:
       - uses: actions/checkout@v3
@@ -41,6 +43,8 @@ jobs:
     name: Deploy - production
     runs-on: ubuntu-latest
     needs: [deploy-staging]
+    environment:
+      name: production
 
     steps:
       - uses: actions/checkout@v3
