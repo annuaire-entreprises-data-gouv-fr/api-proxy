@@ -36,7 +36,8 @@ export const logInterceptor = (response: AxiosResponse<any, any>) => {
       //@ts-ignore
       response?.cached,
       startTime ? endTime - startTime : undefined,
-      (response?.config?.method || '').toUpperCase()
+      (response?.config?.method || '').toUpperCase(),
+      response?.request?.socket?.localAddress
     )
   );
 
@@ -70,7 +71,8 @@ export const errorInterceptor = (error: AxiosError) => {
         status,
         false,
         startTime ? endTime - startTime : undefined,
-        error.request?.method
+        error.request?.method,
+        error?.request?.socket?.localAddress
       )
     );
   }
@@ -112,7 +114,8 @@ export const formatLog = (
   status: number,
   isFromCached = false,
   time = -1,
-  method: string
+  method: string,
+  outgoingIp: string
 ) => {
-  return `status=${status} time=${time} isFromCached=${isFromCached} request=${url} method=${method}`;
+  return `status=${status} time=${time} isFromCached=${isFromCached} request=${url} method=${method} out_ip=${outgoingIp}`;
 };
