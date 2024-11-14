@@ -1,10 +1,10 @@
-import routes from '../urls';
-import { Siren } from '../../models/siren-and-siret';
-import pdfDownloader from '../../utils/download-manager';
 import constants from '../../constants';
+import { Siren } from '../../models/siren-and-siret';
+import inpiSiteCookies from '../../utils/auth/site/provider';
+import pdfDownloader from '../../utils/download-manager';
 import { httpGet } from '../../utils/network';
 import logErrorInSentry, { logWarningInSentry } from '../../utils/sentry';
-import inpiSiteCookies from '../../utils/auth/site/provider';
+import routes from '../urls';
 
 interface IDownloadArgs {
   siren: Siren;
@@ -15,7 +15,8 @@ const downloadImmatriculationPdf = async ({
   siren,
   useCookie = true,
 }: IDownloadArgs): Promise<string> => {
-  const urlPdf = `${routes.inpi.portail.pdf}?format=pdf&ids=["${siren}"]`;
+  const encodedSiren = encodeURIComponent(siren);
+  const urlPdf = `${routes.inpi.portail.pdf}?format=pdf&ids=["${encodedSiren}"]`;
 
   let cookies = '';
   if (useCookie) {
