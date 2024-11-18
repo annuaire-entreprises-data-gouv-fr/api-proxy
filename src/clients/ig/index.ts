@@ -152,8 +152,8 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
     nomComplet,
     etat: r.etat === 'ACTIF' ? 'A' : 'C',
     libelleNatureJuridique,
-    activitePrincipale: r.activite_naf.code,
-    libelleActivitePrincipale: r.activite_naf.libelle,
+    activitePrincipale: r.activite_naf?.code || '',
+    libelleActivitePrincipale: r.activite_naf?.libelle || '',
     dateCreation: '',
     siege: null,
     association: {

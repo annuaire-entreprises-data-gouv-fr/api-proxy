@@ -1,20 +1,20 @@
+import constants from '../../../constants';
 import { IImmatriculation } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
-import routes from '../../urls';
 import { httpGet } from '../../../utils/network';
+import routes from '../../urls';
 import { extractImmatriculationFromHtml } from './html-parser';
-import constants from '../../../constants';
 
 export const fetchImmatriculationFromSite = async (
   siren: Siren
 ): Promise<IImmatriculation> => {
-  const response = await httpGet<string>(
-    routes.inpi.portail.entreprise + siren,
-    {
-      timeout: constants.timeout.XXXXL,
-      useCache: false,
-    }
-  );
+  const encodedSiren = encodeURIComponent(siren);
+  const url = `${routes.inpi.portail.entreprise}${encodedSiren}`;
+
+  const response = await httpGet<string>(url, {
+    timeout: constants.timeout.XXXXL,
+    useCache: false,
+  });
 
   return {
     siren,
