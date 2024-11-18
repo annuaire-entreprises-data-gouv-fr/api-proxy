@@ -1,9 +1,11 @@
-import routes from '../urls';
-import { httpGet } from '../../utils/network';
 import constants from '../../constants';
 import { TVANumber } from '../../models/siren-and-siret';
+import { httpGet } from '../../utils/network';
+import routes from '../urls';
 
 export const clientTVA = async (tvaNumber: TVANumber): Promise<string> => {
-  const url = `${routes.tva}${tvaNumber}`;
+  const encodedTvaNumber = encodeURIComponent(tvaNumber);
+  const url = `${routes.tva}${encodedTvaNumber}`;
+
   return await httpGet(url, { timeout: constants.timeout.XXL, useCache: true });
 };
