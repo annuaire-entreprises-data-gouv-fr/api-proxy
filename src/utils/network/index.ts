@@ -52,7 +52,6 @@ export const axiosInstanceFactory = (
     storage: redisStorage ? buildStorage(redisStorage) : undefined,
     // ignore cache-control headers as some API like sirene return 'no-cache' headers
     headerInterpreter: () => CACHE_TIMEOUT,
-    // eslint-disable-next-line no-console
     debug: console.info,
   });
 
