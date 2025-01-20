@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/node';
-import { Severity } from '@sentry/node';
 
 export interface IScope {
   page?: string;
@@ -21,7 +20,7 @@ const getScope = (extra: IScope) => {
 };
 
 export const logInSentryFactory =
-  (severity = 'error' as Severity) =>
+  (severity = 'error' as Sentry.SeverityLevel) =>
   (errorMsg: any, extra?: IScope) => {
     const shouldLogInSentry =
       process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN && Sentry;
