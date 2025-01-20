@@ -39,8 +39,12 @@ export const logInSentryFactory =
     }
   };
 
-export const logWarningInSentry = logInSentryFactory('info' as Severity);
+export const logWarningInSentry = logInSentryFactory(
+  'info' as Sentry.SeverityLevel
+);
 
-export const logErrorInSentry = logInSentryFactory('error' as Severity);
+export const logErrorInSentry = logInSentryFactory(
+  'error' as Sentry.SeverityLevel
+);
 
 export default logErrorInSentry;
