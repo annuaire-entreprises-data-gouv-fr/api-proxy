@@ -25,7 +25,7 @@ export class RedisStorage implements BuildStorage {
     if (!this._client.isOpen) {
       try {
         return this._client.connect();
-      } catch (e) {
+      } catch {
         logWarningInSentry(
           new RedisStorageException({
             message: 'Could not connect to redis client',

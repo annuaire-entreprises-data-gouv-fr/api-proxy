@@ -38,8 +38,8 @@ if (useSentry) {
     integrations: [],
   });
 
-  // The request handler must be the first middleware on the app
-  app.use(Sentry.Handlers.requestHandler());
+  // The error handler must be before any other error middleware and after all controllers
+  Sentry.setupExpressErrorHandler(app);
 }
 
 /**
@@ -92,15 +92,6 @@ app.use('/eori/:siret', eoriController);
  * IG
  */
 app.use('/ig/:siren', igController);
-
-/**
- * Error handling
- */
-
-if (useSentry) {
-  // The error handler must be before any other error middleware and after all controllers
-  app.use(Sentry.Handlers.errorHandler());
-}
 
 app.use(errorHandler);
 

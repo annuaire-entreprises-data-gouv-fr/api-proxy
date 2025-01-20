@@ -7,7 +7,7 @@ export const capitalize = (str: string) => {
 export const formatIntFr = (intAsString = '') => {
   try {
     return intAsString.replace(/(\d)(?=(\d{3})+$)/g, '$1 ');
-  } catch (e: any) {
+  } catch {
     return intAsString;
   }
 };
