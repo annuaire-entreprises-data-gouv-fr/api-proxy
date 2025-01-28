@@ -88,6 +88,7 @@ export interface IImmatriculation {
  */
 const fetchRneAPI = async (siren: Siren): Promise<IImmatriculation> => {
   try {
+    throw new HttpServerError('[RNE] API disabled');
     const usecache = true;
     return await fetchImmatriculationFromAPIRNE(siren, usecache);
   } catch (errorAPIRNE) {
