@@ -10,7 +10,6 @@ export const rneControllerAPI = async (
   try {
     const siren = verifySiren(req.params.siren);
     const rne = await fetchRneAPI(siren);
-
     res.status(200).json(rne);
   } catch (e) {
     next(e);
