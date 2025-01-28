@@ -26,7 +26,11 @@ export const fetchImmatriculationFromAPIRNE = async (
   siren: Siren,
   useCache = true
 ) => {
-  throw new HttpServerError('[RNE] API disabled');
+  // dummy condition to trick typescript as it fails in tests
+  const a = 0;
+  if (a == 0) {
+    throw new HttpServerError('[RNE] API disabled');
+  }
 
   const data = await defaultApiRneClient.get<IRNEResponse>(
     routes.inpi.api.rne.cmc.companies + siren,
