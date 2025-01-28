@@ -24,7 +24,7 @@ class RNEClient {
     this.accounts =
       credentialType === ECredentialType.ACTES
         ? [
-            // [process.env.RNE_LOGIN_ACTES_1, process.env.RNE_PASSWORD_ACTES_1],
+            [process.env.RNE_LOGIN_ACTES_1, process.env.RNE_PASSWORD_ACTES_1],
             [process.env.RNE_LOGIN_ACTES_2, process.env.RNE_PASSWORD_ACTES_2],
           ]
         : [
