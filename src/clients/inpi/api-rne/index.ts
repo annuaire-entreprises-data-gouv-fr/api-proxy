@@ -1,5 +1,5 @@
 import constants from '../../../constants';
-import { HttpNotFound, HttpServerError } from '../../../http-exceptions';
+import { HttpNotFound } from '../../../http-exceptions';
 import {
   IImmatriculation,
   IPersonneMorale,
@@ -26,12 +26,6 @@ export const fetchImmatriculationFromAPIRNE = async (
   siren: Siren,
   useCache = true
 ) => {
-  // dummy condition to trick typescript as it fails in tests
-  const a = 0;
-  if (a == 0) {
-    throw new HttpServerError('[RNE] API disabled');
-  }
-
   const data = await defaultApiRneClient.get<IRNEResponse>(
     routes.inpi.api.rne.cmc.companies + siren,
     { timeout: constants.timeout.XXXL, useCache }
