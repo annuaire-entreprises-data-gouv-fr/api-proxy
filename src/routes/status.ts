@@ -4,6 +4,6 @@ import express from 'express';
 
 const statusRouter = express.Router();
 
-statusRouter.get('/rne/api', apiRneStatusController);
+statusRouter.get('/rne', apiRneStatusController);
 
 export default statusRouter;
