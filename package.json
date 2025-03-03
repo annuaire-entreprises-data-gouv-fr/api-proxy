@@ -24,7 +24,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@sentry/node": "^9.2.0",
+    "@sentry/node": "^9.3.0",
     "@sentry/tracing": "^7.120.3",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
