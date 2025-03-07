@@ -126,7 +126,7 @@ const mapPersonneMoraleToDomainObject = (
         return {
           numObservation: 'NC',
           description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
-            i.observationComplementaire
+            i.observationComplementaire ?? 'observation vide'
           }`,
           dateAjout: i.dateEffet ?? '',
         };
