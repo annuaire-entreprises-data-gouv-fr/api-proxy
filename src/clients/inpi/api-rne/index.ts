@@ -17,6 +17,7 @@ import { logWarningInSentry } from '../../../utils/sentry';
 import routes from '../../urls';
 import { formatINPIDateField } from '../helper';
 import {
+  IRNEInscriptionsOffices,
   IRNEPersonneMorale,
   IRNEPersonnePhysique,
   IRNEResponse,
@@ -31,10 +32,14 @@ export const fetchImmatriculationFromAPIRNE = async (
     { timeout: constants.timeout.XXXL, useCache }
   );
 
+  const inscriptionsOffices =
+    data.formality?.content?.inscriptionsOffices ?? [];
+
   if (data.formality.content.personnePhysique) {
     return mapPersonnePhysiqueToDomainObject(
       data.formality.content.personnePhysique,
       data.formality.content.formeExerciceActivitePrincipale,
+      inscriptionsOffices,
       siren
     );
   }
@@ -45,6 +50,7 @@ export const fetchImmatriculationFromAPIRNE = async (
     return mapPersonneMoraleToDomainObject(
       (personneMorale || exploitation) as IRNEPersonneMorale,
       data.formality.content.formeExerciceActivitePrincipale,
+      inscriptionsOffices,
       siren
     );
   }
@@ -59,6 +65,7 @@ export const fetchImmatriculationFromAPIRNE = async (
 const mapPersonneMoraleToDomainObject = (
   pm: IRNEPersonneMorale,
   natureEntreprise = '',
+  inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {
   const {
@@ -113,15 +120,27 @@ const mapPersonneMoraleToDomainObject = (
     },
     dirigeants: mapDirigeantsToDomainObject(pm?.composition?.pouvoirs),
     beneficiaires: [],
-    observations:
-      (pm?.observations?.rcs || []).map((o) => {
+    observations: [
+      // observations équivalent in RNE
+      ...inscriptionsOffices.map((i: IRNEInscriptionsOffices) => {
+        return {
+          numObservation: 'NC',
+          description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
+            i.observationComplementaire
+          }`,
+          dateAjout: i.dateEffet ?? '',
+        };
+      }),
+      // old observations - come from old RCS records. Not sure it exist for RNM or RAA
+      ...(pm?.observations?.rcs || []).map((o) => {
         const { numObservation = '', texte = '', dateAjout = '' } = o || {};
         return {
           numObservation,
           description: texte.trimStart().trimEnd(),
           dateAjout: formatINPIDateField(dateAjout),
         };
-      }) || [],
+      }),
+    ],
     metadata: {
       isFallback: false,
     },
@@ -131,6 +150,7 @@ const mapPersonneMoraleToDomainObject = (
 const mapPersonnePhysiqueToDomainObject = (
   pp: IRNEPersonnePhysique,
   natureEntreprise = '',
+  inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {
   const {
@@ -179,7 +199,17 @@ const mapPersonnePhysiqueToDomainObject = (
       },
     ],
     beneficiaires: [],
-    observations: [],
+    // inscriptionsOffices are the new way to name observations in RNE
+    // not sure there are old observations for EI
+    observations: inscriptionsOffices.map((i: IRNEInscriptionsOffices) => {
+      return {
+        numObservation: 'NC',
+        description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
+          i.observationComplementaire
+        }`,
+        dateAjout: i.dateEffet ?? '',
+      };
+    }),
     metadata: {
       isFallback: false,
     },

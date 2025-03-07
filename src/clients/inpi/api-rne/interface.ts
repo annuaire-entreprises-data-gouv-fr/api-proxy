@@ -165,9 +165,17 @@ export interface IRNEResponse {
         entrepriseAgricole: boolean;
         eirl: boolean;
       };
+      inscriptionsOffices: [];
       personneMorale?: IRNEPersonneMorale;
       exploitation?: IRNEPersonneMorale;
       personnePhysique?: IRNEPersonnePhysique;
     };
   };
 }
+
+export type IRNEInscriptionsOffices = {
+  dateEffet: string;
+  partnerCenter: string;
+  partnerCode: string;
+  observationComplementaire: string;
+};
