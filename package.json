@@ -29,7 +29,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^22.13.9",
+    "@types/node": "^22.13.13",
     "@types/redis": "^4.0.11",
     "@types/yauzl": "^2.10.3",
     "@typescript-eslint/eslint-plugin": "^8.26.0",
