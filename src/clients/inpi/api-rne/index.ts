@@ -122,15 +122,17 @@ const mapPersonneMoraleToDomainObject = (
     beneficiaires: [],
     observations: [
       // observations équivalent in RNE
-      ...inscriptionsOffices.map((i: IRNEInscriptionsOffices) => {
-        return {
-          numObservation: 'NC',
-          description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
-            i.observationComplementaire ?? 'observation vide'
-          }`,
-          dateAjout: i.dateEffet ?? '',
-        };
-      }),
+      ...inscriptionsOffices
+        .filter((i: IRNEInscriptionsOffices) => !!i.observationComplementaire)
+        .map((i: IRNEInscriptionsOffices) => {
+          return {
+            numObservation: 'NC',
+            description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
+              i.observationComplementaire ?? 'observation vide'
+            }`,
+            dateAjout: i.dateEffet ?? '',
+          };
+        }),
       // old observations - come from old RCS records. Not sure it exist for RNM or RAA
       ...(pm?.observations?.rcs || []).map((o) => {
         const { numObservation = '', texte = '', dateAjout = '' } = o || {};
