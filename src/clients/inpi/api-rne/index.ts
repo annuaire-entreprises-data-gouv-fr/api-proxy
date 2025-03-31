@@ -203,15 +203,17 @@ const mapPersonnePhysiqueToDomainObject = (
     beneficiaires: [],
     // inscriptionsOffices are the new way to name observations in RNE
     // not sure there are old observations for EI
-    observations: inscriptionsOffices.map((i: IRNEInscriptionsOffices) => {
-      return {
-        numObservation: 'NC',
-        description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
-          i.observationComplementaire
-        }`,
-        dateAjout: i.dateEffet ?? '',
-      };
-    }),
+    observations: inscriptionsOffices
+      .filter((i: IRNEInscriptionsOffices) => !!i.observationComplementaire)
+      .map((i: IRNEInscriptionsOffices) => {
+        return {
+          numObservation: 'NC',
+          description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
+            i.observationComplementaire
+          }`,
+          dateAjout: i.dateEffet ?? '',
+        };
+      }),
     metadata: {
       isFallback: false,
     },
