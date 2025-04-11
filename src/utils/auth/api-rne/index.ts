@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import routes from '../../../clients/urls';
 import constants from '../../../constants';
 import {
@@ -6,7 +7,6 @@ import {
 } from '../../../http-exceptions';
 import httpClient, { httpGet, IDefaultRequestConfig } from '../../network';
 import { logWarningInSentry } from '../../sentry';
-import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -103,6 +103,5 @@ class RNEClient {
 }
 
 const defaultApiRneClient = new RNEClient(ECredentialType.DEFAULT);
-const actesApiRneClient = new RNEClient(ECredentialType.ACTES);
 
-export { defaultApiRneClient, actesApiRneClient };
+export { defaultApiRneClient };
