@@ -1,29 +1,7 @@
-import { Siren } from './siren-and-siret';
-import { HttpNotFound, HttpServerError } from '../http-exceptions';
-import { fetchImmatriculationFromSite } from '../clients/inpi/site';
 import { fetchImmatriculationFromAPIRNE } from '../clients/inpi/api-rne';
-
-interface IActe {
-  id: string;
-  dateDepot: string;
-  detailsDocuments: {
-    nom: string;
-    label: string;
-  }[];
-}
-
-interface IBilan {
-  id: string;
-  dateDepot: string;
-  typeBilan: string;
-  dateCloture: string;
-  confidentiality: string;
-}
-
-export interface IDocuments {
-  actes: IActe[];
-  bilans: IBilan[];
-}
+import { fetchImmatriculationFromSite } from '../clients/inpi/site';
+import { HttpNotFound, HttpServerError } from '../http-exceptions';
+import { Siren } from './siren-and-siret';
 
 export interface IEtatCivil {
   nom: string;
