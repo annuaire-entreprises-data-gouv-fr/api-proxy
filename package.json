@@ -37,7 +37,7 @@
     "axios": "^1.8.4",
     "axios-cache-interceptor": "^1.7.0",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "fast-xml-parser": "^5.0.9",
     "helmet": "^8.1.0",
     "jsdom": "^26.0.0",
