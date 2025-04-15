@@ -1,12 +1,15 @@
 import dotenv from 'dotenv';
-import routes from '../../../clients/urls';
 import constants from '../../../constants';
 import {
   HttpTooManyRequests,
   HttpUnauthorizedError,
 } from '../../../http-exceptions';
-import httpClient, { httpGet, IDefaultRequestConfig } from '../../network';
-import { logWarningInSentry } from '../../sentry';
+import httpClient, {
+  httpGet,
+  IDefaultRequestConfig,
+} from '../../../utils/network';
+import { logWarningInSentry } from '../../../utils/sentry';
+import routes from '../../urls';
 
 dotenv.config();
 
