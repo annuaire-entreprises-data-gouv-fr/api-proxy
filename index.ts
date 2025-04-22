@@ -8,6 +8,7 @@ import { errorHandler } from './src/controllers/errorHandler';
 import { igController } from './src/controllers/ig';
 import { rneControllerAPI, rneControllerSite } from './src/controllers/rne';
 import { tvaController } from './src/controllers/tva';
+import statusRouter from './src/routes/status';
 
 dotenv.config();
 
@@ -52,6 +53,11 @@ app.get('/rne/:siren', rneControllerAPI);
  * RNE Fallback
  */
 app.get('/rne/fallback/:siren', rneControllerSite);
+
+/**
+ * Status
+ */
+app.use('/status', statusRouter);
 
 /**
  * Association
