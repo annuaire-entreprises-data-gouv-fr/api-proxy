@@ -1,6 +1,6 @@
-import { verifySiren } from '../models/siren-and-siret';
 import { Request, Response } from 'express';
-import { listDocumentsRne } from '../clients/inpi/api-rne-documents';
+import { listDocumentsRne } from '../clients/inpi/api-rne/documents';
+import { verifySiren } from '../models/siren-and-siret';
 
 export const apiRneStatusController = async (req: Request, res: Response) => {
   try {
