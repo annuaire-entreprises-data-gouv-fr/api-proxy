@@ -3,28 +3,6 @@ import { fetchImmatriculationFromSite } from '../clients/inpi/site';
 import { HttpNotFound, HttpServerError } from '../http-exceptions';
 import { Siren } from './siren-and-siret';
 
-interface IActe {
-  id: string;
-  dateDepot: string;
-  detailsDocuments: {
-    nom: string;
-    label: string;
-  }[];
-}
-
-interface IBilan {
-  id: string;
-  dateDepot: string;
-  typeBilan: string;
-  dateCloture: string;
-  confidentiality: string;
-}
-
-export interface IDocuments {
-  actes: IActe[];
-  bilans: IBilan[];
-}
-
 export interface IEtatCivil {
   nom: string;
   prenom: string;
