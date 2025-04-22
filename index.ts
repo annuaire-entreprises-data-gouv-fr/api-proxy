@@ -1,19 +1,14 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
-import { rneControllerAPI, rneControllerSite } from './src/controllers/rne';
-import { errorHandler } from './src/controllers/errorHandler';
-import { associationController } from './src/controllers/association';
 import * as Sentry from '@sentry/node';
+import dotenv from 'dotenv';
+import express, { Express, Request, Response } from 'express';
 import helmet from 'helmet';
-import statusRouter from './src/routes/status';
-import { rneListDocumentsController } from './src/controllers/rne-document';
-import {
-  rneActeDownloadController,
-  rneBilanDownloadController,
-} from './src/controllers/rne-download';
-import { tvaController } from './src/controllers/tva';
+import { associationController } from './src/controllers/association';
 import { eoriController } from './src/controllers/eori';
+import { errorHandler } from './src/controllers/errorHandler';
 import { igController } from './src/controllers/ig';
+import { rneControllerAPI, rneControllerSite } from './src/controllers/rne';
+import { tvaController } from './src/controllers/tva';
+import statusRouter from './src/routes/status';
 
 dotenv.config();
 
@@ -58,15 +53,6 @@ app.get('/rne/:siren', rneControllerAPI);
  * RNE Fallback
  */
 app.get('/rne/fallback/:siren', rneControllerSite);
-
-// list documents
-app.get('/rne/documents/:siren', rneListDocumentsController);
-
-// download an acte
-app.get('/rne/download/acte/:id', rneActeDownloadController);
-
-// download a bilan
-app.get('/rne/download/bilan/:id', rneBilanDownloadController);
 
 /**
  * Status

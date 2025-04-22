@@ -1,12 +1,11 @@
 import constants from '../../../constants';
 import { HttpNotFound } from '../../../http-exceptions';
 import {
+  IEtatCivil,
   IImmatriculation,
   IPersonneMorale,
-  IEtatCivil,
 } from '../../../models/rne';
 import { Siren } from '../../../models/siren-and-siret';
-import { defaultApiRneClient } from '../../../utils/auth/api-rne';
 import { formatFloatFr } from '../../../utils/helpers/formatters';
 import {
   libelleFromCategoriesJuridiques,
@@ -16,6 +15,7 @@ import {
 import { logWarningInSentry } from '../../../utils/sentry';
 import routes from '../../urls';
 import { formatINPIDateField } from '../helper';
+import { defaultApiRneClient } from './auth';
 import {
   IRNEInscriptionsOffices,
   IRNEPersonneMorale,
