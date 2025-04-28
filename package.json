@@ -40,7 +40,7 @@
     "express": "^5.1.0",
     "fast-xml-parser": "^5.0.9",
     "helmet": "^8.1.0",
-    "jsdom": "^26.0.0",
+    "jsdom": "^26.1.0",
     "redis": "^4.7.0",
     "typescript": "^5.8.3",
     "uninstall": "^0.0.0",
