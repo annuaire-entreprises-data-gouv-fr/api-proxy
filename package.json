@@ -54,7 +54,7 @@
     "eslint": "^9.25.1",
     "globals": "^16.0.0",
     "jest": "^29.7.0",
-    "nodemon": "^3.1.9",
+    "nodemon": "^3.1.10",
     "pre-commit": "^1.2.2",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2"
