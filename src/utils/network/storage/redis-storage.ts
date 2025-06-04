@@ -53,7 +53,7 @@ export class RedisStorage implements BuildStorage {
     const result = await redisPromiseTimeout(this._client.get(key), 100).catch(
       (err) => {
         const duration = performance.now() - start;
-        const message =(err.message || 'Could not get key') +` [Redis timeout=100ms, elapsed=${Math.round(duration)}ms, enventLoopLag=${Math.round(this._eventLoopLag)}ms]`;
+        const message = `${(err.message || 'Could not get key')} [Redis timeout=100ms, elapsed=${Math.round(duration)}ms, enventLoopLag=${Math.round(this._eventLoopLag)}ms]`;
         logWarningInSentry(
           new RedisStorageException({
             message: message,
