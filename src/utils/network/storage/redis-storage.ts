@@ -2,11 +2,23 @@ import { BuildStorage } from 'axios-cache-interceptor';
 import { createClient } from 'redis';
 import { redisPromiseTimeout } from './redis-timeout';
 import { logWarningInSentry } from '../../sentry';
+import { performance } from 'perf_hooks';
 
 export class RedisStorage implements BuildStorage {
   private _client;
+  private _eventLoopLag;
+  private _lastLoop;
 
   constructor(private cache_timeout: number) {
+    // Mesure de l'event loop lag toutes les 10 secondes
+    this._lastLoop = performance.now();
+    this._eventLoopLag = 0;
+    setInterval(() => {
+      const now = performance.now();
+      this._eventLoopLag = now - this._lastLoop - 10000;
+      this._lastLoop = now;
+    }, 10000);
+
     this._client = createClient({
       url: process.env.REDIS_URL,
       pingInterval: 1000,
@@ -37,11 +49,14 @@ export class RedisStorage implements BuildStorage {
 
   find = async (key: string) => {
     await this.connect();
+    const start = performance.now();
     const result = await redisPromiseTimeout(this._client.get(key), 100).catch(
       (err) => {
+        const duration = performance.now() - start;
+        const message = `${(err.message || 'Could not get key')} [Redis timeout=100ms, elapsed=${Math.round(duration)}ms, enventLoopLag=${Math.round(this._eventLoopLag)}ms]`;
         logWarningInSentry(
           new RedisStorageException({
-            message: err.message || 'Could not get key',
+            message: message,
           })
         );
         return null;
