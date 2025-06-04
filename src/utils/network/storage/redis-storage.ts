@@ -56,7 +56,7 @@ export class RedisStorage implements BuildStorage {
         const message =(err.message || 'Could not get key') +` [Redis timeout=100ms, elapsed=${Math.round(duration)}ms, enventLoopLag=${Math.round(this._eventLoopLag)}ms]`;
         logWarningInSentry(
           new RedisStorageException({
-            message: err.message || 'Could not get key',
+            message: message,
           })
         );
         return null;
