@@ -35,7 +35,7 @@
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
     "axios": "^1.8.4",
-    "axios-cache-interceptor": "^1.7.0",
+    "axios-cache-interceptor": "^1.8.0",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "fast-xml-parser": "^5.2.1",
