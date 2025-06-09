@@ -32,7 +32,7 @@
     "@types/node": "^22.15.3",
     "@types/redis": "^4.0.11",
     "@types/yauzl": "^2.10.3",
-    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.31.0",
     "axios": "^1.8.4",
     "axios-cache-interceptor": "^1.7.0",
