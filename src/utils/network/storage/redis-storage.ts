@@ -50,18 +50,38 @@ export class RedisStorage implements BuildStorage {
   find = async (key: string) => {
     await this.connect();
     const start = performance.now();
-    const result = await redisPromiseTimeout(this._client.get(key), 100).catch(
-      (err) => {
-        const duration = performance.now() - start;
-        const message = `${(err.message || 'Could not get key')} [Redis timeout=100ms, elapsed=${Math.round(duration)}ms, enventLoopLag=${Math.round(this._eventLoopLag)}ms]`;
-        logWarningInSentry(
-          new RedisStorageException({
-            message: message,
-          })
-        );
-        return null;
+    let result: string | null = null;
+    let error: any = null;
+
+    // Premier essai
+    try {
+      result = await redisPromiseTimeout(this._client.get(key), 100);
+    } catch (err) {
+      error = err;
+    }
+
+    // Retry en cas de timeout ou d'erreur
+    if (error || result === null) {
+      try {
+        result = await redisPromiseTimeout(this._client.get(key), 100);
+        error = null;
+      } catch (err) {
+        error = err;
       }
-    );
+    }
+
+    if (error) {
+      const duration = performance.now() - start;
+      const message =
+        (error.message || 'Could not get key') +
+        ` [Redis timeout=100ms, elapsed=${Math.round(duration)}ms, enventLoopLag=${Math.round(this._eventLoopLag)}ms]`;
+      logWarningInSentry(
+        new RedisStorageException({
+          message: message,
+        })
+      );
+      return null;
+    }
 
     return result ? JSON.parse(result) : result;
   };
