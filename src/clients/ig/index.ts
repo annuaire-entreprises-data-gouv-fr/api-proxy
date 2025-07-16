@@ -119,6 +119,9 @@ const clientUniteLegaleIG = async (siren: Siren) => {
     url: routes.ig + siren,
     timeout: constants.timeout.XXXL,
     useCache: true,
+    headers: {
+      'User-Agent': 'PostmanRuntime/7.44.1',
+    },
   });
 
   return mapToDomainObject(response, siren);
