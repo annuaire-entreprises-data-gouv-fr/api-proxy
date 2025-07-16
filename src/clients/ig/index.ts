@@ -1,7 +1,7 @@
 import constants from '../../constants';
+import { HttpServerError, HttpTimeoutError } from '../../http-exceptions';
 import { Siren } from '../../models/siren-and-siret';
 import { formatNameFull } from '../../utils/helpers/formatters';
-import httpClient from '../../utils/network';
 import routes from '../urls';
 
 interface IGResponse {
@@ -115,13 +115,36 @@ interface PersonneMorale {
  * @param siret
  */
 const clientUniteLegaleIG = async (siren: Siren) => {
-  const response = await httpClient<IGResponse>({
-    url: routes.ig + siren,
-    timeout: constants.timeout.XXXL,
-    useCache: true,
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    constants.timeout.XXXL
+  );
 
-  return mapToDomainObject(response, siren);
+  try {
+    const response = await fetch(routes.ig + siren, {
+      signal: controller.signal,
+      method: 'GET',
+      headers: {
+        'User-Agent': 'bruno-runtime/2.1.0',
+      },
+    });
+
+    if (!response.ok) {
+      console.log(`Error fetching IG data: ${response.statusText}`);
+      throw new HttpServerError(
+        `Failed to fetch IG data: ${response.status} ${response.statusText}`
+      );
+    }
+    const data = await response.json();
+    return mapToDomainObject(data, siren);
+  } catch (error: any) {
+    clearTimeout(timeoutId);
+    if (error?.name === 'AbortError') {
+      throw new HttpTimeoutError('Timeout');
+    }
+    throw error;
+  }
 };
 
 const mapToDomainObject = (r: IGResponse, siren: Siren) => {
