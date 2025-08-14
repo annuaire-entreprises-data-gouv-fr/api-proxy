@@ -59,6 +59,7 @@ interface IRNEAdresse {
 }
 
 interface IRNEPouvoir {
+  roleEntreprise: string; // '65',
   libelleRoleEntreprise: string; // 'Commissaire aux comptes titulaire',
   typeDePersonne: string; //'ENTREPRISE',
   indicateurActifAgricole: boolean;

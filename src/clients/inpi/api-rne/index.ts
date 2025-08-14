@@ -238,7 +238,7 @@ const mapDirigeantsToDomainObject = (
 
       const role =
         p.libelleRoleEntreprise ||
-        libelleFromCodeRoleDirigeant(p?.individu?.descriptionPersonne.role);
+        libelleFromCodeRoleDirigeant(p?.roleEntreprise);
 
       return {
         nom: nomComplet,
