@@ -1,5 +1,5 @@
 const routes = {
-  association: 'https://siva-integ1.cegedim.cloud/apim/api-asso/api/structure/',
+  association: 'https://siva-int.menjes.ate.info/apim/api-asso/api/structure/',
   tva: 'https://ec.europa.eu/taxation_customs/vies/rest-api/ms/FR/vat/',
   eori: 'https://ec.europa.eu/taxation_customs/dds2/eos/validation/services/validation',
   ig: 'https://www.api.infogreffe.fr/athena/detail-entreprises/detail_entreprises?numero_identification=',
