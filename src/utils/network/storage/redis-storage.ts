@@ -86,11 +86,14 @@ export class RedisStorage implements BuildStorage {
     return result ? JSON.parse(result) : result;
   };
 
-  set = async (key: string, value: any) => {
+  set = async (key: string, value: any, _:any, ttl = this.cache_timeout) => {
     await this.connect();
     await redisPromiseTimeout(
       this._client.set(key, JSON.stringify(value), {
-        PX: this.cache_timeout,
+        expiration: {
+          type: 'PX',
+          value: ttl,
+        },
       }),
       200
     ).catch((err) => {
@@ -100,6 +103,11 @@ export class RedisStorage implements BuildStorage {
         })
       );
     });
+  };
+
+  getTTL = async (key: string) => {
+    await this.connect();
+    return await redisPromiseTimeout(this._client.pTTL(key), 100);
   };
 
   remove = async (key: string) => {

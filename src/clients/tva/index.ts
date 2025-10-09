@@ -1,11 +1,27 @@
 import constants from '../../constants';
 import { TVANumber } from '../../models/siren-and-siret';
 import { httpGet } from '../../utils/network';
+import { getOrSetWithCacheExpiry } from '../../utils/network/storage/smart-cache-storage';
 import routes from '../urls';
 
-export const clientTVA = async (tvaNumber: TVANumber): Promise<string> => {
+const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+export const clientTVA = (tvaNumber: TVANumber): Promise<string> => {
   const encodedTvaNumber = encodeURIComponent(tvaNumber);
   const url = `${routes.tva}${encodedTvaNumber}`;
 
-  return await httpGet(url, { timeout: constants.timeout.XXL, useCache: true });
+  const callback = () => httpGet<{ userError: string }>(url, { timeout: constants.timeout.XXL, useCache: false }).then((res) => {
+      if (["VALID", "INVALID"].indexOf(res.userError) === -1) {
+        throw new Error(res.userError);
+      }
+      return res;
+    });
+
+  return getOrSetWithCacheExpiry(
+    `tva:${tvaNumber}`,
+    callback,
+    ONE_MONTH_MS,
+    ONE_WEEK_MS
+  );
 };

@@ -16,7 +16,7 @@ import {
   logInterceptor,
 } from './interceptors';
 
-const redisStorage = new RedisStorage(CACHE_TIMEOUT);
+export const redisStorage = new RedisStorage(CACHE_TIMEOUT);
 
 /**
  * Limit the number of sockets allocated per distant hosts and to reuse sockets
