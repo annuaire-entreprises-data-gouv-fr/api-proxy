@@ -4,7 +4,6 @@ import http from 'http';
 
 import constants from '../../constants';
 import { CACHE_TIMEOUT, defaultCacheConfig } from './cache-config';
-import { RedisStorage } from './storage/redis-storage';
 import {
   AxiosCacheInstance,
   buildStorage,
@@ -15,8 +14,7 @@ import {
   errorInterceptor,
   logInterceptor,
 } from './interceptors';
-
-const redisStorage = new RedisStorage(CACHE_TIMEOUT);
+import { storage } from './storage/storage';
 
 /**
  * Limit the number of sockets allocated per distant hosts and to reuse sockets
@@ -49,7 +47,7 @@ export const axiosInstanceFactory = (
   };
 
   const axiosInstance = setupCache(Axios.create(axiosOptions), {
-    storage: redisStorage ? buildStorage(redisStorage) : undefined,
+    storage: buildStorage(storage),
     // ignore cache-control headers as some API like sirene return 'no-cache' headers
     headerInterpreter: () => CACHE_TIMEOUT,
     debug: console.info,

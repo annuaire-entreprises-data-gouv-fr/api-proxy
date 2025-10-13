@@ -20,10 +20,10 @@ export class RedisPromiseTimeoutError extends Error {
  *                   `TimeoutError`, whichever settles first.
  */
 
-export const redisPromiseTimeout = (
-  promise: Promise<any>,
+export const redisPromiseTimeout = <T>(
+  promise: Promise<T>,
   timeoutMillis: number
-) => {
+): Promise<T> => {
   let timeout: NodeJS.Timeout;
 
   return Promise.race([
@@ -36,7 +36,7 @@ export const redisPromiseTimeout = (
   ]).then(
     function (v) {
       clearTimeout(timeout);
-      return v;
+      return v as T;
     },
     function (err) {
       clearTimeout(timeout);

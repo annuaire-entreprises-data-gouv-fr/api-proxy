@@ -61,7 +61,7 @@ export class RedisStorage implements BuildStorage {
     }
 
     // Retry en cas de timeout ou d'erreur
-    if (error || result === null) {
+    if (error) {
       try {
         result = await redisPromiseTimeout(this._client.get(key), 100);
         error = null;
@@ -86,11 +86,14 @@ export class RedisStorage implements BuildStorage {
     return result ? JSON.parse(result) : result;
   };
 
-  set = async (key: string, value: any) => {
+  set = async (key: string, value: any, _:any, ttl = this.cache_timeout) => {
     await this.connect();
     await redisPromiseTimeout(
       this._client.set(key, JSON.stringify(value), {
-        PX: this.cache_timeout,
+        expiration: {
+          type: 'PX',
+          value: ttl,
+        },
       }),
       200
     ).catch((err) => {
@@ -100,6 +103,39 @@ export class RedisStorage implements BuildStorage {
         })
       );
     });
+  };
+
+  getTTL = async (key: string) => {
+    await this.connect();
+    let result: number | null = null;
+    let error: any = null;
+
+    try {
+      result = await redisPromiseTimeout(this._client.pTTL(key), 100);
+    } catch (err) {
+      error = err;
+    }
+
+    if (error) {
+      try {
+        result = await redisPromiseTimeout(this._client.pTTL(key), 100);
+        error = null;
+      } catch (err) {
+        error = err;
+      }
+    }
+
+    if (error) {
+      logWarningInSentry(
+        new RedisStorageException({
+          message: error.message || 'Could not get TTL',
+        })
+      );
+    
+      return null;
+    }
+
+    return result;
   };
 
   remove = async (key: string) => {
