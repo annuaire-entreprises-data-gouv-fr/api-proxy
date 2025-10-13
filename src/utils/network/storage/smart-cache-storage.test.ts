@@ -113,7 +113,7 @@ describe("getOrSetWithCacheExpiry", () => {
       const freshValue = { data: "fresh" };
 
       mockStorageFind.mockResolvedValue(null);
-      mockStorageGetTTL.mockResolvedValue(-1);
+      mockStorageGetTTL.mockResolvedValue(null);
       mockCallback.mockResolvedValue(freshValue);
       mockStorageSet.mockResolvedValue(undefined);
 
@@ -133,125 +133,19 @@ describe("getOrSetWithCacheExpiry", () => {
         expiration
       );
     });
-
-    test("Should return fresh value even if caching fails", async () => {
-      const freshValue = { data: "fresh" };
-      const cacheError = new Error("Cache failed");
-
-      mockStorageFind.mockResolvedValue(null);
-      mockStorageGetTTL.mockResolvedValue(-1);
-      mockCallback.mockResolvedValue(freshValue);
-      mockStorageSet.mockRejectedValue(cacheError);
-
-      const result = await getOrSetWithCacheExpiry(
-        testKey,
-        mockCallback,
-        expiration,
-        freshTime
-      );
-
-      expect(result).toEqual(freshValue);
-      expect(mockLogWarningInSentry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: "SmartCacheStorageException",
-          message: expect.stringContaining("Failed to set key"),
-        })
-      );
-    });
   });
 
-  describe("When Redis fails", () => {
-    test("Should return any available cached value on Redis error", async () => {
-      const cachedValue = { data: "cached" };
-      const redisError = new Error("Redis connection failed");
-
-      // First call (Promise.all) fails
-      mockStorageFind.mockRejectedValueOnce(redisError);
-      mockStorageGetTTL.mockRejectedValueOnce(redisError);
-
-      // Fallback find succeeds
-      mockStorageFind.mockResolvedValueOnce(cachedValue);
-
-      const result = await getOrSetWithCacheExpiry(
-        testKey,
-        mockCallback,
-        expiration,
-        freshTime
-      );
-
-      expect(result).toEqual(cachedValue);
-      expect(mockLogWarningInSentry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: "SmartCacheStorageException",
-          message: expect.stringContaining("Redis error for key"),
-        })
-      );
-      expect(mockCallback).not.toHaveBeenCalled();
-    });
-
-    test("Should call callback when Redis fails and no cached value available", async () => {
-      const freshValue = { data: "fresh" };
-      const redisError = new Error("Redis connection failed");
-
-      // All Redis calls fail
-      mockStorageFind.mockRejectedValue(redisError);
-      mockStorageGetTTL.mockRejectedValue(redisError);
-
-      mockCallback.mockResolvedValue(freshValue);
-      mockStorageSet.mockResolvedValue(undefined);
-
-      const result = await getOrSetWithCacheExpiry(
-        testKey,
-        mockCallback,
-        expiration,
-        freshTime
-      );
-
-      expect(result).toEqual(freshValue);
-      expect(mockCallback).toHaveBeenCalled();
-    });
-
-    test("Should throw error when Redis fails, no cache, and callback fails", async () => {
-      const redisError = new Error("Redis connection failed");
+  describe("When callback fails", () => {
+    test("Should throw error when no cache exists and callback fails", async () => {
       const callbackError = new Error("Callback failed");
 
-      // All Redis calls fail
-      mockStorageFind.mockRejectedValue(redisError);
-      mockStorageGetTTL.mockRejectedValue(redisError);
-
+      mockStorageFind.mockResolvedValue(null);
+      mockStorageGetTTL.mockResolvedValue(null);
       mockCallback.mockRejectedValue(callbackError);
 
       await expect(
         getOrSetWithCacheExpiry(testKey, mockCallback, expiration, freshTime)
-      ).rejects.toThrow("Failed to get or set key");
-
-      expect(mockLogWarningInSentry).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: "SmartCacheStorageException",
-          message: expect.stringContaining("Failed to get or set key"),
-        })
-      );
-    });
-
-    test("Should ignore cache error when Redis fails but callback succeeds", async () => {
-      const freshValue = { data: "fresh" };
-      const redisError = new Error("Redis connection failed");
-
-      // All Redis calls fail
-      mockStorageFind.mockRejectedValue(redisError);
-      mockStorageGetTTL.mockRejectedValue(redisError);
-
-      mockCallback.mockResolvedValue(freshValue);
-      mockStorageSet.mockRejectedValue(redisError); // Cache attempt also fails
-
-      const result = await getOrSetWithCacheExpiry(
-        testKey,
-        mockCallback,
-        expiration,
-        freshTime
-      );
-
-      expect(result).toEqual(freshValue);
+      ).rejects.toThrow("Callback failed");
     });
   });
 
@@ -263,6 +157,7 @@ describe("getOrSetWithCacheExpiry", () => {
       mockStorageFind.mockResolvedValue(cachedValue);
       mockStorageGetTTL.mockResolvedValue(0);
       mockCallback.mockResolvedValue(freshValue);
+      mockStorageSet.mockResolvedValue(undefined);
 
       const result = await getOrSetWithCacheExpiry(
         testKey,
@@ -276,11 +171,11 @@ describe("getOrSetWithCacheExpiry", () => {
       expect(result).toEqual(freshValue);
     });
 
-    test("Should handle negative TTL", async () => {
+    test("Should handle null TTL (key doesn't exist)", async () => {
       const freshValue = { data: "fresh" };
 
-      mockStorageFind.mockResolvedValue({ data: "old" });
-      mockStorageGetTTL.mockResolvedValue(-2); // Key doesn't exist
+      mockStorageFind.mockResolvedValue(null);
+      mockStorageGetTTL.mockResolvedValue(null);
       mockCallback.mockResolvedValue(freshValue);
       mockStorageSet.mockResolvedValue(undefined);
 
@@ -297,7 +192,7 @@ describe("getOrSetWithCacheExpiry", () => {
 
     test("Should handle callback returning null", async () => {
       mockStorageFind.mockResolvedValue(null);
-      mockStorageGetTTL.mockResolvedValue(-1);
+      mockStorageGetTTL.mockResolvedValue(null);
       mockCallback.mockResolvedValue(null);
       mockStorageSet.mockResolvedValue(undefined);
 
@@ -319,7 +214,7 @@ describe("getOrSetWithCacheExpiry", () => {
 
     test("Should handle callback returning undefined", async () => {
       mockStorageFind.mockResolvedValue(null);
-      mockStorageGetTTL.mockResolvedValue(-1);
+      mockStorageGetTTL.mockResolvedValue(null);
       mockCallback.mockResolvedValue(undefined);
       mockStorageSet.mockResolvedValue(undefined);
 
@@ -340,5 +235,3 @@ describe("getOrSetWithCacheExpiry", () => {
     });
   });
 });
-
-export {};

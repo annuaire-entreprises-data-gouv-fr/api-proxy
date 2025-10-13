@@ -27,23 +27,23 @@ export const getOrSetWithCacheExpiry = async (
   expiration: number,
   freshTime: number
 ): Promise<any> => {
-  try {
-    const [value, ttl] = await Promise.all([
-      storage.find(key),
-      storage.getTTL(key),
-    ]);
+  const [value, ttl] = await Promise.all([
+    storage.find(key),
+    storage.getTTL(key),
+  ]);
 
-    if (value !== null && ttl > 0) {
-      const age = expiration - ttl;
+  if (value !== null && ttl !== null && ttl > 0) {
+    const age = expiration - ttl;
 
-      if (age < freshTime) {
-        return value;
-      }
-
-      return refreshStaleValue(key, value, callback, expiration);
+    if (age < freshTime) {
+      return value;
     }
 
-    return fetchAndCache(key, callback, expiration);
+    return await refreshStaleValue(key, value, callback, expiration);
+  }
+
+  try {
+    return await fetchAndCache(key, callback, expiration);
   } catch (err) {
     return handleErrorFallback(key, callback, expiration, err);
   }
@@ -82,15 +82,8 @@ const fetchAndCache = async (
 ): Promise<any> => {
   const freshValue = await callback();
 
-  try {
-    await storage.set(key, freshValue, undefined, expiration);
-  } catch (err) {
-    logWarningInSentry(
-      new SmartCacheStorageException({
-        message: `Failed to set key ${key}: ${err instanceof Error ? err.message : 'Unknown error'}`,
-      })
-    );
-  }
+  await storage.set(key, freshValue, undefined, expiration);
+  
   return freshValue;
 };
 
@@ -105,18 +98,14 @@ const handleErrorFallback = async (
   originalError: any
 ): Promise<any> => {
   // Try to get any existing cached value
-  try {
-    const value = await storage.find(key);
-    if (value !== null) {
-      logWarningInSentry(
-        new SmartCacheStorageException({
-          message: `Redis error for key ${key}, returning any available value: ${originalError instanceof Error ? originalError.message : 'Unknown error'}`,
-        })
-      );
-      return value;
-    }
-  } catch {
-    // Fallback also failed
+  const value = await storage.find(key);
+  if (value !== null) {
+    logWarningInSentry(
+      new SmartCacheStorageException({
+        message: `Redis error for key ${key}, returning any available value: ${originalError instanceof Error ? originalError.message : 'Unknown error'}`,
+      })
+    );
+    return value;
   }
 
   // No cached value available, try callback as last resort
