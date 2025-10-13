@@ -49,7 +49,7 @@ interface IRNEAdresse {
   adresse: {
     roleAdresse: string | null;
     pays: string | null;
-    codePays: 'FRA';
+    codePays: "FRA";
     codePostal: string | null;
     commune: string | null;
     codeInseeCommune: string | null;
@@ -150,7 +150,7 @@ export interface IRNEResponse {
     siren: string;
     evenementCessation: string | null;
     natureCessation: string | null;
-    succursaleOuFiliale: 'AVEC_ETABLISSEMENT';
+    succursaleOuFiliale: "AVEC_ETABLISSEMENT";
     indicateurPoursuiteCessation: string | null;
     content: {
       formeExerciceActivitePrincipale: string;

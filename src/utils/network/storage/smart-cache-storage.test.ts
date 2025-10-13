@@ -1,6 +1,6 @@
+import { logWarningInSentry } from "../../sentry";
 import { getOrSetWithCacheExpiry } from "./smart-cache-storage";
 import { storage } from "./storage";
-import { logWarningInSentry } from "../../sentry";
 
 jest.mock("./storage", () => ({
   storage: {
@@ -22,8 +22,8 @@ describe("getOrSetWithCacheExpiry", () => {
   const mockLogWarningInSentry = logWarningInSentry as jest.Mock;
 
   const testKey = "test-key";
-  const expiration = 1000000; // 1000 seconds
-  const freshTime = 500000; // 500 seconds
+  const expiration = 1_000_000; // 1000 seconds
+  const freshTime = 500_000; // 500 seconds
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -32,7 +32,7 @@ describe("getOrSetWithCacheExpiry", () => {
   describe("When value exists and is fresh", () => {
     test("Should return cached value without calling callback", async () => {
       const cachedValue = { data: "cached" };
-      const ttl = 900000; // 900 seconds remaining
+      const ttl = 900_000; // 900 seconds remaining
       // age = expiration - ttl so 100 seconds old. less than freshTime 500 seconds
 
       mockStorageFind.mockResolvedValue(cachedValue);
@@ -56,7 +56,7 @@ describe("getOrSetWithCacheExpiry", () => {
     test("Should refresh value successfully and return fresh data", async () => {
       const staleValue = { data: "stale" };
       const freshValue = { data: "fresh" };
-      const smallFreshTime = 500000; // 500 seconds
+      const smallFreshTime = 500_000; // 500 seconds
       const ttl = 10; // age will be 1000000. More than freshTime 500 seconds
 
       mockStorageFind.mockResolvedValue(staleValue);
@@ -84,7 +84,7 @@ describe("getOrSetWithCacheExpiry", () => {
     test("Should return stale value when callback fails", async () => {
       const staleValue = { data: "stale" };
       const ttl = 10; // Very low TTL = old value
-      const smallFreshTime = 500000;
+      const smallFreshTime = 500_000;
       const callbackError = new Error("Callback failed");
 
       mockStorageFind.mockResolvedValue(staleValue);

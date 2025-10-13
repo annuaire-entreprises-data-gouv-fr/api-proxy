@@ -28,17 +28,17 @@ export const redisPromiseTimeout = <T>(
 
   return Promise.race([
     promise,
-    new Promise(function (resolve, reject) {
-      timeout = setTimeout(function () {
-        reject(new RedisPromiseTimeoutError('Redis client timeout'));
+    new Promise((resolve, reject) => {
+      timeout = setTimeout(() => {
+        reject(new RedisPromiseTimeoutError("Redis client timeout"));
       }, timeoutMillis);
     }),
   ]).then(
-    function (v) {
+    (v) => {
       clearTimeout(timeout);
       return v as T;
     },
-    function (err) {
+    (err) => {
       clearTimeout(timeout);
       throw err;
     }

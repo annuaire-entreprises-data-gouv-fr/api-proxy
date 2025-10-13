@@ -1,7 +1,7 @@
-import { fetchImmatriculationFromAPIRNE } from '../clients/inpi/api-rne';
-import { fetchImmatriculationFromSite } from '../clients/inpi/site';
-import { HttpNotFound, HttpServerError } from '../http-exceptions';
-import { Siren } from './siren-and-siret';
+import { fetchImmatriculationFromAPIRNE } from "../clients/inpi/api-rne";
+import { fetchImmatriculationFromSite } from "../clients/inpi/site";
+import { HttpNotFound, HttpServerError } from "../http-exceptions";
+import type { Siren } from "./siren-and-siret";
 
 export interface IEtatCivil {
   nom: string;

@@ -1,8 +1,8 @@
-import constants from '../../constants';
-import { HttpServerError, HttpTimeoutError } from '../../http-exceptions';
-import { Siren } from '../../models/siren-and-siret';
-import { formatNameFull } from '../../utils/helpers/formatters';
-import routes from '../urls';
+import constants from "../../constants";
+import { HttpServerError, HttpTimeoutError } from "../../http-exceptions";
+import type { Siren } from "../../models/siren-and-siret";
+import { formatNameFull } from "../../utils/helpers/formatters";
+import routes from "../urls";
 
 interface IGResponse {
   id: string;
@@ -124,9 +124,9 @@ const clientUniteLegaleIG = async (siren: Siren) => {
   try {
     const response = await fetch(routes.ig + siren, {
       signal: controller.signal,
-      method: 'GET',
+      method: "GET",
       headers: {
-        'User-Agent': 'bruno-runtime/2.1.0',
+        "User-Agent": "bruno-runtime/2.1.0",
       },
     });
 
@@ -140,17 +140,17 @@ const clientUniteLegaleIG = async (siren: Siren) => {
     return mapToDomainObject(data, siren);
   } catch (error: any) {
     clearTimeout(timeoutId);
-    if (error?.name === 'AbortError') {
-      throw new HttpTimeoutError('Timeout');
+    if (error?.name === "AbortError") {
+      throw new HttpTimeoutError("Timeout");
     }
     throw error;
   }
 };
 
 const mapToDomainObject = (r: IGResponse, siren: Siren) => {
-  const isEI = r.type_personne === 'PP';
+  const isEI = r.type_personne === "PP";
   const libelleNatureJuridique = isEI
-    ? 'Entrepreneur individuel'
+    ? "Entrepreneur individuel"
     : r?.personne_morale?.forme_juridique?.libelle;
 
   const nomComplet = isEI
@@ -159,41 +159,41 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
         r?.personne_physique?.nom_usage
       )}`
     : r?.nom +
-      (r?.personne_morale?.sigle ? ` (${r?.personne_morale?.sigle})` : '');
+      (r?.personne_morale?.sigle ? ` (${r?.personne_morale?.sigle})` : "");
 
   const dateCloture =
-    r?.personne_morale?.date_cloture_exceptionnelle ??
+    (r?.personne_morale?.date_cloture_exceptionnelle ??
     (r?.personne_morale?.jour_date_cloture &&
-      r?.personne_morale?.mois_date_cloture)
+      r?.personne_morale?.mois_date_cloture))
       ? `${r?.personne_morale?.jour_date_cloture}/${
           r?.personne_morale?.mois_date_cloture
         }/${new Date().getFullYear()}`
-      : '';
+      : "";
 
   return {
     siren,
     nomComplet,
-    etat: r.etat === 'ACTIF' ? 'A' : 'C',
+    etat: r.etat === "ACTIF" ? "A" : "C",
     libelleNatureJuridique,
-    activitePrincipale: r.activite_naf?.code || '',
-    libelleActivitePrincipale: r.activite_naf?.libelle || '',
-    dateCreation: '',
+    activitePrincipale: r.activite_naf?.code || "",
+    libelleActivitePrincipale: r.activite_naf?.libelle || "",
+    dateCreation: "",
     siege: null,
     association: {
       idAssociation: r?.personne_morale?.numero_rna || null,
     },
     immatriculation: {
-      dateDebutActivite: '',
-      dateFin: '',
+      dateDebutActivite: "",
+      dateFin: "",
       duree: 0,
       natureEntreprise: [],
       dateCloture,
-      dateImmatriculation: r.date_immatriculation || '',
-      dateRadiation: r.date_radiation || '',
+      dateImmatriculation: r.date_immatriculation || "",
+      dateRadiation: r.date_radiation || "",
       isPersonneMorale: !isEI,
       capital: r?.personne_morale?.capital
         ? `${r?.personne_morale?.capital?.montant} ${r?.personne_morale?.capital?.devise?.code} ${r?.personne_morale?.capital?.type}`
-        : '',
+        : "",
     },
   };
 };

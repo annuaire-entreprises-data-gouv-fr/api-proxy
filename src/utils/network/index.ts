@@ -1,20 +1,19 @@
-import Axios from 'axios';
-import https from 'https';
-import http from 'http';
-
-import constants from '../../constants';
-import { CACHE_TIMEOUT, defaultCacheConfig } from './cache-config';
+import Axios from "axios";
 import {
-  AxiosCacheInstance,
+  type AxiosCacheInstance,
   buildStorage,
   setupCache,
-} from 'axios-cache-interceptor';
+} from "axios-cache-interceptor";
+import http from "http";
+import https from "https";
+import constants from "../../constants";
+import { CACHE_TIMEOUT, defaultCacheConfig } from "./cache-config";
 import {
   addStartTimeInterceptor,
   errorInterceptor,
   logInterceptor,
-} from './interceptors';
-import { storage } from './storage/storage';
+} from "./interceptors";
+import { storage } from "./storage/storage";
 
 /**
  * Limit the number of sockets allocated per distant hosts and to reuse sockets
@@ -32,8 +31,8 @@ export type IDefaultRequestConfig = {
   useCache?: boolean;
   params?: any;
   headers?: any;
-  method?: 'POST' | 'GET' | 'PATCH';
-  responseType?: 'blob' | 'arraybuffer';
+  method?: "POST" | "GET" | "PATCH";
+  responseType?: "blob" | "arraybuffer";
   data?: unknown;
 };
 
@@ -53,11 +52,11 @@ export const axiosInstanceFactory = (
     debug: console.info,
   });
 
-  //@ts-ignore
+  //@ts-expect-error
   axiosInstance.interceptors.request.use(addStartTimeInterceptor, (err) =>
     Promise.reject(err)
   );
-  //@ts-ignore
+  //@ts-expect-error
   axiosInstance.interceptors.response.use(logInterceptor, errorInterceptor);
   return axiosInstance;
 };
@@ -88,7 +87,7 @@ async function httpGet<T>(
   url: string,
   config?: IDefaultRequestConfig
 ): Promise<T> {
-  return await httpClient({ ...config, url, method: 'GET' });
+  return await httpClient({ ...config, url, method: "GET" });
 }
 
 export { httpClient, httpGet };

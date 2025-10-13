@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifySiren } from '../models/siren-and-siret';
-import clientUniteLegaleIG from '../clients/ig';
+import type { NextFunction, Request, Response } from "express";
+import clientUniteLegaleIG from "../clients/ig";
+import { verifySiren } from "../models/siren-and-siret";
 
 export const igController = async (
   req: Request,

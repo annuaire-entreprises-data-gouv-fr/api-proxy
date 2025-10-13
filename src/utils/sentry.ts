@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node';
+import * as Sentry from "@sentry/node";
 
 export interface IScope {
   page?: string;
@@ -13,23 +13,23 @@ export interface IScope {
 const getScope = (extra: IScope) => {
   const scope = new Sentry.Scope();
   Object.keys(extra).forEach((key) => {
-    //@ts-ignore
-    scope.setTag(key, extra[key] || 'N/A');
+    //@ts-expect-error
+    scope.setTag(key, extra[key] || "N/A");
   });
   return scope;
 };
 
 export const logInSentryFactory =
-  (severity = 'error' as Sentry.SeverityLevel) =>
+  (severity = "error" as Sentry.SeverityLevel) =>
   (errorMsg: any, extra?: IScope) => {
     const shouldLogInSentry =
-      process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN && Sentry;
+      process.env.NODE_ENV === "production" && process.env.SENTRY_DSN && Sentry;
 
     if (shouldLogInSentry) {
       const scope = getScope(extra || {});
       scope.setLevel(severity);
 
-      if (typeof errorMsg === 'string') {
+      if (typeof errorMsg === "string") {
         Sentry.captureMessage(errorMsg, scope);
       } else {
         Sentry.captureException(errorMsg, scope);
@@ -40,11 +40,11 @@ export const logInSentryFactory =
   };
 
 export const logWarningInSentry = logInSentryFactory(
-  'info' as Sentry.SeverityLevel
+  "info" as Sentry.SeverityLevel
 );
 
 export const logErrorInSentry = logInSentryFactory(
-  'error' as Sentry.SeverityLevel
+  "error" as Sentry.SeverityLevel
 );
 
 export default logErrorInSentry;

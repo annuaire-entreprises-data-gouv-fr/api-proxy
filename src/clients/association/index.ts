@@ -1,6 +1,6 @@
-import constants from '../../constants';
-import { httpGet } from '../../utils/network';
-import routes from '../urls';
+import constants from "../../constants";
+import { httpGet } from "../../utils/network";
+import routes from "../urls";
 
 export const clientAssociation = async (rna: string): Promise<string> => {
   const encodedRna = encodeURIComponent(rna);

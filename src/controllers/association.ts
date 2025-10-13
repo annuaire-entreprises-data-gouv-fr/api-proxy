@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { clientAssociation } from '../clients/association';
+import type { NextFunction, Request, Response } from "express";
+import { clientAssociation } from "../clients/association";
 
 export const associationController = async (
   req: Request,

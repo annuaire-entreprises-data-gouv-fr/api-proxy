@@ -56,5 +56,3 @@ describe("Check isLuhnValid", () => {
     expect(isLuhnValid("8808781455300000")).toBe(false);
   });
 });
-
-export {};

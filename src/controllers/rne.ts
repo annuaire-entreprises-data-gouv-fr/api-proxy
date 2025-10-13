@@ -1,6 +1,6 @@
-import { verifySiren } from '../models/siren-and-siret';
-import { Request, Response, NextFunction } from 'express';
-import { fetchRneAPI, fetchRneSite } from '../models/rne';
+import type { NextFunction, Request, Response } from "express";
+import { fetchRneAPI, fetchRneSite } from "../models/rne";
+import { verifySiren } from "../models/siren-and-siret";
 
 export const rneControllerAPI = async (
   req: Request,
