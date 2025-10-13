@@ -1,4 +1,4 @@
-import { redisStorage } from "..";
+import { storage } from "./storage";
 import { logWarningInSentry } from "../../sentry";
 
 
@@ -31,8 +31,8 @@ export const getOrSetWithCacheExpiry = async (
     try {
       // Try to get the value and its TTL
       const [value, ttl] = await Promise.all([
-        redisStorage.find(key),
-        redisStorage.getTTL(key),
+        storage.find(key),
+        storage.getTTL(key),
       ]);
 
       if (value !== null && ttl > 0) {
@@ -40,18 +40,15 @@ export const getOrSetWithCacheExpiry = async (
 
         // Value exists and is less than a week old
         if (age < freshTime) {
-            console.log('SMART CACHE STORAGE: Value is less than a week old', key, value);
           return value;
         }
 
         // Value exists but is more than a week old - try to refresh
         try {
           const freshValue = await callback();
-          await redisStorage.set(key, freshValue, undefined, expiration);
-          console.log('SMART CACHE STORAGE: Value is more than a week old, refreshed', key, freshValue);
+          await storage.set(key, freshValue, undefined, expiration);
           return freshValue;
         } catch (err) {
-          console.log('SMART CACHE STORAGE: Callback failed, returning stale value', key, value);
           // Callback failed, return stale value
           logWarningInSentry(
             new SmartCacheStorageException({
@@ -64,13 +61,21 @@ export const getOrSetWithCacheExpiry = async (
 
       // Key doesn't exist or has no TTL - fetch fresh data
       const freshValue = await callback();
-      await redisStorage.set(key, freshValue, undefined, expiration);
-      console.log('SMART CACHE STORAGE: Key doesn\'t exist or has no TTL, fetched fresh data', key, freshValue);
+
+      try {
+        await storage.set(key, freshValue, undefined, expiration);
+      } catch (err) {
+        logWarningInSentry(
+          new SmartCacheStorageException({
+              message: `Failed to set key ${key}: ${err instanceof Error ? err.message : 'Unknown error'}`,
+          })
+        );
+      }
       return freshValue;
     } catch (err) {
       // Redis error - try to get any existing value as fallback
       try {
-        const value = await redisStorage.find(key);
+        const value = await storage.find(key);
         if (value !== null) {
           logWarningInSentry(
             new SmartCacheStorageException({
@@ -88,7 +93,7 @@ export const getOrSetWithCacheExpiry = async (
         const freshValue = await callback();
         // Try to cache it but don't fail if caching fails
         try {
-          await redisStorage.set(key, freshValue, undefined, expiration);
+          await storage.set(key, freshValue, undefined, expiration);
         } catch {
           // Ignore caching error
         }

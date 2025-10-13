@@ -11,11 +11,12 @@ export const clientTVA = (tvaNumber: TVANumber): Promise<string> => {
   const encodedTvaNumber = encodeURIComponent(tvaNumber);
   const url = `${routes.tva}${encodedTvaNumber}`;
 
-  const callback = () => httpGet<{ userError: string }>(url, { timeout: constants.timeout.XXL, useCache: false }).then((res) => {
-      if (["VALID", "INVALID"].indexOf(res.userError) === -1) {
+  const callback = () => httpGet<{ userError: string, tva?: string }>(url, { timeout: constants.timeout.XXL, useCache: false }).then((res) => {
+      if (!["VALID", "INVALID"].includes(res.userError)) {
         throw new Error(res.userError);
       }
-      return res;
+
+      return { tva: res.tva || null };
     });
 
   return getOrSetWithCacheExpiry(
