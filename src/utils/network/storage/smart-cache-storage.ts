@@ -45,7 +45,7 @@ export const getOrSetWithCacheExpiry = async (
 
     return fetchAndCache(key, callback, expiration);
   } catch (err) {
-    return handleRedisFallback(key, callback, expiration, err);
+    return handleErrorFallback(key, callback, expiration, err);
   }
 };
 
@@ -98,7 +98,7 @@ const fetchAndCache = async (
  * Handles the case when Redis operations fail.
  * Tries to fallback to any cached value, then to callback.
  */
-const handleRedisFallback = async (
+const handleErrorFallback = async (
   key: string,
   callback: () => Promise<any>,
   expiration: number,
