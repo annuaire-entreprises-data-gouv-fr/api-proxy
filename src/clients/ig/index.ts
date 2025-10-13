@@ -4,7 +4,7 @@ import type { Siren } from "../../models/siren-and-siret";
 import { formatNameFull } from "../../utils/helpers/formatters";
 import routes from "../urls";
 
-interface IGResponse {
+type IGResponse = {
   id: string;
   nom: string;
   numero_identification: string;
@@ -54,9 +54,9 @@ interface IGResponse {
   numero_tva_intracommunautaire: any;
   personne_morale?: PersonneMorale;
   personne_physique?: PersonnePhysique;
-}
+};
 
-interface PersonnePhysique {
+type PersonnePhysique = {
   nom_patronymique: string; // "DUBIGNY"
   nom_usage: string; // "MENARD DUBIGNY"
   annee_naissance: string; // null
@@ -74,9 +74,9 @@ interface PersonnePhysique {
   telephone_fixe: string; // null
   email: string; // null
   COG_commune_naissance: string; // null
-}
+};
 
-interface PersonneMorale {
+type PersonneMorale = {
   id: string;
   denomination: string;
   siege_social: null;
@@ -108,7 +108,7 @@ interface PersonneMorale {
   date_societe_mission: string;
   noms_domaines_internet: string[];
   economie_social_solidaire: boolean;
-}
+};
 
 /**
  * Call EORI to validate a French EORI number
@@ -131,6 +131,7 @@ const clientUniteLegaleIG = async (siren: Siren) => {
     });
 
     if (!response.ok) {
+      // biome-ignore lint/suspicious/noConsole: needed for logging
       console.log(`Error fetching IG data: ${response.statusText}`);
       throw new HttpServerError(
         `Failed to fetch IG data: ${response.status} ${response.statusText}`

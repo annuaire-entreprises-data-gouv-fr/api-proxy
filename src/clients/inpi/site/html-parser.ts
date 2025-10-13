@@ -15,7 +15,7 @@ import parseObservations from "./parsers/observations";
 
 export class InvalidFormatError extends HttpServerError {
   constructor(message: string) {
-    super("Unable to parse HTML :" + message);
+    super(`Unable to parse HTML :${message}`);
   }
 }
 
@@ -50,13 +50,12 @@ const extractImmatriculationFromHtml = (
     observations: [],
   } as any;
 
-  let rawIdentite;
+  let rawIdentite: Element | null = null;
 
   const radiationText =
     container.querySelector("p.company-removed")?.textContent || "";
 
-  for (let i = 0; i < rowsHtml.length; i++) {
-    const row = rowsHtml[i];
+  for (const row of rowsHtml) {
     const title = clean(row.querySelector("h2, h3, h4, h5")?.innerHTML);
 
     switch (title) {

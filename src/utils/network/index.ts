@@ -1,11 +1,11 @@
+import http from "node:http";
+import https from "node:https";
 import Axios from "axios";
 import {
   type AxiosCacheInstance,
   buildStorage,
   setupCache,
 } from "axios-cache-interceptor";
-import http from "http";
-import https from "https";
 import constants from "../../constants";
 import { CACHE_TIMEOUT, defaultCacheConfig } from "./cache-config";
 import {
@@ -49,6 +49,7 @@ export const axiosInstanceFactory = (
     storage: buildStorage(storage),
     // ignore cache-control headers as some API like sirene return 'no-cache' headers
     headerInterpreter: () => CACHE_TIMEOUT,
+    // biome-ignore lint/suspicious/noConsole: needed for logging
     debug: console.info,
   });
 
@@ -56,7 +57,6 @@ export const axiosInstanceFactory = (
   axiosInstance.interceptors.request.use(addStartTimeInterceptor, (err) =>
     Promise.reject(err)
   );
-  //@ts-expect-error
   axiosInstance.interceptors.response.use(logInterceptor, errorInterceptor);
   return axiosInstance;
 };

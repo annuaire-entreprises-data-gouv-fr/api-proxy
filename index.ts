@@ -1,10 +1,11 @@
+// biome-ignore lint/performance/noNamespaceImport: Sentry namespace needed
 import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
 import express, { type Express, type Request, type Response } from "express";
 import helmet from "helmet";
 import { associationController } from "./src/controllers/association";
 import { eoriController } from "./src/controllers/eori";
-import { errorHandler } from "./src/controllers/errorHandler";
+import { errorHandler } from "./src/controllers/error-handler";
 import { igController } from "./src/controllers/ig";
 import { rneControllerAPI, rneControllerSite } from "./src/controllers/rne";
 import { tvaController } from "./src/controllers/tva";
@@ -40,7 +41,7 @@ if (useSentry) {
 /**
  * Up and running
  */
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_: Request, res: Response) => {
   res.json({ message: "Server is up and running" });
 });
 
@@ -82,5 +83,6 @@ app.use("/ig/:siren", igController);
 app.use(errorHandler);
 
 app.listen(port, () => {
+  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 });

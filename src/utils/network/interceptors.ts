@@ -15,7 +15,7 @@ import {
  */
 export const addStartTimeInterceptor = (config: AxiosRequestConfig) => ({
   ...config,
-  metadata: { startTime: new Date().getTime() },
+  metadata: { startTime: Date.now() },
 });
 
 /**
@@ -23,19 +23,20 @@ export const addStartTimeInterceptor = (config: AxiosRequestConfig) => ({
  * @param response
  */
 export const logInterceptor = (response: AxiosResponse<any, any>) => {
-  const endTime = new Date().getTime();
+  const endTime = Date.now();
   //@ts-expect-error
   const startTime = response?.config?.metadata?.startTime;
 
+  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.info(
-    formatLog(
-      response?.config?.url || "",
-      response?.status,
+    formatLog({
+      url: response?.config?.url || "",
+      status: response?.status,
       //@ts-expect-error
-      response?.cached,
-      startTime ? endTime - startTime : undefined,
-      (response?.config?.method || "").toUpperCase()
-    )
+      isFromCached: response?.cached,
+      time: startTime ? endTime - startTime : undefined,
+      method: (response?.config?.method || "").toUpperCase(),
+    })
   );
 
   return response;
@@ -59,17 +60,18 @@ export const errorInterceptor = (error: AxiosError) => {
   const statusText = response?.statusText;
 
   if (status !== 404) {
-    const endTime = new Date().getTime();
+    const endTime = Date.now();
     //@ts-expect-error
     const startTime = config?.metadata?.startTime;
+    // biome-ignore lint/suspicious/noConsole: needed for logging
     console.error(
-      formatLog(
+      formatLog({
         url,
         status,
-        false,
-        startTime ? endTime - startTime : undefined,
-        error.request?.method
-      )
+        isFromCached: false,
+        time: startTime ? endTime - startTime : undefined,
+        method: error.request?.method || "",
+      })
     );
   }
 
@@ -105,11 +107,13 @@ export const errorInterceptor = (error: AxiosError) => {
   }
 };
 
-export const formatLog = (
-  url: string,
-  status: number,
-  isFromCached = false,
-  time = -1,
-  method: string
-) =>
-  `status=${status} time=${time} isFromCached=${isFromCached} request=${url} method=${method}`;
+export const formatLog = (params: {
+  url: string;
+  status: number;
+  isFromCached?: boolean;
+  time?: number;
+  method: string;
+}) => {
+  const { url, status, isFromCached = false, time = -1, method } = params;
+  return `status=${status} time=${time} isFromCached=${isFromCached} request=${url} method=${method}`;
+};

@@ -1,15 +1,17 @@
+import { performance } from "node:perf_hooks";
 import type { BuildStorage } from "axios-cache-interceptor";
-import { performance } from "perf_hooks";
 import { createClient } from "redis";
 import { logWarningInSentry } from "../../sentry";
 import { redisPromiseTimeout } from "./redis-timeout";
 
 export class RedisStorage implements BuildStorage {
-  private _client;
+  private readonly _client;
+  private readonly cache_timeout;
   private _eventLoopLag;
   private _lastLoop;
 
-  constructor(private cache_timeout: number) {
+  constructor(cache_timeout: number) {
+    this.cache_timeout = cache_timeout;
     // Mesure de l'event loop lag toutes les 10 secondes
     this._lastLoop = performance.now();
     this._eventLoopLag = 0;
@@ -33,7 +35,7 @@ export class RedisStorage implements BuildStorage {
     });
   }
 
-  private async connect() {
+  private connect() {
     if (!this._client.isOpen) {
       try {
         return this._client.connect();
@@ -48,7 +50,7 @@ export class RedisStorage implements BuildStorage {
   }
 
   find = async (key: string) => {
-    await this.connect();
+    this.connect();
     const start = performance.now();
     let result: string | null = null;
     let error: any = null;
@@ -87,7 +89,7 @@ export class RedisStorage implements BuildStorage {
   };
 
   set = async (key: string, value: any, _: any, ttl = this.cache_timeout) => {
-    await this.connect();
+    this.connect();
     await redisPromiseTimeout(
       this._client.set(key, JSON.stringify(value), {
         expiration: {
@@ -106,7 +108,7 @@ export class RedisStorage implements BuildStorage {
   };
 
   getTTL = async (key: string) => {
-    await this.connect();
+    this.connect();
     let result: number | null = null;
     let error: any = null;
 
@@ -139,13 +141,13 @@ export class RedisStorage implements BuildStorage {
   };
 
   remove = async (key: string) => {
-    await this.connect();
+    this.connect();
     await this._client.del(key);
   };
 }
 
 class RedisStorageException extends Error {
-  public name: string;
+  name: string;
   constructor({ name = "RedisStorageException", message = "" }) {
     super(message);
     this.name = name;

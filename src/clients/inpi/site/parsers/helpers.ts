@@ -28,7 +28,11 @@ export const parseNameAndRole = (rawNameAndRole = "") => {
     nom: null,
     prenom: null,
     role: null,
-  } as any;
+  } as {
+    nom: string | null;
+    prenom: string | null;
+    role: string | null;
+  };
 
   if (!rawNameAndRole) {
     return response;

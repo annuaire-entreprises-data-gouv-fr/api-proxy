@@ -4,19 +4,17 @@ import { extractFromHtmlBlock } from "./helpers";
 const parseObservations = (observationsHtml: NodeListOf<Element>) => {
   const observations = [] as IObservation[];
 
-  for (let i = 0; i < observationsHtml.length; i++) {
+  for (const observationHtml of observationsHtml) {
     const current = {
       numObservation: "",
       dateAjout: "",
       description: "",
     } as IObservation;
 
-    const fields = observationsHtml[i].querySelectorAll(
-      "div.bloc-detail-notice"
-    );
+    const fields = observationHtml.querySelectorAll("div.bloc-detail-notice");
 
-    for (let j = 0; j < fields.length; j++) {
-      const { label, text } = extractFromHtmlBlock(fields[j]);
+    for (const field of fields) {
+      const { label, text } = extractFromHtmlBlock(field);
       if (label.indexOf("Numéro") > -1) {
         current.numObservation = text;
       } else if (label.indexOf("Date") > -1) {

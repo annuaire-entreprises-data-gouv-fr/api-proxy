@@ -4,11 +4,7 @@
  * Always prefer the built-in alternative if it exists
  */
 
-export class RedisPromiseTimeoutError extends Error {
-  constructor(public message: string) {
-    super(message);
-  }
-}
+export class RedisPromiseTimeoutError extends Error {}
 
 /**
  * Rejects a promise with a {@link RedisPromiseTimeoutError} if it does not settle within
@@ -28,7 +24,7 @@ export const redisPromiseTimeout = <T>(
 
   return Promise.race([
     promise,
-    new Promise((resolve, reject) => {
+    new Promise((_, reject) => {
       timeout = setTimeout(() => {
         reject(new RedisPromiseTimeoutError("Redis client timeout"));
       }, timeoutMillis);

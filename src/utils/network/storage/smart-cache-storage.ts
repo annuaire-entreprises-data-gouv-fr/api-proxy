@@ -2,7 +2,8 @@ import { logWarningInSentry } from "../../sentry";
 import { storage } from "./storage";
 
 class SmartCacheStorageException extends Error {
-  public name: string;
+  name: string;
+
   constructor({ name = "SmartCacheStorageException", message = "" }) {
     super(message);
     this.name = name;

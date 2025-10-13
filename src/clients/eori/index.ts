@@ -20,6 +20,8 @@ export type IEORIValidation = {
   isValid: boolean;
 };
 
+const resultRegex = /<result>[\s\S]*?<\/result>/;
+
 /**
  * Call EORI SOAP API to validate EORI number
  * @param siret
@@ -28,7 +30,7 @@ const clientEORI = async (siret: Siret): Promise<IEORIValidation | null> => {
   const response = await httpClient<string>({
     url: routes.eori,
     method: "POST",
-    data: createSOAPRequest("FR" + siret),
+    data: createSOAPRequest(`FR${siret}`),
     headers: {
       "Content-Type": "text/xml;charset=UTF-8",
       SOAPAction: "",
@@ -36,9 +38,9 @@ const clientEORI = async (siret: Siret): Promise<IEORIValidation | null> => {
     timeout: constants.timeout.XXL,
     useCache: true,
   });
-  const result = response.match(/<result>[\s\S]*?<\/result>/)?.[0];
+  const result = response.match(resultRegex)?.[0];
 
-  if (!(result && result.includes("<status>"))) {
+  if (!result?.includes("<status>")) {
     return null;
   }
 

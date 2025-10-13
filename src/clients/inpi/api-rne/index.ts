@@ -38,7 +38,7 @@ export const fetchImmatriculationFromAPIRNE = async (
   if (data.formality.content.personnePhysique) {
     return mapPersonnePhysiqueToDomainObject(
       data.formality.content.personnePhysique,
-      data.formality.content.formeExerciceActivitePrincipale,
+      data.formality.content.formeExerciceActivitePrincipale || "",
       inscriptionsOffices,
       siren
     );
@@ -49,7 +49,7 @@ export const fetchImmatriculationFromAPIRNE = async (
   if (personneMorale || exploitation) {
     return mapPersonneMoraleToDomainObject(
       (personneMorale || exploitation) as IRNEPersonneMorale,
-      data.formality.content.formeExerciceActivitePrincipale,
+      data.formality.content.formeExerciceActivitePrincipale || "",
       inscriptionsOffices,
       siren
     );
@@ -64,7 +64,7 @@ export const fetchImmatriculationFromAPIRNE = async (
 
 const mapPersonneMoraleToDomainObject = (
   pm: IRNEPersonneMorale,
-  natureEntreprise = "",
+  natureEntreprise: string,
   inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {
@@ -149,7 +149,7 @@ const mapPersonneMoraleToDomainObject = (
 
 const mapPersonnePhysiqueToDomainObject = (
   pp: IRNEPersonnePhysique,
-  natureEntreprise = "",
+  natureEntreprise: string,
   inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {

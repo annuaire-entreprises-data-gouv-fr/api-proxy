@@ -7,8 +7,8 @@ const parseIdentiteBlocks = (identiteHtml: Element) => {
 
   const parsedBlocs = {} as any;
 
-  for (let i = 0; i < blocsHtml.length; i++) {
-    const { label, text } = extractFromHtmlBlock(blocsHtml[i]);
+  for (const blocHtml of blocsHtml) {
+    const { label, text } = extractFromHtmlBlock(blocHtml);
     parsedBlocs[escapeTerm(label)] = text;
   }
   return parsedBlocs;

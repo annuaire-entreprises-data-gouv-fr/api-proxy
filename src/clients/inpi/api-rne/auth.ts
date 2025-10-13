@@ -14,7 +14,7 @@ dotenv.config();
 
 class RNEClient {
   private _token = "";
-  private account = [process.env.RNE_LOGIN, process.env.RNE_PASSWORD];
+  private readonly account = [process.env.RNE_LOGIN, process.env.RNE_PASSWORD];
 
   refreshToken = async () => {
     const [username, password] = this.account;

@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { fetchRneAPI } from "../models/rne";
 import { verifySiren } from "../models/siren-and-siret";
 
-export const apiRneStatusController = async (req: Request, res: Response) => {
+export const apiRneStatusController = async (_: Request, res: Response) => {
   try {
     const dummySiren = verifySiren("552032534");
 

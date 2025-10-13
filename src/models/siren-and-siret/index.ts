@@ -17,7 +17,7 @@ export const isTVANumber = (slug: string): slug is TVANumber =>
 
 /**
  * throw an exception if a string is not a TVA Number
- * */
+ */
 export const verifyTVANumber = (slug: string): TVANumber => {
   if (isTVANumber(slug)) {
     return slug;
@@ -44,7 +44,7 @@ export const isSiret = (slug: string): slug is Siren => {
 
 /**
  * throw an exception if a string is not a siren
- * */
+ */
 export const verifySiren = (slug: string): Siren => {
   if (!isSiren(slug)) {
     if (hasSirenFormat(slug)) {
@@ -57,7 +57,7 @@ export const verifySiren = (slug: string): Siren => {
 
 /**
  * Throw an exception if a string is not a siret
- * */
+ */
 export const verifySiret = (slug: string): Siret => {
   if (!isSiret(slug)) {
     if (hasSiretFormat(slug)) {
@@ -94,7 +94,7 @@ export const isLuhnValid = (str: string) => {
   if (str.indexOf("356000000") === 0) {
     return true;
   }
-  return luhnChecksum(str) % 10 == 0;
+  return luhnChecksum(str) % 10 === 0;
 };
 
 export const isLikelyASiretOrSiren = (slug: string) =>
