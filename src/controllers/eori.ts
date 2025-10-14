@@ -10,10 +10,13 @@ export const eoriController = async (
   try {
     const siret = verifySiret(req.params?.siret);
     const siren = extractSirenFromSiret(siret);
+
     // Try to validate with siren first, if it fails, try with siret
-    const eoriValidation = await clientEORI(siren).catch(() =>
-      clientEORI(siret)
-    );
+    let eoriValidation = await clientEORI(siren);
+
+    if (!eoriValidation?.isValid) {
+      eoriValidation = await clientEORI(siret);
+    }
     res.status(200).json(eoriValidation);
   } catch (e) {
     next(e);
