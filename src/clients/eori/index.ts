@@ -1,5 +1,5 @@
 import constants from "../../constants";
-import type { Siret } from "../../models/siren-and-siret";
+import type { Siren, Siret } from "../../models/siren-and-siret";
 import httpClient from "../../utils/network";
 import routes from "../urls";
 
@@ -26,11 +26,13 @@ const resultRegex = /<result>[\s\S]*?<\/result>/;
  * Call EORI SOAP API to validate EORI number
  * @param siret
  */
-const clientEORI = async (siret: Siret): Promise<IEORIValidation | null> => {
+const clientEORI = async (
+  siretOrSiren: Siret | Siren
+): Promise<IEORIValidation | null> => {
   const response = await httpClient<string>({
     url: routes.eori,
     method: "POST",
-    data: createSOAPRequest(`FR${siret}`),
+    data: createSOAPRequest(`FR${siretOrSiren}`),
     headers: {
       "Content-Type": "text/xml;charset=UTF-8",
       SOAPAction: "",
@@ -46,7 +48,7 @@ const clientEORI = async (siret: Siret): Promise<IEORIValidation | null> => {
 
   const isValid = result.includes("<status>0</status>");
   return {
-    eori: siret,
+    eori: siretOrSiren,
     isValid,
   };
 };
