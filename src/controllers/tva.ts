@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifyTVANumber } from '../models/siren-and-siret';
-import { clientTVA } from '../clients/tva';
+import type { NextFunction, Request, Response } from "express";
+import { clientTVA } from "../clients/tva";
+import { verifyTVANumber } from "../models/siren-and-siret";
 
 export const tvaController = async (
   req: Request,

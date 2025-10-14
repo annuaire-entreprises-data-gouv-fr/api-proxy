@@ -1,26 +1,25 @@
-import { JSDOM } from 'jsdom';
-import {
+import { JSDOM } from "jsdom";
+import { HttpServerError } from "../../../http-exceptions";
+import type {
   IBeneficiaire,
   IDirigeant,
   IIdentite,
   IObservation,
-} from '../../../models/rne';
-import { Siren } from '../../../models/siren-and-siret';
-
-import parseDirigeants from './parsers/dirigeants';
+} from "../../../models/rne";
+import type { Siren } from "../../../models/siren-and-siret";
+import parseDirigeants from "./parsers/dirigeants";
 import parseIdentite, {
   extractDirigeantFromIdentite,
-} from './parsers/identite';
-import { HttpServerError } from '../../../http-exceptions';
-import parseObservations from './parsers/observations';
+} from "./parsers/identite";
+import parseObservations from "./parsers/observations";
 
 export class InvalidFormatError extends HttpServerError {
   constructor(message: string) {
-    super('Unable to parse HTML :' + message);
+    super(`Unable to parse HTML :${message}`);
   }
 }
 
-const clean = (raw = '') => raw.replace('\n', '').replace(/\s+/g, ' ').trim();
+const clean = (raw = "") => raw.replace("\n", "").replace(/\s+/g, " ").trim();
 
 const extractImmatriculationFromHtml = (
   html: string,
@@ -35,14 +34,14 @@ const extractImmatriculationFromHtml = (
   const document = dom.window.document;
 
   const container = document.querySelector(
-    'div#notice-description > div.bloc-without-img'
+    "div#notice-description > div.bloc-without-img"
   );
 
   if (!container) {
-    throw new InvalidFormatError('Cannot find Inpi container');
+    throw new InvalidFormatError("Cannot find Inpi container");
   }
 
-  const rowsHtml = container.querySelectorAll('div.row');
+  const rowsHtml = container.querySelectorAll("div.row");
 
   const response = {
     identite: null,
@@ -51,31 +50,30 @@ const extractImmatriculationFromHtml = (
     observations: [],
   } as any;
 
-  let rawIdentite;
+  let rawIdentite: Element | null = null;
 
   const radiationText =
-    container.querySelector('p.company-removed')?.textContent || '';
+    container.querySelector("p.company-removed")?.textContent || "";
 
-  for (let i = 0; i < rowsHtml.length; i++) {
-    const row = rowsHtml[i];
-    const title = clean(row.querySelector('h2, h3, h4, h5')?.innerHTML);
+  for (const row of rowsHtml) {
+    const title = clean(row.querySelector("h2, h3, h4, h5")?.innerHTML);
 
     switch (title) {
-      case 'Identité':
+      case "Identité":
         response.identite = parseIdentite(row, radiationText);
         rawIdentite = row;
         break;
-      case 'Représentants':
+      case "Représentants":
         response.dirigeants = parseDirigeants(row);
         break;
-      case 'Bénéficiaires effectifs':
+      case "Bénéficiaires effectifs":
         break;
       default:
     }
   }
 
   const observationsHtml = container.querySelectorAll(
-    '#observations + div.row, #observations-other > div.row'
+    "#observations + div.row, #observations-other > div.row"
   );
   response.observations = parseObservations(observationsHtml);
 

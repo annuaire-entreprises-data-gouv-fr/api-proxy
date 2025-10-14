@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import { verifySiret } from '../models/siren-and-siret';
-import clientEORI from '../clients/eori';
+import type { NextFunction, Request, Response } from "express";
+import clientEORI from "../clients/eori";
+import { verifySiret } from "../models/siren-and-siret";
 
 export const eoriController = async (
   req: Request,

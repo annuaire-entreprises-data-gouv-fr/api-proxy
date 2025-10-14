@@ -6,9 +6,7 @@ export const defaultCacheConfig = {
 
   // only cache 200
   cachePredicate: {
-    statusCheck: (status: number) => {
-      return status >= 200 && status < 300;
-    },
+    statusCheck: (status: number) => status >= 200 && status < 300,
     responseMatch: ({ data }: { data: any }) => {
       // only caches if the response is not fallback
       const isFallback = !!data?.metadata?.isFallback;

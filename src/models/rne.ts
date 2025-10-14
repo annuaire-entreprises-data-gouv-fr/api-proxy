@@ -1,25 +1,25 @@
-import { fetchImmatriculationFromAPIRNE } from '../clients/inpi/api-rne';
-import { fetchImmatriculationFromSite } from '../clients/inpi/site';
-import { HttpNotFound, HttpServerError } from '../http-exceptions';
-import { Siren } from './siren-and-siret';
+import { fetchImmatriculationFromAPIRNE } from "../clients/inpi/api-rne";
+import { fetchImmatriculationFromSite } from "../clients/inpi/site";
+import { HttpNotFound, HttpServerError } from "../http-exceptions";
+import type { Siren } from "./siren-and-siret";
 
-export interface IEtatCivil {
+export type IEtatCivil = {
   nom: string;
   prenom: string;
   role: string;
   dateNaissancePartial: string;
   dateNaissanceFull: string;
-}
+};
 
-export interface IBeneficiaire {
+export type IBeneficiaire = {
   type: string;
   nom: string;
   prenoms: string;
   dateNaissancePartial: string;
   nationalite: string;
-}
+};
 
-export interface IIdentite {
+export type IIdentite = {
   denomination: string;
   natureEntreprise: string;
   dateImmatriculation: string;
@@ -31,24 +31,24 @@ export interface IIdentite {
   dureePersonneMorale: number;
   capital: string;
   libelleNatureJuridique: string;
-}
+};
 
-export interface IPersonneMorale {
+export type IPersonneMorale = {
   siren: string;
   denomination: string;
   natureJuridique: string;
   role: string;
-}
+};
 
-export interface IObservation {
+export type IObservation = {
   numObservation: string;
   dateAjout: string;
   description: string;
-}
+};
 
 export type IDirigeant = IEtatCivil | IPersonneMorale;
 
-export interface IImmatriculation {
+export type IImmatriculation = {
   siren: Siren;
   identite: IIdentite;
   dirigeants: IDirigeant[];
@@ -57,7 +57,7 @@ export interface IImmatriculation {
   metadata: {
     isFallback: boolean;
   };
-}
+};
 
 /**
  * Get RNE immatriculation from API, when it works

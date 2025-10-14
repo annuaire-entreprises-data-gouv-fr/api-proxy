@@ -1,5 +1,5 @@
-export const cleanTextFromHtml = (raw = '') =>
-  raw.replace('\n', '').replace(/\s+/g, ' ').replace('<br>', '').trim();
+export const cleanTextFromHtml = (raw = "") =>
+  raw.replace("\n", "").replace(/\s+/g, " ").replace("<br>", "").trim();
 
 /**
  * converts a html block of two adjacents <p> into a {label, text }
@@ -8,11 +8,11 @@ export const cleanTextFromHtml = (raw = '') =>
  */
 export const extractFromHtmlBlock = (block: Element) => {
   const label = cleanTextFromHtml(
-    block.querySelector('p:first-of-type')?.innerHTML
+    block.querySelector("p:first-of-type")?.innerHTML
   );
 
   const text = cleanTextFromHtml(
-    block.querySelector('p:last-of-type')?.innerHTML
+    block.querySelector("p:last-of-type")?.innerHTML
   );
   return { label, text };
 };
@@ -23,29 +23,33 @@ export const extractFromHtmlBlock = (block: Element) => {
  * @param rawNameAndRole
  * @returns
  */
-export const parseNameAndRole = (rawNameAndRole = '') => {
+export const parseNameAndRole = (rawNameAndRole = "") => {
   const response = {
     nom: null,
     prenom: null,
     role: null,
-  } as any;
+  } as {
+    nom: string | null;
+    prenom: string | null;
+    role: string | null;
+  };
 
   if (!rawNameAndRole) {
     return response;
   }
 
-  const [nameRaw, firstName] = rawNameAndRole.split('</span>');
+  const [nameRaw, firstName] = rawNameAndRole.split("</span>");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_spanPrefix, name] = nameRaw.split('class="inpi-bold">');
 
-  if (!name && !firstName) {
-    response.nom = rawNameAndRole;
-  } else {
-    response.nom = (name || '').toUpperCase().trim();
-    response.prenom = (firstName || '')
+  if (name || firstName) {
+    response.nom = (name || "").toUpperCase().trim();
+    response.prenom = (firstName || "")
       .toUpperCase()
       .trim()
-      .replaceAll(' , ', ', ');
+      .replaceAll(" , ", ", ");
+  } else {
+    response.nom = rawNameAndRole;
   }
 
   return response;

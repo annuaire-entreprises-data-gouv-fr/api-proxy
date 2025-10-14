@@ -1,4 +1,4 @@
-interface IRNEIdentitePM {
+type IRNEIdentitePM = {
   entreprise: {
     siren: string;
     denomination: string;
@@ -20,8 +20,8 @@ interface IRNEIdentitePM {
   };
   nomsDeDomaine: [];
   entreprisesIntervenant: [];
-}
-interface IRNEIdentitePP {
+};
+type IRNEIdentitePP = {
   entrepreneur: IRNEEntrepreneur;
   entreprise: {
     siren: string;
@@ -31,17 +31,17 @@ interface IRNEIdentitePP {
     dateRad: string;
     dateDebutActiv: string;
   };
-}
+};
 
-interface IRNEEntrepreneur {
+type IRNEEntrepreneur = {
   descriptionPersonne: {
     nom: string;
     prenoms: string[];
     nomUsage: string;
   };
-}
+};
 
-interface IRNEAdresse {
+type IRNEAdresse = {
   caracteristiques: {
     ambulant: boolean;
     domiciliataire: string | null;
@@ -49,16 +49,16 @@ interface IRNEAdresse {
   adresse: {
     roleAdresse: string | null;
     pays: string | null;
-    codePays: 'FRA';
+    codePays: "FRA";
     codePostal: string | null;
     commune: string | null;
     codeInseeCommune: string | null;
     caracteristiques: string | null;
   };
   entrepriseDomiciliataire: string | null;
-}
+};
 
-interface IRNEPouvoir {
+type IRNEPouvoir = {
   roleEntreprise: string; // '65',
   libelleRoleEntreprise: string; // 'Commissaire aux comptes titulaire',
   typeDePersonne: string; //'ENTREPRISE',
@@ -115,9 +115,9 @@ interface IRNEPouvoir {
     adresseDomicile: IRNEAdresse;
     indicateurActifAgricole: boolean;
   };
-}
+};
 
-export interface IRNEPersonneMorale {
+export type IRNEPersonneMorale = {
   identite: IRNEIdentitePM;
   adresseEntreprise: IRNEAdresse;
   detailCessationEntreprise: {
@@ -130,18 +130,18 @@ export interface IRNEPersonneMorale {
   composition: {
     pouvoirs: IRNEPouvoir[];
   };
-}
+};
 
-export interface IRNEPersonnePhysique {
+export type IRNEPersonnePhysique = {
   identite: IRNEIdentitePP;
   adresseEntreprise: IRNEAdresse;
   detailCessationEntreprise: any;
   composition: {
     pouvoirs: IRNEPouvoir[];
   };
-}
+};
 
-export interface IRNEResponse {
+export type IRNEResponse = {
   siren: string;
   createdAt: string;
   updatedAt: string;
@@ -150,7 +150,7 @@ export interface IRNEResponse {
     siren: string;
     evenementCessation: string | null;
     natureCessation: string | null;
-    succursaleOuFiliale: 'AVEC_ETABLISSEMENT';
+    succursaleOuFiliale: "AVEC_ETABLISSEMENT";
     indicateurPoursuiteCessation: string | null;
     content: {
       formeExerciceActivitePrincipale: string;
@@ -172,7 +172,7 @@ export interface IRNEResponse {
       personnePhysique?: IRNEPersonnePhysique;
     };
   };
-}
+};
 
 export type IRNEInscriptionsOffices = {
   dateEffet: string;

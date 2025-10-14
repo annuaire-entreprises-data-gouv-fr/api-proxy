@@ -1,26 +1,26 @@
-import dotenv from 'dotenv';
-import constants from '../../../constants';
+import dotenv from "dotenv";
+import constants from "../../../constants";
 import {
   HttpTooManyRequests,
   HttpUnauthorizedError,
-} from '../../../http-exceptions';
+} from "../../../http-exceptions";
 import httpClient, {
   httpGet,
-  IDefaultRequestConfig,
-} from '../../../utils/network';
-import routes from '../../urls';
+  type IDefaultRequestConfig,
+} from "../../../utils/network";
+import routes from "../../urls";
 
 dotenv.config();
 
 class RNEClient {
-  private _token = '';
-  private account = [process.env.RNE_LOGIN, process.env.RNE_PASSWORD];
+  private _token = "";
+  private readonly account = [process.env.RNE_LOGIN, process.env.RNE_PASSWORD];
 
   refreshToken = async () => {
     const [username, password] = this.account;
 
     const response = await httpClient<{ token: string }>({
-      method: 'POST',
+      method: "POST",
       url: routes.inpi.api.rne.login,
       data: {
         username,
@@ -29,7 +29,7 @@ class RNEClient {
       timeout: constants.timeout.XXL,
       useCache: false,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
     return response.token;
@@ -70,9 +70,8 @@ class RNEClient {
       ) {
         this._token = await this.refreshToken();
         return await callback();
-      } else {
-        throw e;
       }
+      throw e;
     }
   };
 }

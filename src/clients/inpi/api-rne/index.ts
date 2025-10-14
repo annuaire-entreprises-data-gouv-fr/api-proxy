@@ -1,27 +1,27 @@
-import constants from '../../../constants';
-import { HttpNotFound } from '../../../http-exceptions';
-import {
+import constants from "../../../constants";
+import { HttpNotFound } from "../../../http-exceptions";
+import type {
   IEtatCivil,
   IImmatriculation,
   IPersonneMorale,
-} from '../../../models/rne';
-import { Siren } from '../../../models/siren-and-siret';
-import { formatFloatFr } from '../../../utils/helpers/formatters';
+} from "../../../models/rne";
+import type { Siren } from "../../../models/siren-and-siret";
+import { formatFloatFr } from "../../../utils/helpers/formatters";
 import {
   libelleFromCategoriesJuridiques,
   libelleFromCodeNatureEntreprise,
   libelleFromCodeRoleDirigeant,
-} from '../../../utils/helpers/labels';
-import { logWarningInSentry } from '../../../utils/sentry';
-import routes from '../../urls';
-import { formatINPIDateField } from '../helper';
-import { defaultApiRneClient } from './auth';
-import {
+} from "../../../utils/helpers/labels";
+import { logWarningInSentry } from "../../../utils/sentry";
+import routes from "../../urls";
+import { formatINPIDateField } from "../helper";
+import { defaultApiRneClient } from "./auth";
+import type {
   IRNEInscriptionsOffices,
   IRNEPersonneMorale,
   IRNEPersonnePhysique,
   IRNEResponse,
-} from './interface';
+} from "./interface";
 
 export const fetchImmatriculationFromAPIRNE = async (
   siren: Siren,
@@ -38,7 +38,7 @@ export const fetchImmatriculationFromAPIRNE = async (
   if (data.formality.content.personnePhysique) {
     return mapPersonnePhysiqueToDomainObject(
       data.formality.content.personnePhysique,
-      data.formality.content.formeExerciceActivitePrincipale,
+      data.formality.content.formeExerciceActivitePrincipale || "",
       inscriptionsOffices,
       siren
     );
@@ -49,13 +49,13 @@ export const fetchImmatriculationFromAPIRNE = async (
   if (personneMorale || exploitation) {
     return mapPersonneMoraleToDomainObject(
       (personneMorale || exploitation) as IRNEPersonneMorale,
-      data.formality.content.formeExerciceActivitePrincipale,
+      data.formality.content.formeExerciceActivitePrincipale || "",
       inscriptionsOffices,
       siren
     );
   }
 
-  logWarningInSentry('RNE : no personne moral nor personne physique found', {
+  logWarningInSentry("RNE : no personne moral nor personne physique found", {
     siren,
   });
 
@@ -64,53 +64,53 @@ export const fetchImmatriculationFromAPIRNE = async (
 
 const mapPersonneMoraleToDomainObject = (
   pm: IRNEPersonneMorale,
-  natureEntreprise = '',
+  natureEntreprise: string,
   inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {
   const {
     montantCapital = 0,
-    deviseCapital = '€',
+    deviseCapital = "€",
     capitalVariable = false,
     duree = 0,
-    dateClotureExerciceSocial = '',
+    dateClotureExerciceSocial = "",
   } = pm?.identite.description || {};
 
   const {
-    denomination = '',
-    formeJuridique = '',
-    dateImmat = '',
-    nomCommercial = '',
-    sigle = '',
-    dateDebutActiv = '',
+    denomination = "",
+    formeJuridique = "",
+    dateImmat = "",
+    nomCommercial = "",
+    sigle = "",
+    dateDebutActiv = "",
   } = pm?.identite.entreprise || {};
 
-  const denominationComplete = `${denomination || 'Nom inconnu'}${
-    nomCommercial ? ` (${nomCommercial})` : ''
-  }${sigle ? ` (${sigle})` : ''}`;
+  const denominationComplete = `${denomination || "Nom inconnu"}${
+    nomCommercial ? ` (${nomCommercial})` : ""
+  }${sigle ? ` (${sigle})` : ""}`;
 
   const capital = montantCapital
     ? `${formatFloatFr(montantCapital.toString())} ${deviseCapital} (${
-        capitalVariable ? 'variable' : 'fixe'
+        capitalVariable ? "variable" : "fixe"
       })`
-    : '';
+    : "";
 
   return {
     siren,
     identite: {
       denomination: denominationComplete,
-      dateImmatriculation: formatINPIDateField(dateImmat || '').split('T')[0],
-      dateDebutActiv: dateDebutActiv,
+      dateImmatriculation: formatINPIDateField(dateImmat || "").split("T")[0],
+      dateDebutActiv,
       dateRadiation: formatINPIDateField(
         (
           pm?.detailCessationEntreprise?.dateRadiation ||
           pm?.detailCessationEntreprise?.dateEffet ||
-          ''
-        ).split('T')[0]
+          ""
+        ).split("T")[0]
       ),
       dateCessationActivite: (
-        pm?.detailCessationEntreprise?.dateCessationTotaleActivite || ''
-      ).split('T')[0],
+        pm?.detailCessationEntreprise?.dateCessationTotaleActivite || ""
+      ).split("T")[0],
       isPersonneMorale: true,
       dateClotureExercice: dateClotureExerciceSocial,
       dureePersonneMorale: duree || 0,
@@ -124,18 +124,16 @@ const mapPersonneMoraleToDomainObject = (
       // observations équivalent in RNE
       ...inscriptionsOffices
         .filter((i: IRNEInscriptionsOffices) => !!i.observationComplementaire)
-        .map((i: IRNEInscriptionsOffices) => {
-          return {
-            numObservation: 'NC',
-            description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
-              i.observationComplementaire ?? 'observation vide'
-            }`,
-            dateAjout: i.dateEffet ?? '',
-          };
-        }),
+        .map((i: IRNEInscriptionsOffices) => ({
+          numObservation: "NC",
+          description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ""}${
+            i.observationComplementaire ?? "observation vide"
+          }`,
+          dateAjout: i.dateEffet ?? "",
+        })),
       // old observations - come from old RCS records. Not sure it exist for RNM or RAA
       ...(pm?.observations?.rcs || []).map((o) => {
-        const { numObservation = '', texte = '', dateAjout = '' } = o || {};
+        const { numObservation = "", texte = "", dateAjout = "" } = o || {};
         return {
           numObservation,
           description: texte.trimStart().trimEnd(),
@@ -151,53 +149,53 @@ const mapPersonneMoraleToDomainObject = (
 
 const mapPersonnePhysiqueToDomainObject = (
   pp: IRNEPersonnePhysique,
-  natureEntreprise = '',
+  natureEntreprise: string,
   inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {
   const {
-    dateImmat = '',
-    formeJuridique = '',
-    dateDebutActiv = '',
+    dateImmat = "",
+    formeJuridique = "",
+    dateDebutActiv = "",
   } = pp?.identite?.entreprise || {};
 
   const {
-    prenoms = [''],
-    nomUsage = '',
-    nom = '',
+    prenoms = [""],
+    nomUsage = "",
+    nom = "",
   } = pp?.identite.entrepreneur?.descriptionPersonne || {};
   const prenom = prenoms[0];
 
   const denomination = `${prenom} ${
-    nomUsage && nom ? `${nomUsage} (${nom})` : `${nomUsage || nom || ''}`
+    nomUsage && nom ? `${nomUsage} (${nom})` : `${nomUsage || nom || ""}`
   }`;
 
   return {
     siren,
     identite: {
-      denomination: denomination || '',
-      dateImmatriculation: formatINPIDateField(dateImmat || '').split('T')[0],
+      denomination: denomination || "",
+      dateImmatriculation: formatINPIDateField(dateImmat || "").split("T")[0],
       dateDebutActiv,
       dateRadiation: formatINPIDateField(
-        (pp?.detailCessationEntreprise?.dateRadiation || '').split('T')[0]
+        (pp?.detailCessationEntreprise?.dateRadiation || "").split("T")[0]
       ),
       dateCessationActivite: (
-        pp?.detailCessationEntreprise?.dateCessationTotaleActivite || ''
-      ).split('T')[0],
+        pp?.detailCessationEntreprise?.dateCessationTotaleActivite || ""
+      ).split("T")[0],
       isPersonneMorale: false,
-      dateClotureExercice: '',
+      dateClotureExercice: "",
       dureePersonneMorale: 0,
-      capital: '',
+      capital: "",
       libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
       natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
     },
     dirigeants: [
       {
         nom,
-        prenom: prenoms.join(', '),
-        role: '',
-        dateNaissancePartial: '',
-        dateNaissanceFull: '',
+        prenom: prenoms.join(", "),
+        role: "",
+        dateNaissancePartial: "",
+        dateNaissanceFull: "",
       },
     ],
     beneficiaires: [],
@@ -205,15 +203,13 @@ const mapPersonnePhysiqueToDomainObject = (
     // not sure there are old observations for EI
     observations: inscriptionsOffices
       .filter((i: IRNEInscriptionsOffices) => !!i.observationComplementaire)
-      .map((i: IRNEInscriptionsOffices) => {
-        return {
-          numObservation: 'NC',
-          description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ''}${
-            i.observationComplementaire
-          }`,
-          dateAjout: i.dateEffet ?? '',
-        };
-      }),
+      .map((i: IRNEInscriptionsOffices) => ({
+        numObservation: "NC",
+        description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ""}${
+          i.observationComplementaire
+        }`,
+        dateAjout: i.dateEffet ?? "",
+      })),
     metadata: {
       isFallback: false,
     },
@@ -221,19 +217,19 @@ const mapPersonnePhysiqueToDomainObject = (
 };
 
 const mapDirigeantsToDomainObject = (
-  pouvoirs: IRNEPersonneMorale['composition']['pouvoirs'] = []
+  pouvoirs: IRNEPersonneMorale["composition"]["pouvoirs"] = []
 ) =>
   pouvoirs.map((p) => {
-    if (!!p.individu) {
+    if (p.individu) {
       const {
-        nom = '',
+        nom = "",
         prenoms = [],
-        nomUsage = '',
-        dateDeNaissance = '',
+        nomUsage = "",
+        dateDeNaissance = "",
       } = p.individu?.descriptionPersonne || {};
 
       const nomComplet = `${
-        nomUsage && nom ? `${nomUsage} (${nom})` : `${nomUsage || nom || ''}`
+        nomUsage && nom ? `${nomUsage} (${nom})` : `${nomUsage || nom || ""}`
       }`;
 
       const role =
@@ -242,27 +238,26 @@ const mapDirigeantsToDomainObject = (
 
       return {
         nom: nomComplet,
-        prenom: prenoms.join(', '),
+        prenom: prenoms.join(", "),
         role,
         dateNaissancePartial: dateDeNaissance,
-        dateNaissanceFull: '',
+        dateNaissanceFull: "",
       } as IEtatCivil;
-    } else {
-      const {
-        siren = '',
-        denomination = '',
-        roleEntreprise = '',
-        formeJuridique = '',
-      } = p.entreprise || {};
-
-      const role =
-        p.libelleRoleEntreprise || libelleFromCodeRoleDirigeant(roleEntreprise);
-
-      return {
-        siren,
-        denomination,
-        natureJuridique: formeJuridique,
-        role,
-      } as IPersonneMorale;
     }
+    const {
+      siren = "",
+      denomination = "",
+      roleEntreprise = "",
+      formeJuridique = "",
+    } = p.entreprise || {};
+
+    const role =
+      p.libelleRoleEntreprise || libelleFromCodeRoleDirigeant(roleEntreprise);
+
+    return {
+      siren,
+      denomination,
+      natureJuridique: formeJuridique,
+      role,
+    } as IPersonneMorale;
   }) || [];

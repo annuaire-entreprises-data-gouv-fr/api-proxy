@@ -1,46 +1,48 @@
-import { BuildStorage } from 'axios-cache-interceptor';
-import { createClient } from 'redis';
-import { redisPromiseTimeout } from './redis-timeout';
-import { logWarningInSentry } from '../../sentry';
-import { performance } from 'perf_hooks';
+import { performance } from "node:perf_hooks";
+import type { BuildStorage } from "axios-cache-interceptor";
+import { createClient } from "redis";
+import { logWarningInSentry } from "../../sentry";
+import { redisPromiseTimeout } from "./redis-timeout";
 
 export class RedisStorage implements BuildStorage {
-  private _client;
+  private readonly _client;
+  private readonly cache_timeout;
   private _eventLoopLag;
   private _lastLoop;
 
-  constructor(private cache_timeout: number) {
+  constructor(cache_timeout: number) {
+    this.cache_timeout = cache_timeout;
     // Mesure de l'event loop lag toutes les 10 secondes
     this._lastLoop = performance.now();
     this._eventLoopLag = 0;
     setInterval(() => {
       const now = performance.now();
-      this._eventLoopLag = now - this._lastLoop - 10000;
+      this._eventLoopLag = now - this._lastLoop - 10_000;
       this._lastLoop = now;
-    }, 10000);
+    }, 10_000);
 
     this._client = createClient({
       url: process.env.REDIS_URL,
       pingInterval: 1000,
     });
 
-    this._client.on('error', (err) => {
+    this._client.on("error", (err) => {
       logWarningInSentry(
         new RedisStorageException({
-          message: err.message || 'Redis client error',
+          message: err.message || "Redis client error",
         })
       );
     });
   }
 
-  private async connect() {
+  private connect() {
     if (!this._client.isOpen) {
       try {
         return this._client.connect();
       } catch {
         logWarningInSentry(
           new RedisStorageException({
-            message: 'Could not connect to redis client',
+            message: "Could not connect to redis client",
           })
         );
       }
@@ -48,7 +50,7 @@ export class RedisStorage implements BuildStorage {
   }
 
   find = async (key: string) => {
-    await this.connect();
+    this.connect();
     const start = performance.now();
     let result: string | null = null;
     let error: any = null;
@@ -73,11 +75,11 @@ export class RedisStorage implements BuildStorage {
     if (error) {
       const duration = performance.now() - start;
       const message =
-        (error.message || 'Could not get key') +
+        (error.message || "Could not get key") +
         ` [Redis timeout=100ms, elapsed=${Math.round(duration)}ms, enventLoopLag=${Math.round(this._eventLoopLag)}ms]`;
       logWarningInSentry(
         new RedisStorageException({
-          message: message,
+          message,
         })
       );
       return null;
@@ -86,12 +88,12 @@ export class RedisStorage implements BuildStorage {
     return result ? JSON.parse(result) : result;
   };
 
-  set = async (key: string, value: any, _:any, ttl = this.cache_timeout) => {
-    await this.connect();
+  set = async (key: string, value: any, _: any, ttl = this.cache_timeout) => {
+    this.connect();
     await redisPromiseTimeout(
       this._client.set(key, JSON.stringify(value), {
         expiration: {
-          type: 'PX',
+          type: "PX",
           value: ttl,
         },
       }),
@@ -99,14 +101,14 @@ export class RedisStorage implements BuildStorage {
     ).catch((err) => {
       logWarningInSentry(
         new RedisStorageException({
-          message: err.message || 'Could not set key',
+          message: err.message || "Could not set key",
         })
       );
     });
   };
 
   getTTL = async (key: string) => {
-    await this.connect();
+    this.connect();
     let result: number | null = null;
     let error: any = null;
 
@@ -128,10 +130,10 @@ export class RedisStorage implements BuildStorage {
     if (error) {
       logWarningInSentry(
         new RedisStorageException({
-          message: error.message || 'Could not get TTL',
+          message: error.message || "Could not get TTL",
         })
       );
-    
+
       return null;
     }
 
@@ -139,14 +141,14 @@ export class RedisStorage implements BuildStorage {
   };
 
   remove = async (key: string) => {
-    await this.connect();
+    this.connect();
     await this._client.del(key);
   };
 }
 
 class RedisStorageException extends Error {
-  public name: string;
-  constructor({ name = 'RedisStorageException', message = '' }) {
+  name: string;
+  constructor({ name = "RedisStorageException", message = "" }) {
     super(message);
     this.name = name;
   }

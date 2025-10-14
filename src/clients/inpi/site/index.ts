@@ -1,9 +1,9 @@
-import constants from '../../../constants';
-import { IImmatriculation } from '../../../models/rne';
-import { Siren } from '../../../models/siren-and-siret';
-import { httpGet } from '../../../utils/network';
-import routes from '../../urls';
-import { extractImmatriculationFromHtml } from './html-parser';
+import constants from "../../../constants";
+import type { IImmatriculation } from "../../../models/rne";
+import type { Siren } from "../../../models/siren-and-siret";
+import { httpGet } from "../../../utils/network";
+import routes from "../../urls";
+import { extractImmatriculationFromHtml } from "./html-parser";
 
 export const fetchImmatriculationFromSite = async (
   siren: Siren

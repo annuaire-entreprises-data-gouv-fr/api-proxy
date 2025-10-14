@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - run: npm run lint:fix
+      glob:
+        - "*.js"
+        - "*.jsx"
+        - "*.ts"
+        - "*.tsx"
+        - "*.json"
+        - "*.jsonc"
+        - "*.css"
+      stage_fixed: true
+    - run: npm run test

@@ -1,9 +1,10 @@
-import { storage } from "./storage";
 import { logWarningInSentry } from "../../sentry";
+import { storage } from "./storage";
 
 class SmartCacheStorageException extends Error {
-  public name: string;
-  constructor({ name = 'SmartCacheStorageException', message = '' }) {
+  name: string;
+
+  constructor({ name = "SmartCacheStorageException", message = "" }) {
     super(message);
     this.name = name;
   }
@@ -64,7 +65,7 @@ const refreshStaleValue = async (
   } catch (err) {
     logWarningInSentry(
       new SmartCacheStorageException({
-        message: `Callback failed for key ${key}, returning stale value: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        message: `Callback failed for key ${key}, returning stale value: ${err instanceof Error ? err.message : "Unknown error"}`,
       })
     );
     return staleValue;
@@ -83,7 +84,7 @@ const fetchAndCache = async (
   const freshValue = await callback();
 
   await storage.set(key, freshValue, undefined, expiration);
-  
+
   return freshValue;
 };
 
@@ -102,7 +103,7 @@ const handleErrorFallback = async (
   if (value !== null) {
     logWarningInSentry(
       new SmartCacheStorageException({
-        message: `Redis error for key ${key}, returning any available value: ${originalError instanceof Error ? originalError.message : 'Unknown error'}`,
+        message: `Redis error for key ${key}, returning any available value: ${originalError instanceof Error ? originalError.message : "Unknown error"}`,
       })
     );
     return value;
@@ -113,7 +114,7 @@ const handleErrorFallback = async (
     return await fetchAndCache(key, callback, expiration);
   } catch (callbackErr) {
     const error = new SmartCacheStorageException({
-      message: `Failed to get or set key ${key}: ${callbackErr instanceof Error ? callbackErr.message : 'Unknown error'}`,
+      message: `Failed to get or set key ${key}: ${callbackErr instanceof Error ? callbackErr.message : "Unknown error"}`,
     });
 
     logWarningInSentry(error);
