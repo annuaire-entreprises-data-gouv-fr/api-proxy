@@ -107,10 +107,7 @@ const handleErrorFallback = async (
     return value;
   }
 
-  // No cached value available, throw error
-  const error = new SmartCacheStorageException({
-    message: `Failed to get or set key ${key}: ${originalError instanceof Error ? originalError.message : "Unknown error"}`,
-  });
-  logWarningInSentry(error);
-  throw error;
+  // No cached value available, rethrow original error
+  logWarningInSentry(originalError);
+  throw originalError;
 };
