@@ -46,7 +46,7 @@ export const getOrSetWithCacheExpiry = async (
   try {
     return await fetchAndCache(key, callback, expiration);
   } catch (err) {
-    return handleErrorFallback(key, callback, expiration, err);
+    return handleErrorFallback(key, err);
   }
 };
 
@@ -94,13 +94,11 @@ const fetchAndCache = async (
  */
 const handleErrorFallback = async (
   key: string,
-  callback: () => Promise<any>,
-  expiration: number,
   originalError: any
 ): Promise<any> => {
   // Try to get any existing cached value
   const value = await storage.find(key);
-  if (value !== null) {
+  if (value !== null && value !== undefined) {
     logWarningInSentry(
       new SmartCacheStorageException({
         message: `Redis error for key ${key}, returning any available value: ${originalError instanceof Error ? originalError.message : "Unknown error"}`,
@@ -109,15 +107,10 @@ const handleErrorFallback = async (
     return value;
   }
 
-  // No cached value available, try callback as last resort
-  try {
-    return await fetchAndCache(key, callback, expiration);
-  } catch (callbackErr) {
-    const error = new SmartCacheStorageException({
-      message: `Failed to get or set key ${key}: ${callbackErr instanceof Error ? callbackErr.message : "Unknown error"}`,
-    });
-
-    logWarningInSentry(error);
-    throw error;
-  }
+  // No cached value available, throw error
+  const error = new SmartCacheStorageException({
+    message: `Failed to get or set key ${key}: ${originalError instanceof Error ? originalError.message : "Unknown error"}`,
+  });
+  logWarningInSentry(error);
+  throw error;
 };
