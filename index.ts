@@ -3,7 +3,6 @@ import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
 import express, { type Express, type Request, type Response } from "express";
 import helmet from "helmet";
-import { associationController } from "./src/controllers/association";
 import { eoriController } from "./src/controllers/eori";
 import { errorHandler } from "./src/controllers/error-handler";
 import { igController } from "./src/controllers/ig";
@@ -59,11 +58,6 @@ app.get("/rne/fallback/:siren", rneControllerSite);
  * Status
  */
 app.use("/status", statusRouter);
-
-/**
- * Association
- */
-app.use("/association/:rna", associationController);
 
 /**
  * TVA
