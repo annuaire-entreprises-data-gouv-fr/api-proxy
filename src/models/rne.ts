@@ -9,6 +9,8 @@ export type IEtatCivil = {
   role: string;
   dateNaissancePartial: string;
   dateNaissanceFull: string;
+  estDemissionnaire: boolean;
+  dateDemission: string | null;
 };
 
 export type IBeneficiaire = {

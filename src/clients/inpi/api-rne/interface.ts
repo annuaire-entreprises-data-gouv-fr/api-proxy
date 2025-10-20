@@ -115,6 +115,8 @@ type IRNEPouvoir = {
     adresseDomicile: IRNEAdresse;
     indicateurActifAgricole: boolean;
   };
+  mentionDemissionOrdre: boolean;
+  dateMentionDemissionOrdre?: string;
 };
 
 export type IRNEPersonneMorale = {
