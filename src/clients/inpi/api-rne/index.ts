@@ -196,6 +196,8 @@ const mapPersonnePhysiqueToDomainObject = (
         role: "",
         dateNaissancePartial: "",
         dateNaissanceFull: "",
+        estDemissionnaire: false,
+        dateDemission: null,
       },
     ],
     beneficiaires: [],
@@ -242,6 +244,8 @@ const mapDirigeantsToDomainObject = (
         role,
         dateNaissancePartial: dateDeNaissance,
         dateNaissanceFull: "",
+        estDemissionnaire: p.mentionDemissionOrdre,
+        dateDemission: p.dateMentionDemissionOrdre ?? null,
       } as IEtatCivil;
     }
     const {
