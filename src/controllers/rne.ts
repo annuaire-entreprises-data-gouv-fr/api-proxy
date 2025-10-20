@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { fetchRneAPI, fetchRneSite } from "../models/rne";
+import { fetchRneAPI, fetchRneObservationsSite } from "../models/rne";
 import { verifySiren } from "../models/siren-and-siret";
 
 export const rneControllerAPI = async (
@@ -16,15 +16,15 @@ export const rneControllerAPI = async (
   }
 };
 
-export const rneControllerSite = async (
+export const rneControllerObservationsSite = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const siren = verifySiren(req.params.siren);
-    const rne = await fetchRneSite(siren);
-    res.status(206).json(rne);
+    const observations = await fetchRneObservationsSite(siren);
+    res.status(206).json(observations);
   } catch (e) {
     next(e);
   }

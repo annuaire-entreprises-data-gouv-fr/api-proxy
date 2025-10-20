@@ -1,16 +1,7 @@
 import { JSDOM } from "jsdom";
 import { HttpServerError } from "../../../http-exceptions";
-import type {
-  IBeneficiaire,
-  IDirigeant,
-  IIdentite,
-  IObservation,
-} from "../../../models/rne";
+import type { IObservation } from "../../../models/rne";
 import type { Siren } from "../../../models/siren-and-siret";
-import parseDirigeants from "./parsers/dirigeants";
-import parseIdentite, {
-  extractDirigeantFromIdentite,
-} from "./parsers/identite";
 import parseObservations from "./parsers/observations";
 
 export class InvalidFormatError extends HttpServerError {
@@ -19,17 +10,10 @@ export class InvalidFormatError extends HttpServerError {
   }
 }
 
-const clean = (raw = "") => raw.replace("\n", "").replace(/\s+/g, " ").trim();
-
-const extractImmatriculationFromHtml = (
+export const extractObservationsFromHtml = (
   html: string,
   _siren: Siren
-): {
-  dirigeants: IDirigeant[];
-  beneficiaires: IBeneficiaire[];
-  identite: IIdentite;
-  observations: IObservation[];
-} => {
+): IObservation[] => {
   const dom = new JSDOM(html);
   const document = dom.window.document;
 
@@ -41,52 +25,9 @@ const extractImmatriculationFromHtml = (
     throw new InvalidFormatError("Cannot find Inpi container");
   }
 
-  const rowsHtml = container.querySelectorAll("div.row");
-
-  const response = {
-    identite: null,
-    dirigeants: [],
-    beneficiaires: [],
-    observations: [],
-  } as any;
-
-  let rawIdentite: Element | null = null;
-
-  const radiationText =
-    container.querySelector("p.company-removed")?.textContent || "";
-
-  for (const row of rowsHtml) {
-    const title = clean(row.querySelector("h2, h3, h4, h5")?.innerHTML);
-
-    switch (title) {
-      case "Identité":
-        response.identite = parseIdentite(row, radiationText);
-        rawIdentite = row;
-        break;
-      case "Représentants":
-        response.dirigeants = parseDirigeants(row);
-        break;
-      case "Bénéficiaires effectifs":
-        break;
-      default:
-    }
-  }
-
   const observationsHtml = container.querySelectorAll(
     "#observations + div.row, #observations-other > div.row"
   );
-  response.observations = parseObservations(observationsHtml);
 
-  // EI
-  if (
-    response.dirigeants.length === 0 &&
-    response.identite.isPersonneMorale === false &&
-    rawIdentite
-  ) {
-    response.dirigeants = [extractDirigeantFromIdentite(rawIdentite)];
-  }
-
-  return response;
+  return parseObservations(observationsHtml);
 };
-
-export { extractImmatriculationFromHtml };

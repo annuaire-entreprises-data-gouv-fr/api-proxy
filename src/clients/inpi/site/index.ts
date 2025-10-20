@@ -1,13 +1,13 @@
 import constants from "../../../constants";
-import type { IImmatriculation } from "../../../models/rne";
+import type { IObservation } from "../../../models/rne";
 import type { Siren } from "../../../models/siren-and-siret";
 import { httpGet } from "../../../utils/network";
 import routes from "../../urls";
-import { extractImmatriculationFromHtml } from "./html-parser";
+import { extractObservationsFromHtml } from "./html-parser";
 
-export const fetchImmatriculationFromSite = async (
+export const fetchObservationsFromSite = async (
   siren: Siren
-): Promise<IImmatriculation> => {
+): Promise<IObservation[]> => {
   const encodedSiren = encodeURIComponent(siren);
   const url = `${routes.inpi.portail.entreprise}${encodedSiren}`;
 
@@ -16,11 +16,5 @@ export const fetchImmatriculationFromSite = async (
     useCache: false,
   });
 
-  return {
-    siren,
-    ...extractImmatriculationFromHtml(response, siren),
-    metadata: {
-      isFallback: true,
-    },
-  };
+  return extractObservationsFromHtml(response, siren);
 };
