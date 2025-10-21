@@ -1,5 +1,5 @@
 import { fetchImmatriculationFromAPIRNE } from "../clients/inpi/api-rne";
-import { fetchImmatriculationFromSite } from "../clients/inpi/site";
+import { fetchObservationsFromSite } from "../clients/inpi/site";
 import { HttpNotFound, HttpServerError } from "../http-exceptions";
 import type { Siren } from "./siren-and-siret";
 
@@ -79,18 +79,15 @@ const fetchRneAPI = async (siren: Siren): Promise<IImmatriculation> => {
 };
 
 /**
- * Get INPI immatriculation from site parser
+ * Get INPI observations from site parser
  * @param siren
  * @returns
  */
-const fetchRneSite = async (siren: Siren): Promise<IImmatriculation> => {
+const fetchRneObservationsSite = async (
+  siren: Siren
+): Promise<IObservation[]> => {
   try {
-    return {
-      ...(await fetchImmatriculationFromSite(siren)),
-      metadata: {
-        isFallback: true,
-      },
-    };
+    return await fetchObservationsFromSite(siren);
   } catch (fallbackError) {
     if (fallbackError instanceof HttpNotFound) {
       throw fallbackError;
@@ -99,4 +96,4 @@ const fetchRneSite = async (siren: Siren): Promise<IImmatriculation> => {
   }
 };
 
-export { fetchRneAPI, fetchRneSite };
+export { fetchRneAPI, fetchRneObservationsSite };

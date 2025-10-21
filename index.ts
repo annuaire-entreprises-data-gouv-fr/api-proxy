@@ -6,7 +6,10 @@ import helmet from "helmet";
 import { eoriController } from "./src/controllers/eori";
 import { errorHandler } from "./src/controllers/error-handler";
 import { igController } from "./src/controllers/ig";
-import { rneControllerAPI, rneControllerSite } from "./src/controllers/rne";
+import {
+  rneControllerAPI,
+  rneControllerObservationsSite,
+} from "./src/controllers/rne";
 import { tvaController } from "./src/controllers/tva";
 import statusRouter from "./src/routes/status";
 
@@ -52,7 +55,7 @@ app.get("/rne/:siren", rneControllerAPI);
 /**
  * RNE Fallback
  */
-app.get("/rne/fallback/:siren", rneControllerSite);
+app.get("/rne/observations/fallback/:siren", rneControllerObservationsSite);
 
 /**
  * Status
