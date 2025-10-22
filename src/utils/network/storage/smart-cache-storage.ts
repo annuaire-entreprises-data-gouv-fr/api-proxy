@@ -108,6 +108,5 @@ const handleErrorFallback = async (
   }
 
   // No cached value available, rethrow original error
-  logWarningInSentry(originalError);
   throw originalError;
 };

@@ -64,3 +64,9 @@ export class HttpBadRequestError extends HttpError {
     super(message, 400);
   }
 }
+
+export class HttpLockedError extends HttpError {
+  constructor(message: string) {
+    super(message, 423);
+  }
+}

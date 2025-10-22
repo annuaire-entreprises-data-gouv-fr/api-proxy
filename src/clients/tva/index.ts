@@ -1,4 +1,5 @@
 import constants from "../../constants";
+import { HttpBadRequestError, HttpLockedError } from "../../http-exceptions";
 import type { TVANumber } from "../../models/siren-and-siret";
 import { httpGet } from "../../utils/network";
 import { getOrSetWithCacheExpiry } from "../../utils/network/storage/smart-cache-storage";
@@ -16,8 +17,11 @@ export const clientTVA = (tvaNumber: TVANumber): Promise<string> => {
       timeout: constants.timeout.XXL,
       useCache: false,
     }).then((res) => {
+      if (res.userError === "MS_MAX_CONCURRENT_REQ") {
+        throw new HttpLockedError(res.userError);
+      }
       if (!["VALID", "INVALID"].includes(res.userError)) {
-        throw new Error(res.userError);
+        throw new HttpBadRequestError(res.userError);
       }
 
       return { tva: res.isValid ? (res.vatNumber ?? null) : null };
