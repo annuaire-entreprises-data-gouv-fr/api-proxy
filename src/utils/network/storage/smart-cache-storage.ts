@@ -22,12 +22,12 @@ class SmartCacheStorageException extends Error {
  * @param freshTime - The time to consider the value as fresh in milliseconds
  * @returns The cached or fresh value. Throws if no value can be retrieved.
  */
-export const getOrSetWithCacheExpiry = async (
+export const getOrSetWithCacheExpiry = async <T>(
   key: string,
-  callback: () => Promise<any>,
+  callback: () => Promise<T>,
   expiration: number,
   freshTime: number
-): Promise<any> => {
+): Promise<T> => {
   const [value, ttl] = await Promise.all([
     storage.find(key),
     storage.getTTL(key),
