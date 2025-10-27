@@ -10,7 +10,7 @@ const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const clientTVA = (
   tvaNumber: TVANumber,
-  noCache = false
+  useCache = true
 ): Promise<{ tva: string | null }> => {
   const encodedTvaNumber = encodeURIComponent(tvaNumber);
   const url = `${routes.tva}${encodedTvaNumber}`;
@@ -30,12 +30,12 @@ export const clientTVA = (
       return { tva: res.isValid ? (res.vatNumber ?? null) : null };
     });
 
-  return noCache
-    ? callback()
-    : getOrSetWithCacheExpiry(
+  return useCache
+    ? getOrSetWithCacheExpiry(
         `tva:${tvaNumber}`,
         callback,
         ONE_MONTH_MS,
         ONE_WEEK_MS
-      );
+      )
+    : callback();
 };
