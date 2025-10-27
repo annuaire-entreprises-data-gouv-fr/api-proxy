@@ -8,7 +8,10 @@ import routes from "../urls";
 const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
-export const clientTVA = (tvaNumber: TVANumber): Promise<string> => {
+export const clientTVA = (
+  tvaNumber: TVANumber,
+  useCache = true
+): Promise<{ tva: string | null }> => {
   const encodedTvaNumber = encodeURIComponent(tvaNumber);
   const url = `${routes.tva}${encodedTvaNumber}`;
 
@@ -27,10 +30,12 @@ export const clientTVA = (tvaNumber: TVANumber): Promise<string> => {
       return { tva: res.isValid ? (res.vatNumber ?? null) : null };
     });
 
-  return getOrSetWithCacheExpiry(
-    `tva:${tvaNumber}`,
-    callback,
-    ONE_MONTH_MS,
-    ONE_WEEK_MS
-  );
+  return useCache
+    ? getOrSetWithCacheExpiry(
+        `tva:${tvaNumber}`,
+        callback,
+        ONE_MONTH_MS,
+        ONE_WEEK_MS
+      )
+    : callback();
 };

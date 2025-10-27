@@ -8,8 +8,9 @@ export const tvaController = async (
   next: NextFunction
 ) => {
   try {
+    const useCache = req.query?.useCache !== "false";
     const tvaNumber = verifyTVANumber(req.params?.tvaNumber);
-    const tva = await clientTVA(tvaNumber);
+    const tva = await clientTVA(tvaNumber, useCache);
     res.status(200).json(tva);
   } catch (e) {
     next(e);
