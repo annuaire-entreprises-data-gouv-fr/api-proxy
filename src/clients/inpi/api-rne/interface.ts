@@ -38,6 +38,7 @@ type IRNEEntrepreneur = {
     nom: string;
     prenoms: string[];
     nomUsage: string;
+    dateDeNaissance: string;
   };
 };
 

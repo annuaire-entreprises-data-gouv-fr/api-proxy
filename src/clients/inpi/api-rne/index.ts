@@ -163,6 +163,7 @@ const mapPersonnePhysiqueToDomainObject = (
     prenoms = [""],
     nomUsage = "",
     nom = "",
+    dateDeNaissance = "",
   } = pp?.identite.entrepreneur?.descriptionPersonne || {};
   const prenom = prenoms[0];
 
@@ -194,7 +195,7 @@ const mapPersonnePhysiqueToDomainObject = (
         nom,
         prenom: prenoms.join(", "),
         role: "",
-        dateNaissancePartial: "",
+        dateNaissancePartial: dateDeNaissance,
         dateNaissanceFull: "",
         estDemissionnaire: false,
         dateDemission: null,
