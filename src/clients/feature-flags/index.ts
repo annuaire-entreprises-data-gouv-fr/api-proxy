@@ -5,15 +5,15 @@ import { readFromGrist } from "../external-tooling/grist";
 
 export type FeatureFlagValue = boolean | string;
 
-export const clientFeatureFlags = async (params: {
-  useCache?: boolean;
-  timeout?: number;
-}): Promise<{ [key: string]: FeatureFlagValue }> => {
-  const { useCache = true, timeout = constants.timeout.XXL } = params;
+let featureFlagsPromise: Promise<{ [key: string]: FeatureFlagValue }> | null =
+  null;
 
+export const clientFeatureFlags = async (): Promise<{
+  [key: string]: FeatureFlagValue;
+}> => {
   const callback = async () => {
     const response: { feature_name: string; value: FeatureFlagValue }[] =
-      await readFromGrist("feature-flags", timeout);
+      await readFromGrist("feature-flags");
 
     return response
       .filter((row) => !!row.feature_name)
@@ -26,18 +26,13 @@ export const clientFeatureFlags = async (params: {
       );
   };
 
-  if (useCache) {
-    try {
-      const value = await readFeatureFlagsFromCache();
-      if (value) {
-        return value;
-      }
-    } catch {
-      // silently fail
-    }
-  }
+  featureFlagsPromise = callback();
 
-  return callback();
+  const featureFlags = await featureFlagsPromise;
+
+  featureFlagsPromise = null;
+
+  return featureFlags;
 };
 
 const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000;
@@ -67,6 +62,19 @@ export const readFeatureFlagsFromCache = async (): Promise<{
 
   if (featureFlags) {
     return featureFlags;
+  }
+
+  if (featureFlagsPromise) {
+    const result = await Promise.race([
+      featureFlagsPromise,
+      new Promise<void>((resolve) =>
+        setTimeout(() => resolve(), constants.timeout.S)
+      ),
+    ]);
+
+    if (result) {
+      return result;
+    }
   }
 
   const fileContent = fs.readFileSync("feature-flags.json", "utf8");

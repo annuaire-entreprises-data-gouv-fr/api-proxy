@@ -3,8 +3,8 @@ import {
   cacheFeatureFlags,
   clientFeatureFlags,
   type FeatureFlagValue,
+  readFeatureFlagsFromCache,
 } from "../clients/feature-flags";
-import constants from "../constants";
 
 export const featureFlagsController = async (
   _: Request,
@@ -12,10 +12,7 @@ export const featureFlagsController = async (
   next: NextFunction
 ) => {
   try {
-    const featureFlags = await clientFeatureFlags({
-      useCache: true,
-      timeout: constants.timeout.M,
-    });
+    const featureFlags = await readFeatureFlagsFromCache();
     res.status(200).json(featureFlags);
   } catch (e) {
     next(e);
@@ -27,10 +24,7 @@ const FIVE_MINUTES_MS = 5 * 60 * 1000;
 const fetchAndCacheFeatureFlags = async (): Promise<{
   [key: string]: FeatureFlagValue;
 }> => {
-  const featureFlags = await clientFeatureFlags({
-    useCache: false,
-    timeout: constants.timeout.XXL,
-  }).catch((e) => {
+  const featureFlags = await clientFeatureFlags().catch((e) => {
     // biome-ignore lint/suspicious/noConsole: needed for logging
     console.error("💽[server]: Error polling feature flags:", e);
     return {};
