@@ -83,7 +83,9 @@ const fetchAndCache = async (
 ): Promise<any> => {
   const freshValue = await callback();
 
-  await storage.set(key, freshValue, undefined, expiration);
+  await storage.set(key, freshValue, undefined, expiration).catch(() => {
+    // silently fail
+  });
 
   return freshValue;
 };

@@ -5,6 +5,10 @@ import express, { type Express, type Request, type Response } from "express";
 import helmet from "helmet";
 import { eoriController } from "./src/controllers/eori";
 import { errorHandler } from "./src/controllers/error-handler";
+import {
+  featureFlagsController,
+  startPollingFeatureFlags,
+} from "./src/controllers/feature-flags";
 import { igController } from "./src/controllers/ig";
 import {
   rneControllerAPI,
@@ -77,9 +81,28 @@ app.use("/eori/:siret", eoriController);
  */
 app.use("/ig/:siren", igController);
 
+/**
+ * Feature Flags
+ */
+app.get("/feature-flags", featureFlagsController);
+
 app.use(errorHandler);
 
-app.listen(port, () => {
+let pollingTimeout: NodeJS.Timeout;
+
+const server = app.listen(port, () => {
   // biome-ignore lint/suspicious/noConsole: needed for logging
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+
+  // biome-ignore lint/suspicious/noConsole: needed for logging
+  console.log("💽[server]: Polling feature flags every 5 minutes...");
+
+  pollingTimeout = startPollingFeatureFlags();
+});
+
+server.on("close", () => {
+  // biome-ignore lint/suspicious/noConsole: needed for logging
+  console.log("💽[server]: Server is closing...");
+
+  clearInterval(pollingTimeout);
 });
