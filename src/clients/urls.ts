@@ -23,6 +23,9 @@ const routes = {
       },
     },
   },
+  tooling: {
+    grist: "https://grist.numerique.gouv.fr/api/docs/",
+  },
 };
 
 export default routes;
