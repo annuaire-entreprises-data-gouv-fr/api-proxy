@@ -34,7 +34,7 @@
     "@types/redis": "^4.0.11",
     "@types/yauzl": "^2.10.3",
     "axios": "^1.8.4",
-    "axios-cache-interceptor": "^1.8.0",
+    "axios-cache-interceptor": "^1.11.1",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "fast-xml-parser": "^5.2.1",
