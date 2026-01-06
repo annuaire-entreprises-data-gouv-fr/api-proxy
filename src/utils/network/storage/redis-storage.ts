@@ -104,6 +104,8 @@ export class RedisStorage implements BuildStorage {
           message: err.message || "Could not set key",
         })
       );
+
+      throw err;
     });
   };
 
