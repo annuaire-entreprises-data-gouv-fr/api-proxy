@@ -131,11 +131,13 @@ const clientUniteLegaleIG = async (siren: Siren) => {
     });
 
     if (!response.ok) {
+      errorMessage = `Error fetching IG data: ${response.status}: ${response.statusText}`;
       // biome-ignore lint/suspicious/noConsole: needed for logging
-      console.log(`Error fetching IG data: ${response.statusText}`);
-      throw new HttpServerError(
-        `Failed to fetch IG data: ${response.status} ${response.statusText}`
-      );
+      console.log(errorMessage);
+      if (response.statud === 404) {
+        thrown new HttpNotFound(errorMessage)
+      }
+      throw new HttpServerError(errorMessage);
     }
     const data = await response.json();
     return mapToDomainObject(data, siren);
