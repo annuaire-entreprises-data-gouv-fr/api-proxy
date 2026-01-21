@@ -1,5 +1,9 @@
 import constants from "../../constants";
-import { HttpServerError, HttpTimeoutError } from "../../http-exceptions";
+import {
+  HttpNotFound,
+  HttpServerError,
+  HttpTimeoutError,
+} from "../../http-exceptions";
 import type { Siren } from "../../models/siren-and-siret";
 import { formatNameFull } from "../../utils/helpers/formatters";
 import routes from "../urls";
@@ -131,11 +135,11 @@ const clientUniteLegaleIG = async (siren: Siren) => {
     });
 
     if (!response.ok) {
-      errorMessage = `Error fetching IG data: ${response.status}: ${response.statusText}`;
+      const errorMessage = `Error fetching IG data: ${response.status}: ${response.statusText}`;
       // biome-ignore lint/suspicious/noConsole: needed for logging
       console.log(errorMessage);
       if (response.status === 404) {
-        thrown new HttpNotFound(errorMessage)
+        throw new HttpNotFound(errorMessage);
       }
       throw new HttpServerError(errorMessage);
     }
