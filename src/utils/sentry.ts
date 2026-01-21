@@ -1,5 +1,6 @@
 // biome-ignore lint/performance/noNamespaceImport: Sentry namespace needed
 import * as Sentry from "@sentry/node";
+import { RedisStorageException } from "./network/storage/redis-storage";
 
 export type IScope = {
   page?: string;
@@ -35,7 +36,8 @@ export const logInSentryFactory =
       } else {
         Sentry.captureException(errorMsg, scope);
       }
-    } else {
+      // Avoid logging RedisStorageException in local development
+    } else if (!(errorMsg instanceof RedisStorageException)) {
       // biome-ignore lint/suspicious/noConsole: needed for debugging
       console.log(errorMsg, JSON.stringify(extra || {}));
     }

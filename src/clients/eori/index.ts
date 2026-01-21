@@ -28,7 +28,8 @@ const eoriRegex = /<eori>(.*?)<\/eori>/;
  * @param siret
  */
 const clientEORI = async (
-  siretOrSiren: Siret | Siren
+  siretOrSiren: Siret | Siren,
+  signal?: AbortSignal
 ): Promise<IEORIValidation | null> => {
   const eoriConstructed = `FR${siretOrSiren}`;
 
@@ -42,6 +43,7 @@ const clientEORI = async (
     },
     timeout: constants.timeout.XXL,
     useCache: true,
+    signal,
   });
   const result = response.match(resultRegex)?.[0];
 

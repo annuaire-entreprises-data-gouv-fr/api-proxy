@@ -10,7 +10,8 @@ const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const clientTVA = (
   tvaNumber: TVANumber,
-  useCache = true
+  useCache = true,
+  signal?: AbortSignal
 ): Promise<{ tva: string | null }> => {
   const encodedTvaNumber = encodeURIComponent(tvaNumber);
   const url = `${routes.tva}${encodedTvaNumber}`;
@@ -19,6 +20,7 @@ export const clientTVA = (
     httpGet<{ userError: string; isValid: boolean; vatNumber?: string }>(url, {
       timeout: constants.timeout.XXL,
       useCache: false,
+      signal,
     }).then((res) => {
       if (res.userError === "MS_MAX_CONCURRENT_REQ") {
         throw new HttpLockedError(res.userError);

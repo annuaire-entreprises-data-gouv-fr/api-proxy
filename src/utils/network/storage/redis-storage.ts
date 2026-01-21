@@ -148,7 +148,7 @@ export class RedisStorage implements BuildStorage {
   };
 }
 
-class RedisStorageException extends Error {
+export class RedisStorageException extends Error {
   name: string;
   constructor({ name = "RedisStorageException", message = "" }) {
     super(message);
