@@ -6,7 +6,7 @@ permissions:
 
 on:
   pull_request:
-    types: [review_requested]
+    branches: [main]
 
 # Be extremely careful as the env variables defined here are accessible by all the actions of the workflow.
 # For critical env variable, declare it within the action.
