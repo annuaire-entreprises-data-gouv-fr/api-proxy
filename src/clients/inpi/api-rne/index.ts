@@ -25,11 +25,13 @@ import type {
 
 export const fetchImmatriculationFromAPIRNE = async (
   siren: Siren,
-  useCache = true
+  useCache = true,
+  signal?: AbortSignal
 ) => {
   const data = await defaultApiRneClient.get<IRNEResponse>(
     routes.inpi.api.rne.cmc.companies + siren,
-    { timeout: constants.timeout.XXXL, useCache }
+    { timeout: constants.timeout.XXXL, useCache },
+    signal
   );
 
   const inscriptionsOffices =

@@ -66,10 +66,13 @@ export type IImmatriculation = {
  * @param siren
  * @returns
  */
-const fetchRneAPI = async (siren: Siren): Promise<IImmatriculation> => {
+const fetchRneAPI = async (
+  siren: Siren,
+  signal?: AbortSignal
+): Promise<IImmatriculation> => {
   try {
     const usecache = true;
-    return await fetchImmatriculationFromAPIRNE(siren, usecache);
+    return await fetchImmatriculationFromAPIRNE(siren, usecache, signal);
   } catch (errorAPIRNE) {
     if (errorAPIRNE instanceof HttpNotFound) {
       throw errorAPIRNE;
@@ -84,10 +87,11 @@ const fetchRneAPI = async (siren: Siren): Promise<IImmatriculation> => {
  * @returns
  */
 const fetchRneObservationsSite = async (
-  siren: Siren
+  siren: Siren,
+  signal?: AbortSignal
 ): Promise<IObservation[]> => {
   try {
-    return await fetchObservationsFromSite(siren);
+    return await fetchObservationsFromSite(siren, signal);
   } catch (fallbackError) {
     if (fallbackError instanceof HttpNotFound) {
       throw fallbackError;

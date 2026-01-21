@@ -37,7 +37,8 @@ class RNEClient {
 
   get = async <T>(
     route: string,
-    options?: IDefaultRequestConfig
+    options?: IDefaultRequestConfig,
+    signal?: AbortSignal
   ): Promise<T> => {
     const callback = () =>
       httpGet<T>(route, {
@@ -47,6 +48,7 @@ class RNEClient {
           Authorization: `Bearer ${this._token}`,
         },
         useCache: !!options?.useCache,
+        signal,
       });
 
     try {

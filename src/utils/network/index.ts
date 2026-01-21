@@ -34,6 +34,7 @@ export type IDefaultRequestConfig = {
   method?: "POST" | "GET" | "PATCH";
   responseType?: "blob" | "arraybuffer";
   data?: unknown;
+  signal?: AbortSignal;
 };
 
 export const axiosInstanceFactory = (

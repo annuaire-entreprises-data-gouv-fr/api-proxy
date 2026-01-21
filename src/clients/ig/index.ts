@@ -115,19 +115,25 @@ type PersonneMorale = {
 };
 
 /**
- * Call EORI to validate a French EORI number
- * @param siret
+ * Call IG to fetch unite legale data
+ * @param siren
+ * @param signal - Optional AbortSignal for request cancellation
  */
-const clientUniteLegaleIG = async (siren: Siren) => {
-  const controller = new AbortController();
+const clientUniteLegaleIG = async (siren: Siren, signal?: AbortSignal) => {
+  const timeoutController = new AbortController();
   const timeoutId = setTimeout(
-    () => controller.abort(),
+    () => timeoutController.abort(),
     constants.timeout.XXXL
   );
 
+  // Combine timeout signal with optional external signal
+  const combinedSignal = signal
+    ? AbortSignal.any([timeoutController.signal, signal])
+    : timeoutController.signal;
+
   try {
     const response = await fetch(routes.ig + siren, {
-      signal: controller.signal,
+      signal: combinedSignal,
       method: "GET",
       headers: {
         "User-Agent": "bruno-runtime/2.1.0",
@@ -148,6 +154,10 @@ const clientUniteLegaleIG = async (siren: Siren) => {
   } catch (error: any) {
     clearTimeout(timeoutId);
     if (error?.name === "AbortError") {
+      // Check if it was a timeout or external cancellation
+      if (signal?.aborted) {
+        throw error; // Re-throw for external cancellation handling
+      }
       throw new HttpTimeoutError("Timeout");
     }
     throw error;
