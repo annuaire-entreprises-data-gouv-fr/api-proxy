@@ -134,7 +134,7 @@ const clientUniteLegaleIG = async (siren: Siren) => {
       errorMessage = `Error fetching IG data: ${response.status}: ${response.statusText}`;
       // biome-ignore lint/suspicious/noConsole: needed for logging
       console.log(errorMessage);
-      if (response.statud === 404) {
+      if (response.status === 404) {
         thrown new HttpNotFound(errorMessage)
       }
       throw new HttpServerError(errorMessage);
