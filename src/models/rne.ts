@@ -52,7 +52,6 @@ export type IDirigeant = IEtatCivil | IPersonneMorale;
 
 export type IImmatriculation = {
   siren: Siren;
-  identite: IIdentite;
   dirigeants: IDirigeant[];
   beneficiaires: IBeneficiaire[];
   observations: IObservation[];

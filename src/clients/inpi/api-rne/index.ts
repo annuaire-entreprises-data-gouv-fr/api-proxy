@@ -6,12 +6,7 @@ import type {
   IPersonneMorale,
 } from "../../../models/rne";
 import type { Siren } from "../../../models/siren-and-siret";
-import { formatFloatFr } from "../../../utils/helpers/formatters";
-import {
-  libelleFromCategoriesJuridiques,
-  libelleFromCodeNatureEntreprise,
-  libelleFromCodeRoleDirigeant,
-} from "../../../utils/helpers/labels";
+import { libelleFromCodeRoleDirigeant } from "../../../utils/helpers/labels";
 import { logWarningInSentry } from "../../../utils/sentry";
 import routes from "../../urls";
 import { formatINPIDateField } from "../helper";
@@ -40,7 +35,6 @@ export const fetchImmatriculationFromAPIRNE = async (
   if (data.formality.content.personnePhysique) {
     return mapPersonnePhysiqueToDomainObject(
       data.formality.content.personnePhysique,
-      data.formality.content.formeExerciceActivitePrincipale || "",
       inscriptionsOffices,
       siren
     );
@@ -51,7 +45,6 @@ export const fetchImmatriculationFromAPIRNE = async (
   if (personneMorale || exploitation) {
     return mapPersonneMoraleToDomainObject(
       (personneMorale || exploitation) as IRNEPersonneMorale,
-      data.formality.content.formeExerciceActivitePrincipale || "",
       inscriptionsOffices,
       siren
     );
@@ -66,60 +59,11 @@ export const fetchImmatriculationFromAPIRNE = async (
 
 const mapPersonneMoraleToDomainObject = (
   pm: IRNEPersonneMorale,
-  natureEntreprise: string,
   inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {
-  const {
-    montantCapital = 0,
-    deviseCapital = "€",
-    capitalVariable = false,
-    duree = 0,
-    dateClotureExerciceSocial = "",
-  } = pm?.identite.description || {};
-
-  const {
-    denomination = "",
-    formeJuridique = "",
-    dateImmat = "",
-    nomCommercial = "",
-    sigle = "",
-    dateDebutActiv = "",
-  } = pm?.identite.entreprise || {};
-
-  const denominationComplete = `${denomination || "Nom inconnu"}${
-    nomCommercial ? ` (${nomCommercial})` : ""
-  }${sigle ? ` (${sigle})` : ""}`;
-
-  const capital = montantCapital
-    ? `${formatFloatFr(montantCapital.toString())} ${deviseCapital} (${
-        capitalVariable ? "variable" : "fixe"
-      })`
-    : "";
-
   return {
     siren,
-    identite: {
-      denomination: denominationComplete,
-      dateImmatriculation: formatINPIDateField(dateImmat || "").split("T")[0],
-      dateDebutActiv,
-      dateRadiation: formatINPIDateField(
-        (
-          pm?.detailCessationEntreprise?.dateRadiation ||
-          pm?.detailCessationEntreprise?.dateEffet ||
-          ""
-        ).split("T")[0]
-      ),
-      dateCessationActivite: (
-        pm?.detailCessationEntreprise?.dateCessationTotaleActivite || ""
-      ).split("T")[0],
-      isPersonneMorale: true,
-      dateClotureExercice: dateClotureExerciceSocial,
-      dureePersonneMorale: duree || 0,
-      capital,
-      libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
-      natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
-    },
     dirigeants: mapDirigeantsToDomainObject(pm?.composition?.pouvoirs),
     beneficiaires: [],
     observations: [
@@ -151,47 +95,17 @@ const mapPersonneMoraleToDomainObject = (
 
 const mapPersonnePhysiqueToDomainObject = (
   pp: IRNEPersonnePhysique,
-  natureEntreprise: string,
   inscriptionsOffices: IRNEInscriptionsOffices[],
   siren: Siren
 ): IImmatriculation => {
   const {
-    dateImmat = "",
-    formeJuridique = "",
-    dateDebutActiv = "",
-  } = pp?.identite?.entreprise || {};
-
-  const {
     prenoms = [""],
-    nomUsage = "",
     nom = "",
     dateDeNaissance = "",
   } = pp?.identite.entrepreneur?.descriptionPersonne || {};
-  const prenom = prenoms[0];
-
-  const denomination = `${prenom} ${
-    nomUsage && nom ? `${nomUsage} (${nom})` : `${nomUsage || nom || ""}`
-  }`;
 
   return {
     siren,
-    identite: {
-      denomination: denomination || "",
-      dateImmatriculation: formatINPIDateField(dateImmat || "").split("T")[0],
-      dateDebutActiv,
-      dateRadiation: formatINPIDateField(
-        (pp?.detailCessationEntreprise?.dateRadiation || "").split("T")[0]
-      ),
-      dateCessationActivite: (
-        pp?.detailCessationEntreprise?.dateCessationTotaleActivite || ""
-      ).split("T")[0],
-      isPersonneMorale: false,
-      dateClotureExercice: "",
-      dureePersonneMorale: 0,
-      capital: "",
-      libelleNatureJuridique: libelleFromCategoriesJuridiques(formeJuridique),
-      natureEntreprise: libelleFromCodeNatureEntreprise(natureEntreprise),
-    },
     dirigeants: [
       {
         nom,
