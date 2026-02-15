@@ -33,7 +33,7 @@
     "@types/node": "^22.15.3",
     "@types/redis": "^4.0.11",
     "@types/yauzl": "^2.10.3",
-    "axios": "^1.8.4",
+    "axios": "^1.12.2",
     "axios-cache-interceptor": "^1.8.0",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
