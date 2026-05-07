@@ -190,7 +190,7 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
   return {
     siren,
     nomComplet,
-    etat: r.etat === "ACTIF" ? "A" : "C",
+    etat: ["ACTIF", "ACTIVE"].includes(r.etat) ? "A" : "C",
     libelleNatureJuridique,
     activitePrincipale: r.activite_naf?.code || "",
     libelleActivitePrincipale: r.activite_naf?.libelle || "",
