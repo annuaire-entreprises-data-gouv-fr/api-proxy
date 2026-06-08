@@ -18,33 +18,32 @@ Ce repository fait partie [d'un ensemble de services qui constituent l'Annuaire 
 # Installation
 pnpm i
 
-# Lancer le site en dev
+# Lancer le service en dev
 pnpm dev
 
-# Lancer le site en prod
+# Lancer le service en prod
 pnpm build && pnpm start
 
 ```
 
 ## Utilisation
 
-L’API est protégée en appel par un header `X-API-Key`
+L’API du proxy en staging et production est protégée en appel par un header `X-API-Key`
 
-Une fois doté de ce header vous pouvez appeler les routes suivantes :
+Le service expose les routes suivantes :
 
+```txt
+GET /                                  # healthcheck simple
+GET /rne/:siren                        # donnees RNE depuis l'API INPI
+GET /rne/observations/fallback/:siren  # observations RNE depuis le site INPI
+GET /status/rne                        # statut de l'API RNE
+GET /tva/:tvaNumber                    # validation d'un numero de TVA
+GET /eori/:siret                       # validation EORI
+GET /ig/:siren                         # donnees Unite Legale IG
+GET /feature-flags                     # feature flags mis en cache
 ```
 
-// create a PDF download job
-https://rncs-proxy.api.gouv.fr/document/justificatif/job/:siren
-https://rncs-proxy.api.gouv.fr/document/justificatif/job/status
-
-// download an existing file with the slug given on job creation
-https://rncs-proxy.api.gouv.fr/document/downloads/:slug
-
-// status
-https://rncs-proxy.api.gouv.fr/status/imr/api
-https://rncs-proxy.api.gouv.fr/status/imr/site
-```
+La route TVA accepte le parametre de query optionnel `useCache=false`.
 
 ### Tests
 

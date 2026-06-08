@@ -1,7 +1,7 @@
-import express from "express";
+import { Hono } from "hono";
 import { apiRneStatusController } from "../controllers/status";
 
-const statusRouter = express.Router();
+const statusRouter = new Hono();
 
 statusRouter.get("/rne", apiRneStatusController);
 

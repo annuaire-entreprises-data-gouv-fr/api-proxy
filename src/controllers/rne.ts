@@ -1,57 +1,37 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Handler } from "hono";
 import { fetchRneAPI, fetchRneObservationsSite } from "../models/rne";
 import { verifySiren } from "../models/siren-and-siret";
-import { requestParamToString } from "../utils/helpers/params";
 
-export const rneControllerAPI = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const abortController = new AbortController();
-
-  // Cancel the request if client disconnects
-  req.on("close", () => {
-    abortController.abort();
-  });
-
+export const rneControllerAPI: Handler<object, "/rne/:siren"> = async (c) => {
   try {
-    const siren = verifySiren(requestParamToString(req.params?.siren));
-    const rne = await fetchRneAPI(siren, abortController.signal);
-    res.status(200).json(rne);
+    const siren = verifySiren(c.req.param("siren"));
+    const rne = await fetchRneAPI(siren, c.req.raw.signal);
+    return c.json(rne, 200);
   } catch (error) {
     // Don't forward abort errors to error handler since there's no client to respond to
     if (error instanceof Error && error.name === "CanceledError") {
-      return;
+      return c.body(null);
     }
-    next(error);
+    throw error;
   }
 };
 
-export const rneControllerObservationsSite = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const abortController = new AbortController();
-
-  // Cancel the request if client disconnects
-  req.on("close", () => {
-    abortController.abort();
-  });
-
+export const rneControllerObservationsSite: Handler<
+  object,
+  "/rne/observations/fallback/:siren"
+> = async (c) => {
   try {
-    const siren = verifySiren(requestParamToString(req.params?.siren));
+    const siren = verifySiren(c.req.param("siren"));
     const observations = await fetchRneObservationsSite(
       siren,
-      abortController.signal
+      c.req.raw.signal
     );
-    res.status(206).json(observations);
+    return c.json(observations, 206);
   } catch (error) {
     // Don't forward abort errors to error handler since there's no client to respond to
     if (error instanceof Error && error.name === "CanceledError") {
-      return;
+      return c.body(null);
     }
-    next(error);
+    throw error;
   }
 };

@@ -1,36 +1,24 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Handler } from "hono";
 import clientEORI from "../clients/eori";
 import { extractSirenFromSiret, verifySiret } from "../models/siren-and-siret";
-import { requestParamToString } from "../utils/helpers/params";
 
-export const eoriController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const abortController = new AbortController();
-
-  // Cancel the request if client disconnects
-  req.on("close", () => {
-    abortController.abort();
-  });
-
+export const eoriController: Handler<object, "/eori/:siret"> = async (c) => {
   try {
-    const siret = verifySiret(requestParamToString(req.params?.siret));
+    const siret = verifySiret(c.req.param("siret"));
     const siren = extractSirenFromSiret(siret);
 
     // Try to validate with siren first, if it fails, try with siret
-    let eoriValidation = await clientEORI(siren, abortController.signal);
+    let eoriValidation = await clientEORI(siren, c.req.raw.signal);
 
-    if (!(eoriValidation?.isValid || abortController.signal.aborted)) {
-      eoriValidation = await clientEORI(siret, abortController.signal);
+    if (!(eoriValidation?.isValid || c.req.raw.signal.aborted)) {
+      eoriValidation = await clientEORI(siret, c.req.raw.signal);
     }
-    res.status(200).json(eoriValidation);
+    return c.json(eoriValidation, 200);
   } catch (error) {
     // Don't forward abort errors to error handler since there's no client to respond to
     if (error instanceof Error && error.name === "CanceledError") {
-      return;
+      return c.body(null);
     }
-    next(error);
+    throw error;
   }
 };

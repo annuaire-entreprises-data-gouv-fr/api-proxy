@@ -1,8 +1,9 @@
+import { serve } from "@hono/node-server";
 // biome-ignore lint/performance/noNamespaceImport: Sentry namespace needed
 import * as Sentry from "@sentry/node";
 import dotenv from "dotenv";
-import express, { type Express, type Request, type Response } from "express";
-import helmet from "helmet";
+import { Hono } from "hono";
+import { secureHeaders } from "hono/secure-headers";
 import { eoriController } from "./src/controllers/eori";
 import { errorHandler } from "./src/controllers/error-handler";
 import {
@@ -19,16 +20,13 @@ import statusRouter from "./src/routes/status";
 
 dotenv.config();
 
-const app: Express = express();
+const app = new Hono();
 const port = process.env.PORT || 3000;
 const useSentry =
   process.env.NODE_ENV === "production" && process.env.SENTRY_DSN;
 
-// parse incoming request json body
-app.use(express.json());
-
-// https://expressjs.com/fr/advanced/best-practice-security.html
-app.use(helmet());
+// https://hono.dev/docs/middleware/builtin/secure-headers
+app.use(secureHeaders());
 
 /**
  * Error handling
@@ -39,17 +37,12 @@ if (useSentry) {
     dsn: process.env.SENTRY_DSN,
     integrations: [],
   });
-
-  // The error handler must be before any other error middleware and after all controllers
-  Sentry.setupExpressErrorHandler(app);
 }
 
 /**
  * Up and running
  */
-app.get("/", (_: Request, res: Response) => {
-  res.json({ message: "Server is up and running" });
-});
+app.get("/", (c) => c.json({ message: "Server is up and running" }));
 
 /**
  * RNE
@@ -64,42 +57,66 @@ app.get("/rne/observations/fallback/:siren", rneControllerObservationsSite);
 /**
  * Status
  */
-app.use("/status", statusRouter);
+app.route("/status", statusRouter);
 
 /**
  * TVA
  */
-app.use("/tva/:tvaNumber", tvaController);
+app.get("/tva/:tvaNumber", tvaController);
 
 /**
  * EORI
  */
-app.use("/eori/:siret", eoriController);
+app.get("/eori/:siret", eoriController);
 
 /**
  * IG
  */
-app.use("/ig/:siren", igController);
+app.get("/ig/:siren", igController);
 
 /**
  * Feature Flags
  */
 app.get("/feature-flags", featureFlagsController);
 
-app.use(errorHandler);
+app.onError((err, c) => {
+  if (useSentry) {
+    Sentry.captureException(err);
+  }
+
+  return errorHandler(err, c);
+});
 
 let pollingTimeout: NodeJS.Timeout;
 
-const server = app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
+const server = serve(
+  {
+    fetch: app.fetch,
+    port: Number(port),
+  },
+  () => {
+    console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 
-  console.log("💽[server]: Polling feature flags every 5 minutes...");
+    console.log("💽[server]: Polling feature flags every 5 minutes...");
 
-  pollingTimeout = startPollingFeatureFlags();
-});
+    pollingTimeout = startPollingFeatureFlags();
+  }
+);
 
-server.on("close", () => {
-  console.log("💽[server]: Server is closing...");
-
+process.on("SIGINT", () => {
+  console.log("💽[server]: Server is shutting down..");
   clearInterval(pollingTimeout);
+  server.close();
+  process.exit(0);
+});
+process.on("SIGTERM", () => {
+  console.log("💽[server]: Server is shutting down...");
+  clearInterval(pollingTimeout);
+  server.close((err) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    }
+    process.exit(0);
+  });
 });
