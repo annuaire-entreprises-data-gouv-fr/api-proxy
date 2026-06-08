@@ -16,7 +16,7 @@ jobs:
       name: staging
     steps:
       - uses: actions/checkout@v4
-      - uses: annuaire-entreprises-data-gouv-fr/github-actions/.github/actions/deploy@v1
+      - uses: annuaire-entreprises-data-gouv-fr/github-actions/.github/actions/deploy@v1.1
         with:
           app-to-deploy: "annuaire-entreprises-api-proxy"
           app-repository: "https://github.com/annuaire-entreprises-data-gouv-fr/api-proxy.git"
@@ -27,7 +27,8 @@ jobs:
           ssh-host: ${{ secrets.SSH_HOST_STAGING }}
           notify-on-failure: true
           notify-on-success: false
-          notify-webhook: ${{ secrets.DEV_EVENT_HOOK }}
+          tchap-url: ${{ secrets.TCHAP_URL }}
+          tchap-token: ${{ secrets.TCHAP_TOKEN }}
 
   deploy-production:
     name: Deploy - production
@@ -38,7 +39,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: annuaire-entreprises-data-gouv-fr/github-actions/.github/actions/deploy@v1
+      - uses: annuaire-entreprises-data-gouv-fr/github-actions/.github/actions/deploy@v1.1
         with:
           app-to-deploy: "annuaire-entreprises-api-proxy"
           app-repository: "https://github.com/annuaire-entreprises-data-gouv-fr/api-proxy.git"
@@ -49,4 +50,5 @@ jobs:
           ssh-host: ${{ secrets.SSH_HOST_PRODUCTION }}
           notify-on-failure: true
           notify-on-success: true
-          notify-webhook: ${{ secrets.DEV_EVENT_HOOK }}
+          tchap-url: ${{ secrets.TCHAP_URL }}
+          tchap-token: ${{ secrets.TCHAP_TOKEN }}
