@@ -168,12 +168,11 @@ const mapDirigeantsToDomainObject = (
     const {
       siren = "",
       denomination = "",
-      roleEntreprise = "",
       formeJuridique = "",
     } = p.entreprise || {};
 
     const role =
-      p.libelleRoleEntreprise || libelleFromCodeRoleDirigeant(roleEntreprise);
+      p.libelleRoleEntreprise || libelleFromCodeRoleDirigeant(p.roleEntreprise);
 
     return {
       siren,
