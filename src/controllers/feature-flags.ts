@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Context } from "hono";
 import {
   cacheFeatureFlags,
   clientFeatureFlags,
@@ -6,17 +6,9 @@ import {
 } from "../clients/feature-flags";
 import { logErrorInSentry } from "../utils/sentry";
 
-export const featureFlagsController = async (
-  _: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const featureFlags = await readFeatureFlagsFromCache();
-    res.status(200).json(featureFlags);
-  } catch (e) {
-    next(e);
-  }
+export const featureFlagsController = async (c: Context) => {
+  const featureFlags = await readFeatureFlagsFromCache();
+  return c.json(featureFlags, 200);
 };
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;

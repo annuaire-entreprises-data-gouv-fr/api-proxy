@@ -1,29 +1,17 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Handler } from "hono";
 import clientUniteLegaleIG from "../clients/ig";
 import { verifySiren } from "../models/siren-and-siret";
-import { requestParamToString } from "../utils/helpers/params";
 
-export const igController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const abortController = new AbortController();
-
-  // Cancel the request if client disconnects
-  req.on("close", () => {
-    abortController.abort();
-  });
-
+export const igController: Handler<object, "/ig/:siren"> = async (c) => {
   try {
-    const siren = verifySiren(requestParamToString(req.params?.siren));
-    const response = await clientUniteLegaleIG(siren, abortController.signal);
-    res.status(200).json(response);
+    const siren = verifySiren(c.req.param("siren"));
+    const response = await clientUniteLegaleIG(siren, c.req.raw.signal);
+    return c.json(response, 200);
   } catch (error) {
     // Don't forward abort errors to error handler since there's no client to respond to
     if (error instanceof Error && error.name === "AbortError") {
-      return;
+      return c.body(null);
     }
-    next(error);
+    throw error;
   }
 };
