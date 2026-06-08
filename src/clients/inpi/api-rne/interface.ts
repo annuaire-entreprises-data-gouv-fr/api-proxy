@@ -1,4 +1,12 @@
-type IRNEIdentitePM = {
+interface IRNEIdentitePM {
+  description: {
+    duree: number;
+    ess: boolean;
+    capitalVariable: boolean;
+    montantCapital: number;
+    deviseCapital: string;
+    dateClotureExerciceSocial: string;
+  };
   entreprise: {
     siren: string;
     denomination: string;
@@ -10,18 +18,10 @@ type IRNEIdentitePM = {
     dateRad: string;
     dateDebutActiv: string;
   };
-  description: {
-    duree: number;
-    ess: boolean;
-    capitalVariable: boolean;
-    montantCapital: number;
-    deviseCapital: string;
-    dateClotureExerciceSocial: string;
-  };
-  nomsDeDomaine: [];
   entreprisesIntervenant: [];
-};
-type IRNEIdentitePP = {
+  nomsDeDomaine: [];
+}
+interface IRNEIdentitePP {
   entrepreneur: IRNEEntrepreneur;
   entreprise: {
     siren: string;
@@ -31,22 +31,18 @@ type IRNEIdentitePP = {
     dateRad: string;
     dateDebutActiv: string;
   };
-};
+}
 
-type IRNEEntrepreneur = {
+interface IRNEEntrepreneur {
   descriptionPersonne: {
     nom: string;
     prenoms: string[];
     nomUsage: string;
     dateDeNaissance: string;
   };
-};
+}
 
-type IRNEAdresse = {
-  caracteristiques: {
-    ambulant: boolean;
-    domiciliataire: string | null;
-  };
+interface IRNEAdresse {
   adresse: {
     roleAdresse: string | null;
     pays: string | null;
@@ -56,13 +52,24 @@ type IRNEAdresse = {
     codeInseeCommune: string | null;
     caracteristiques: string | null;
   };
+  caracteristiques: {
+    ambulant: boolean;
+    domiciliataire: string | null;
+  };
   entrepriseDomiciliataire: string | null;
-};
+}
 
-type IRNEPouvoir = {
-  roleEntreprise: string; // '65',
-  libelleRoleEntreprise: string; // 'Commissaire aux comptes titulaire',
-  typeDePersonne: string; //'ENTREPRISE',
+interface IRNEPouvoir {
+  adresseEntreprise?: IRNEAdresse;
+  dateMentionDemissionOrdre?: string;
+  entreprise?: {
+    roleEntreprise: string; //'71',
+    siren: string; // '387953961',
+    denomination: string; // 'Mazars et Associés',
+    formeJuridique: string; //'Société par actions simplifiée',
+    entrepriseValidated: boolean;
+    entrepriseRdd: true;
+  };
   indicateurActifAgricole: boolean;
   individu: {
     descriptionPersonne: {
@@ -89,15 +96,8 @@ type IRNEPouvoir = {
     };
     adresseDomicile: IRNEAdresse;
   };
-  entreprise?: {
-    roleEntreprise: string; //'71',
-    siren: string; // '387953961',
-    denomination: string; // 'Mazars et Associés',
-    formeJuridique: string; //'Société par actions simplifiée',
-    entrepriseValidated: boolean;
-    entrepriseRdd: true;
-  };
-  adresseEntreprise?: IRNEAdresse;
+  libelleRoleEntreprise: string; // 'Commissaire aux comptes titulaire',
+  mentionDemissionOrdre: boolean;
   representant?: {
     descriptionPersonne: {
       sirenPresent: boolean;
@@ -116,39 +116,36 @@ type IRNEPouvoir = {
     adresseDomicile: IRNEAdresse;
     indicateurActifAgricole: boolean;
   };
-  mentionDemissionOrdre: boolean;
-  dateMentionDemissionOrdre?: string;
-};
+  roleEntreprise: string; // '65',
+  typeDePersonne: string; //'ENTREPRISE',
+}
 
-export type IRNEPersonneMorale = {
-  identite: IRNEIdentitePM;
+export interface IRNEPersonneMorale {
   adresseEntreprise: IRNEAdresse;
+  beneficiairesEffectifs: any[];
+  composition: {
+    pouvoirs: IRNEPouvoir[];
+  };
   detailCessationEntreprise: {
     dateRadiation: string;
     dateEffet: string;
     dateCessationTotaleActivite: string;
   };
-  beneficiairesEffectifs: any[];
+  identite: IRNEIdentitePM;
   observations: { rcs: any[] };
-  composition: {
-    pouvoirs: IRNEPouvoir[];
-  };
-};
+}
 
-export type IRNEPersonnePhysique = {
-  identite: IRNEIdentitePP;
+export interface IRNEPersonnePhysique {
   adresseEntreprise: IRNEAdresse;
-  detailCessationEntreprise: any;
   composition: {
     pouvoirs: IRNEPouvoir[];
   };
-};
+  detailCessationEntreprise: any;
+  identite: IRNEIdentitePP;
+}
 
-export type IRNEResponse = {
-  siren: string;
+export interface IRNEResponse {
   createdAt: string;
-  updatedAt: string;
-  id: string;
   formality: {
     siren: string;
     evenementCessation: string | null;
@@ -175,11 +172,14 @@ export type IRNEResponse = {
       personnePhysique?: IRNEPersonnePhysique;
     };
   };
-};
+  id: string;
+  siren: string;
+  updatedAt: string;
+}
 
-export type IRNEInscriptionsOffices = {
+export interface IRNEInscriptionsOffices {
   dateEffet: string;
+  observationComplementaire: string;
   partnerCenter: string;
   partnerCode: string;
-  observationComplementaire: string;
-};
+}

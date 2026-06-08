@@ -22,11 +22,9 @@ export const featureFlagsController = async (
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 
 const fetchAndCacheFeatureFlags = async () => {
-  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.log("💽[server]: Polling feature flags...");
 
   const featureFlags = await clientFeatureFlags().catch((e) => {
-    // biome-ignore lint/suspicious/noConsole: needed for logging
     console.error("💽[server]: Error polling feature flags:", e);
 
     logErrorInSentry(
@@ -36,7 +34,6 @@ const fetchAndCacheFeatureFlags = async () => {
   });
 
   await cacheFeatureFlags(featureFlags).catch((e) => {
-    // biome-ignore lint/suspicious/noConsole: needed for logging
     console.error("💽[server]: Error caching feature flags:", e);
 
     logErrorInSentry(
@@ -44,7 +41,6 @@ const fetchAndCacheFeatureFlags = async () => {
     );
   });
 
-  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.log("💽[server]: Feature flags cached:", featureFlags);
 
   return featureFlags;

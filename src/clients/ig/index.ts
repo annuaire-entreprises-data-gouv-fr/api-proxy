@@ -8,15 +8,7 @@ import type { Siren } from "../../models/siren-and-siret";
 import { formatNameFull } from "../../utils/helpers/formatters";
 import routes from "../urls";
 
-type IGResponse = {
-  id: string;
-  nom: string;
-  numero_identification: string;
-  etat: string;
-  date_immatriculation: string;
-  etat_technique: string;
-  type_personne: string;
-  date_creation_informatique: string;
+interface IGResponse {
   activite_declaree: any;
   activite_naf: {
     code: string;
@@ -41,49 +33,56 @@ type IGResponse = {
       libelle: string;
     };
   };
+  annee_enquete_tranche_effectif: number;
+  date_cloture_effectif: string;
+  date_creation_informatique: string;
+  date_effet_radiation: any;
+  date_immatriculation: string;
+  date_mention_sans_activite: any;
+  date_radiation: any;
+  date_sans_activite: any;
+  effectif: number;
+  etat: string;
+  etat_technique: string;
+  id: string;
+  motif_radiation: any;
+  motif_sans_activite: any;
+  nom: string;
+  numero_identification: string;
+  numero_tva_intracommunautaire: any;
+  personne_morale?: PersonneMorale;
+  personne_physique?: PersonnePhysique;
+  sans_activite: boolean;
   tranche_effectif: {
     code: string;
     libelle: string;
   };
-  annee_enquete_tranche_effectif: number;
-  effectif: number;
-  date_cloture_effectif: string;
-  date_radiation: any;
-  date_effet_radiation: any;
-  motif_radiation: any;
-  sans_activite: boolean;
-  motif_sans_activite: any;
-  date_sans_activite: any;
-  date_mention_sans_activite: any;
-  numero_tva_intracommunautaire: any;
-  personne_morale?: PersonneMorale;
-  personne_physique?: PersonnePhysique;
-};
+  type_personne: string;
+}
 
-type PersonnePhysique = {
-  nom_patronymique: string; // "DUBIGNY"
-  nom_usage: string; // "MENARD DUBIGNY"
+interface PersonnePhysique {
   annee_naissance: string; // null
-  mois_naissance: string; // null
+  autres_prenoms: string; // []
+  COG_commune_naissance: string; // null
+  civilite: string; // null
+  email: string; // null
   jour_naissance: string; // null
   lieu_naissance: string; // null
+  mois_naissance: string; // null
+  nationalite: string; // null
+  nom_patronymique: string; // "DUBIGNY"
+  nom_usage: string; // "MENARD DUBIGNY"
   pays_naissance: string; // null
   premier_prenom: string; // "JESSICA"
-  autres_prenoms: string; // []
   pseudonyme: string; // null
   sexe: string; // "F"
-  civilite: string; // null
-  nationalite: string; // null
-  telephone_professionnel: string; // null
   telephone_fixe: string; // null
-  email: string; // null
-  COG_commune_naissance: string; // null
-};
+  telephone_professionnel: string; // null
+}
 
-type PersonneMorale = {
-  id: string;
-  denomination: string;
-  siege_social: null;
+interface PersonneMorale {
+  associe_unique: boolean;
+  assujettis_uniquement: boolean;
   au_domicile_representant_legal: boolean;
   capital: {
     montant: number;
@@ -94,25 +93,26 @@ type PersonneMorale = {
     montant_minimum: any;
     type: string;
   };
-  numero_rna: string;
-  type_declaration_beneficiaire_effectif: string;
-  assujettis_uniquement: boolean;
-  divergence_beneficiaire_effectif: string[];
-  jour_date_cloture: number;
-  mois_date_cloture: number;
   date_cloture_exceptionnelle: string;
+  date_societe_mission: string;
+  denomination: string;
+  divergence_beneficiaire_effectif: string[];
+  economie_social_solidaire: boolean;
   forme_juridique: {
     code: string;
     libelle: string;
   };
-  sigle: string;
-  associe_unique: boolean;
+  id: string;
   identification_registre_etranger: string;
-  societe_mission: boolean;
-  date_societe_mission: string;
+  jour_date_cloture: number;
+  mois_date_cloture: number;
   noms_domaines_internet: string[];
-  economie_social_solidaire: boolean;
-};
+  numero_rna: string;
+  siege_social: null;
+  sigle: string;
+  societe_mission: boolean;
+  type_declaration_beneficiaire_effectif: string;
+}
 
 /**
  * Call IG to fetch unite legale data
@@ -142,8 +142,6 @@ const clientUniteLegaleIG = async (siren: Siren, signal?: AbortSignal) => {
 
     if (!response.ok) {
       const errorMessage = `Error fetching IG data: ${response.status}: ${response.statusText}`;
-      // biome-ignore lint/suspicious/noConsole: needed for logging
-      console.log(errorMessage);
       if (response.status === 404) {
         throw new HttpNotFound(errorMessage);
       }

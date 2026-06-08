@@ -2,14 +2,14 @@
 import * as Sentry from "@sentry/node";
 import { RedisStorageException } from "./network/storage/redis-storage";
 
-export type IScope = {
-  page?: string;
-  siret?: string;
-  siren?: string;
-  details?: string;
-  referrer?: string;
+export interface IScope {
   browser?: string;
-};
+  details?: string;
+  page?: string;
+  referrer?: string;
+  siren?: string;
+  siret?: string;
+}
 
 // scope allows to log stuff in tags in sentry
 const getScope = (extra: IScope) => {
@@ -38,7 +38,6 @@ export const logInSentryFactory =
       }
       // Avoid logging RedisStorageException in local development
     } else if (!(errorMsg instanceof RedisStorageException)) {
-      // biome-ignore lint/suspicious/noConsole: needed for debugging
       console.log(errorMsg, JSON.stringify(extra || {}));
     }
   };

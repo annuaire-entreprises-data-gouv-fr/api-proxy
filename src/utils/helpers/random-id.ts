@@ -1,2 +1,2 @@
-const randomId = () => Math.random().toString(16).substring(7);
+const randomId = () => Math.random().toString(16).slice(7);
 export default randomId;

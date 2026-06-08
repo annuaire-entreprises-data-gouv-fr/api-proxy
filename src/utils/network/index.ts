@@ -25,17 +25,17 @@ const agentOptions = {
   maxFreeSockets: 128, // Maximum number of sockets to leave open in a free state. Only relevant if keepAlive is set to true. Defaults to 256.
 };
 
-export type IDefaultRequestConfig = {
-  url?: string;
-  timeout?: number;
-  useCache?: boolean;
-  params?: any;
+export interface IDefaultRequestConfig {
+  data?: unknown;
   headers?: any;
   method?: "POST" | "GET" | "PATCH";
+  params?: any;
   responseType?: "blob" | "arraybuffer";
-  data?: unknown;
   signal?: AbortSignal;
-};
+  timeout?: number;
+  url?: string;
+  useCache?: boolean;
+}
 
 export const axiosInstanceFactory = (
   timeout = constants.timeout.L
@@ -50,7 +50,6 @@ export const axiosInstanceFactory = (
     storage: buildStorage(storage),
     // ignore cache-control headers as some API like sirene return 'no-cache' headers
     headerInterpreter: () => CACHE_TIMEOUT,
-    // biome-ignore lint/suspicious/noConsole: needed for logging
     debug: console.info,
   });
 

@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { fetchRneAPI, fetchRneObservationsSite } from "../models/rne";
 import { verifySiren } from "../models/siren-and-siret";
+import { requestParamToString } from "../utils/helpers/params";
 
 export const rneControllerAPI = async (
   req: Request,
@@ -15,7 +16,7 @@ export const rneControllerAPI = async (
   });
 
   try {
-    const siren = verifySiren(req.params.siren);
+    const siren = verifySiren(requestParamToString(req.params?.siren));
     const rne = await fetchRneAPI(siren, abortController.signal);
     res.status(200).json(rne);
   } catch (error) {
@@ -40,7 +41,7 @@ export const rneControllerObservationsSite = async (
   });
 
   try {
-    const siren = verifySiren(req.params.siren);
+    const siren = verifySiren(requestParamToString(req.params?.siren));
     const observations = await fetchRneObservationsSite(
       siren,
       abortController.signal
