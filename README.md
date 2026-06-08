@@ -16,13 +16,13 @@ Ce repository fait partie [d'un ensemble de services qui constituent l'Annuaire 
 
 ```bash
 # Installation
-npm i
+pnpm i
 
 # Lancer le site en dev
-npm run dev
+pnpm dev
 
 # Lancer le site en prod
-npm run build && npm run start
+pnpm build && pnpm start
 
 ```
 
@@ -51,13 +51,13 @@ https://rncs-proxy.api.gouv.fr/status/imr/site
 1. Linter
 
 ```bash
-npm run lint
+pnpm lint
 ```
 
 2. Tests unitaires
 
 ```bash
-npm run test
+pnpm test
 ```
 
 ### Deploiement

@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import clientEORI from "../clients/eori";
 import { extractSirenFromSiret, verifySiret } from "../models/siren-and-siret";
+import { requestParamToString } from "../utils/helpers/params";
 
 export const eoriController = async (
   req: Request,
@@ -15,7 +16,7 @@ export const eoriController = async (
   });
 
   try {
-    const siret = verifySiret(req.params?.siret);
+    const siret = verifySiret(requestParamToString(req.params?.siret));
     const siren = extractSirenFromSiret(siret);
 
     // Try to validate with siren first, if it fails, try with siret

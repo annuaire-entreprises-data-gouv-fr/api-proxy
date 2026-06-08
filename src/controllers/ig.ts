@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import clientUniteLegaleIG from "../clients/ig";
 import { verifySiren } from "../models/siren-and-siret";
+import { requestParamToString } from "../utils/helpers/params";
 
 export const igController = async (
   req: Request,
@@ -15,7 +16,7 @@ export const igController = async (
   });
 
   try {
-    const siren = verifySiren(req.params?.siren);
+    const siren = verifySiren(requestParamToString(req.params?.siren));
     const response = await clientUniteLegaleIG(siren, abortController.signal);
     res.status(200).json(response);
   } catch (error) {

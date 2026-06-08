@@ -11,7 +11,7 @@ export const formatINPIDateField = (unformatted: string | number): string => {
   if (typeof unformatted === "number") {
     // YYYYMMDD as number
     const YYYYMMDD = unformatted.toString();
-    return `${YYYYMMDD.substr(0, 4)}-${YYYYMMDD.substr(4, 2)}-${YYYYMMDD.substr(
+    return `${YYYYMMDD.slice(0, 4)}-${YYYYMMDD.slice(4, 6)}-${YYYYMMDD.slice(
       6
     )}`;
   }

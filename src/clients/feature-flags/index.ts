@@ -43,7 +43,6 @@ export const cacheFeatureFlags = async (featureFlags: {
   try {
     await storage.set("feature-flags", featureFlags, undefined, ONE_MONTH_MS);
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: needed for logging
     console.error(
       `💽[server]: Error caching feature flags: ${error instanceof Error ? error.message : "Unknown error"}. Writing to file...`
     );

@@ -2,11 +2,11 @@ import constants from "../../constants";
 import httpClient from "../../utils/network";
 import routes from "../urls";
 
-type IGristRecords = {
+interface IGristRecords {
   records: {
     fields: any;
   }[];
-};
+}
 
 const gristTables = {
   "feature-flags": {

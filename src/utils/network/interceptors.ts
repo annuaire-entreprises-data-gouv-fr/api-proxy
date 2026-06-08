@@ -27,7 +27,6 @@ export const logInterceptor = (response: AxiosResponse<any, any>) => {
   //@ts-expect-error
   const startTime = response?.config?.metadata?.startTime;
 
-  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.info(
     formatLog({
       url: response?.config?.url || "",
@@ -55,7 +54,7 @@ const getStatus = (response?: AxiosResponse, message?: string) => {
 export const errorInterceptor = (error: AxiosError) => {
   const { config, response, message } = error || {};
 
-  const url = (config?.url || "an unknown url").substring(0, 100);
+  const url = (config?.url || "an unknown url").slice(0, 100);
   const status = getStatus(response, message);
   const statusText = response?.statusText;
 
@@ -63,7 +62,6 @@ export const errorInterceptor = (error: AxiosError) => {
     const endTime = Date.now();
     //@ts-expect-error
     const startTime = config?.metadata?.startTime;
-    // biome-ignore lint/suspicious/noConsole: needed for logging
     console.error(
       formatLog({
         url,

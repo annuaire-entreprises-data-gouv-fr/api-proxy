@@ -3,62 +3,62 @@ import { fetchObservationsFromSite } from "../clients/inpi/site";
 import { HttpNotFound, HttpServerError } from "../http-exceptions";
 import type { Siren } from "./siren-and-siret";
 
-export type IEtatCivil = {
+export interface IEtatCivil {
+  dateDemission: string | null;
+  dateNaissanceFull: string;
+  dateNaissancePartial: string;
+  estDemissionnaire: boolean;
   nom: string;
   prenom: string;
   role: string;
-  dateNaissancePartial: string;
-  dateNaissanceFull: string;
-  estDemissionnaire: boolean;
-  dateDemission: string | null;
-};
+}
 
-export type IBeneficiaire = {
-  type: string;
-  nom: string;
-  prenoms: string;
+export interface IBeneficiaire {
   dateNaissancePartial: string;
   nationalite: string;
-};
+  nom: string;
+  prenoms: string;
+  type: string;
+}
 
-export type IIdentite = {
-  denomination: string;
-  natureEntreprise: string;
-  dateImmatriculation: string;
-  dateDebutActiv: string;
-  dateRadiation: string;
-  dateCessationActivite: string;
-  isPersonneMorale: boolean;
-  dateClotureExercice: string;
-  dureePersonneMorale: number;
+export interface IIdentite {
   capital: string;
+  dateCessationActivite: string;
+  dateClotureExercice: string;
+  dateDebutActiv: string;
+  dateImmatriculation: string;
+  dateRadiation: string;
+  denomination: string;
+  dureePersonneMorale: number;
+  isPersonneMorale: boolean;
   libelleNatureJuridique: string;
-};
+  natureEntreprise: string;
+}
 
-export type IPersonneMorale = {
-  siren: string;
+export interface IPersonneMorale {
   denomination: string;
   natureJuridique: string;
   role: string;
-};
+  siren: string;
+}
 
-export type IObservation = {
-  numObservation: string;
+export interface IObservation {
   dateAjout: string;
   description: string;
-};
+  numObservation: string;
+}
 
 export type IDirigeant = IEtatCivil | IPersonneMorale;
 
-export type IImmatriculation = {
-  siren: Siren;
-  dirigeants: IDirigeant[];
+export interface IImmatriculation {
   beneficiaires: IBeneficiaire[];
-  observations: IObservation[];
+  dirigeants: IDirigeant[];
   metadata: {
     isFallback: boolean;
   };
-};
+  observations: IObservation[];
+  siren: Siren;
+}
 
 /**
  * Get RNE immatriculation from API, when it works

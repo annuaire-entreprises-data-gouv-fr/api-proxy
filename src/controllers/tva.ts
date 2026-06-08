@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { clientTVA } from "../clients/tva";
 import { verifyTVANumber } from "../models/siren-and-siret";
+import { requestParamToString } from "../utils/helpers/params";
 
 export const tvaController = async (
   req: Request,
@@ -16,7 +17,9 @@ export const tvaController = async (
 
   try {
     const useCache = req.query?.useCache !== "false";
-    const tvaNumber = verifyTVANumber(req.params?.tvaNumber);
+    const tvaNumber = verifyTVANumber(
+      requestParamToString(req.params?.tvaNumber)
+    );
     const tva = await clientTVA(tvaNumber, useCache, abortController.signal);
     res.status(200).json(tva);
   } catch (error) {

@@ -15,10 +15,10 @@ function createSOAPRequest(eoriNumber: string) {
 `;
 }
 
-export type IEORIValidation = {
+export interface IEORIValidation {
   eori: string;
   isValid: boolean;
-};
+}
 
 const resultRegex = /<result>[\s\S]*?<\/result>/;
 const eoriRegex = /<eori>(.*?)<\/eori>/;

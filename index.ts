@@ -91,17 +91,14 @@ app.use(errorHandler);
 let pollingTimeout: NodeJS.Timeout;
 
 const server = app.listen(port, () => {
-  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
 
-  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.log("💽[server]: Polling feature flags every 5 minutes...");
 
   pollingTimeout = startPollingFeatureFlags();
 });
 
 server.on("close", () => {
-  // biome-ignore lint/suspicious/noConsole: needed for logging
   console.log("💽[server]: Server is closing...");
 
   clearInterval(pollingTimeout);
