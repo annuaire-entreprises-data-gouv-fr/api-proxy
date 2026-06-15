@@ -10,21 +10,6 @@ import {
  */
 type Brand<K, T> = K & { __brand: T };
 
-export type TVANumber = Brand<string, "TVANumber">;
-
-export const isTVANumber = (slug: string): slug is TVANumber =>
-  !!slug.match(/^\d{11}$/g);
-
-/**
- * throw an exception if a string is not a TVA Number
- */
-export const verifyTVANumber = (slug: string): TVANumber => {
-  if (isTVANumber(slug)) {
-    return slug;
-  }
-  throw new Error("Not a valid TVANumber");
-};
-
 export type Siren = Brand<string, "Siren">;
 export type Siret = Brand<string, "Siren">;
 
