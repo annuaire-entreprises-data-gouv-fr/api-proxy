@@ -15,7 +15,6 @@ import {
   rneControllerAPI,
   rneControllerObservationsSite,
 } from "./src/controllers/rne";
-import { tvaController } from "./src/controllers/tva";
 import statusRouter from "./src/routes/status";
 
 dotenv.config();
@@ -58,11 +57,6 @@ app.get("/rne/observations/fallback/:siren", rneControllerObservationsSite);
  * Status
  */
 app.route("/status", statusRouter);
-
-/**
- * TVA
- */
-app.get("/tva/:tvaNumber", tvaController);
 
 /**
  * EORI
