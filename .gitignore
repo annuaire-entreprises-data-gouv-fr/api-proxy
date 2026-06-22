@@ -91,6 +91,11 @@ dist
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
 
+# Infos privées
+.claude/
+.cursor/
+.vscode/
+
 # vuepress build output
 .vuepress/dist
 
