@@ -1,11 +1,8 @@
 import constants from "../../constants";
-import {
-  HttpNotFound,
-  HttpServerError,
-  HttpTimeoutError,
-} from "../../http-exceptions";
+import { HttpTimeoutError } from "../../http-exceptions";
 import type { Siren } from "../../models/siren-and-siret";
 import { formatNameFull } from "../../utils/helpers/formatters";
+import { httpGet } from "../../utils/network";
 import routes from "../urls";
 
 interface IGResponse {
@@ -132,23 +129,14 @@ const clientUniteLegaleIG = async (siren: Siren, signal?: AbortSignal) => {
     : timeoutController.signal;
 
   try {
-    const response = await fetch(routes.ig + siren, {
+    const response = await httpGet<IGResponse>(routes.ig + siren, {
       signal: combinedSignal,
-      method: "GET",
       headers: {
         "User-Agent": "bruno-runtime/2.1.0",
       },
     });
 
-    if (!response.ok) {
-      const errorMessage = `Error fetching IG data: ${response.status}: ${response.statusText}`;
-      if (response.status === 404) {
-        throw new HttpNotFound(errorMessage);
-      }
-      throw new HttpServerError(errorMessage);
-    }
-    const data = await response.json();
-    return mapToDomainObject(data, siren);
+    return mapToDomainObject(response, siren);
   } catch (error: any) {
     clearTimeout(timeoutId);
     if (error?.name === "AbortError") {
