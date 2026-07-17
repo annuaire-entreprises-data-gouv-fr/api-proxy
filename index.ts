@@ -13,6 +13,7 @@ import {
 import { igController } from "./src/controllers/ig";
 import {
   rneControllerAPI,
+  rneControllerImmatriculationDate,
   rneControllerObservationsSite,
 } from "./src/controllers/rne";
 import statusRouter from "./src/routes/status";
@@ -46,6 +47,7 @@ app.get("/", (c) => c.json({ message: "Server is up and running" }));
 /**
  * RNE
  */
+app.get("/rne/:siren/date", rneControllerImmatriculationDate);
 app.get("/rne/:siren", rneControllerAPI);
 
 /**
