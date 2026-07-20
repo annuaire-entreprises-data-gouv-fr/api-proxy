@@ -1,6 +1,6 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests
 
-name: 'Pre-merge checks'
+name: "Pre-merge checks"
 permissions:
   contents: read
 
@@ -11,10 +11,10 @@ on:
 # Be extremely careful as the env variables defined here are accessible by all the actions of the workflow.
 # For critical env variable, declare it within the action.
 env:
-  node-version: 20.x
+  node-version: 22.22.2
 jobs:
   dependencies:
-    name: 'Install dependencies'
+    name: "Install dependencies"
     runs-on: ubuntu-latest
 
     steps:
@@ -23,21 +23,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
+      - name: Enable pnpm
+        shell: bash
+        run: corepack enable pnpm
       - name: Cache node modules
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         id: restore-dependencies
         env:
           cache-name: cache-node-modules
         with:
-          # Cache node_modules. To cache global, you may try ~/.npm
           path: ./node_modules
-          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-npm-cache-
+            ${{ runner.os }}-pnpm-cache-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       - name: Install dependencies
-        run: npm i
+        shell: bash
+        run: pnpm install --frozen-lockfile --prod=false --ignore-scripts
 
   lint:
     name: Lint
@@ -50,6 +53,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
+      - name: Enable pnpm
+        shell: bash
+        run: corepack enable pnpm
       - name: Load node modules
         uses: actions/cache@v4
         id: restore-dependencies
@@ -57,9 +63,9 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ./node_modules
-          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
       - name: Run linter
-        run: npm run lint
+        run: pnpm lint
 
   build:
     name: Build
@@ -72,6 +78,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
+      - name: Enable pnpm
+        shell: bash
+        run: corepack enable pnpm
       - name: Load node modules
         uses: actions/cache@v4
         id: restore-dependencies
@@ -79,9 +88,9 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ./node_modules
-          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
       - name: Build
-        run: npm run build
+        run: pnpm build
       - name: Cache build
         uses: actions/cache@v4
         id: restore-build
@@ -100,6 +109,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.node-version }}
+      - name: Enable pnpm
+        shell: bash
+        run: corepack enable pnpm
       - name: Load node modules
         uses: actions/cache@v4
         id: restore-dependencies
@@ -107,7 +119,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: ./node_modules
-          key: ${{ runner.os }}-npm-cache-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-pnpm-cache-${{ hashFiles('**/pnpm-lock.yaml') }}
       - name: Run unit tests
         run: |
-          npm run test
+          pnpm test
