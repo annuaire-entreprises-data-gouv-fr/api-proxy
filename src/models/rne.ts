@@ -1,4 +1,5 @@
 import { fetchImmatriculationFromAPIRNE } from "../clients/inpi/api-rne";
+import { fetchImmatriculationDateFromAPIRNE } from "../clients/inpi/api-rne/immatriculation-date";
 import { fetchObservationsFromSite } from "../clients/inpi/site";
 import { HttpNotFound, HttpServerError } from "../http-exceptions";
 import type { Siren } from "./siren-and-siret";
@@ -63,6 +64,7 @@ export interface IImmatriculation {
 /**
  * Get RNE immatriculation from API, when it works
  * @param siren
+ * @param signal
  * @returns
  */
 const fetchRneAPI = async (
@@ -81,8 +83,29 @@ const fetchRneAPI = async (
 };
 
 /**
+ * Get RNE immatriculation date from API
+ * @param siren
+ * @param signal
+ * @returns The immatriculation date
+ */
+const fetchRneImmatriculationDate = async (
+  siren: Siren,
+  signal?: AbortSignal
+): Promise<{ dateMiseAJourInpi: string }> => {
+  try {
+    return await fetchImmatriculationDateFromAPIRNE(siren, true, signal);
+  } catch (errorAPIRNE) {
+    if (errorAPIRNE instanceof HttpNotFound) {
+      throw errorAPIRNE;
+    }
+    throw new HttpServerError(`[RNE] API  failed : ${errorAPIRNE}`);
+  }
+};
+
+/**
  * Get INPI observations from site parser
  * @param siren
+ * @param signal
  * @returns
  */
 const fetchRneObservationsSite = async (
@@ -99,4 +122,4 @@ const fetchRneObservationsSite = async (
   }
 };
 
-export { fetchRneAPI, fetchRneObservationsSite };
+export { fetchRneAPI, fetchRneImmatriculationDate, fetchRneObservationsSite };

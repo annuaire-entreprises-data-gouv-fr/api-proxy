@@ -104,8 +104,6 @@ export class RedisStorage implements BuildStorage {
           message: err.message || "Could not set key",
         })
       );
-
-      throw err;
     });
   };
 
@@ -144,8 +142,21 @@ export class RedisStorage implements BuildStorage {
 
   remove = async (key: string) => {
     this.connect();
-    await this._client.del(key);
+    await redisPromiseTimeout(this._client.del(key), 100).catch((err) => {
+      logWarningInSentry(
+        new RedisStorageException({
+          message: err.message || "Could not remove key",
+        })
+      );
+    });
   };
+}
+
+export class RedisStorageMock implements BuildStorage {
+  find = (_key: string) => Promise.resolve(undefined);
+  set = (_key: string, _value: any, _: any, _ttl = 0) => Promise.resolve();
+  getTTL = (_key: string) => 0;
+  remove = (_key: string) => Promise.resolve();
 }
 
 export class RedisStorageException extends Error {

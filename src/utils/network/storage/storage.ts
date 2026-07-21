@@ -1,4 +1,10 @@
+import dotenv from "dotenv";
 import { CACHE_TIMEOUT } from "../cache-config";
-import { RedisStorage } from "./redis-storage";
+import { RedisStorage, RedisStorageMock } from "./redis-storage";
 
-export const storage = new RedisStorage(CACHE_TIMEOUT);
+dotenv.config();
+
+export const storage =
+  process.env.USE_MOCK_STORAGE === "true"
+    ? new RedisStorageMock()
+    : new RedisStorage(CACHE_TIMEOUT);
