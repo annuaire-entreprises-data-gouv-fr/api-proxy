@@ -151,18 +151,22 @@ const clientUniteLegaleIG = async (siren: Siren, signal?: AbortSignal) => {
 };
 
 const mapToDomainObject = (r: IGResponse, siren: Siren) => {
-  const isEI = r.type_personne === "PP";
+  const isEI = r?.type_personne === "PP";
   const libelleNatureJuridique = isEI
     ? "Entrepreneur individuel"
     : r?.personne_morale?.forme_juridique?.libelle;
 
-  const nomComplet = isEI
-    ? `${r?.personne_physique?.premier_prenom} ${formatNameFull(
-        r?.personne_physique?.nom_patronymique,
-        r?.personne_physique?.nom_usage
-      )}`
-    : r?.nom +
-      (r?.personne_morale?.sigle ? ` (${r?.personne_morale?.sigle})` : "");
+  let nomComplet = "Non renseigné";
+
+  if (r) {
+    nomComplet = isEI
+      ? `${r.personne_physique?.premier_prenom} ${formatNameFull(
+          r.personne_physique?.nom_patronymique,
+          r.personne_physique?.nom_usage
+        )}`
+      : r.nom +
+        (r.personne_morale?.sigle ? ` (${r.personne_morale?.sigle})` : "");
+  }
 
   const dateCloture =
     (r?.personne_morale?.date_cloture_exceptionnelle ??
@@ -176,10 +180,10 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
   return {
     siren,
     nomComplet,
-    etat: ["ACTIF", "ACTIVE"].includes(r.etat) ? "A" : "C",
+    etat: ["ACTIF", "ACTIVE"].includes(r?.etat) ? "A" : "C",
     libelleNatureJuridique,
-    activitePrincipale: r.activite_naf?.code || "",
-    libelleActivitePrincipale: r.activite_naf?.libelle || "",
+    activitePrincipale: r?.activite_naf?.code || "",
+    libelleActivitePrincipale: r?.activite_naf?.libelle || "",
     dateCreation: "",
     siege: null,
     association: {
@@ -191,8 +195,8 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
       duree: 0,
       natureEntreprise: [],
       dateCloture,
-      dateImmatriculation: r.date_immatriculation || "",
-      dateRadiation: r.date_radiation || "",
+      dateImmatriculation: r?.date_immatriculation || "",
+      dateRadiation: r?.date_radiation || "",
       isPersonneMorale: !isEI,
       capital: r?.personne_morale?.capital
         ? `${r?.personne_morale?.capital?.montant} ${r?.personne_morale?.capital?.devise?.code} ${r?.personne_morale?.capital?.type}`
