@@ -1,5 +1,5 @@
 import constants from "../../constants";
-import { HttpTimeoutError } from "../../http-exceptions";
+import { HttpNotFound, HttpTimeoutError } from "../../http-exceptions";
 import type { Siren } from "../../models/siren-and-siret";
 import { formatNameFull } from "../../utils/helpers/formatters";
 import { httpGet } from "../../utils/network";
@@ -136,6 +136,10 @@ const clientUniteLegaleIG = async (siren: Siren, signal?: AbortSignal) => {
       },
     });
 
+    if (!response) {
+      throw new HttpNotFound(`Siren ${siren} not found in IG`);
+    }
+
     return mapToDomainObject(response, siren);
   } catch (error: any) {
     clearTimeout(timeoutId);
@@ -156,17 +160,13 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
     ? "Entrepreneur individuel"
     : r?.personne_morale?.forme_juridique?.libelle;
 
-  let nomComplet = "Non renseigné";
-
-  if (r) {
-    nomComplet = isEI
-      ? `${r.personne_physique?.premier_prenom} ${formatNameFull(
-          r.personne_physique?.nom_patronymique,
-          r.personne_physique?.nom_usage
-        )}`
-      : r.nom +
-        (r.personne_morale?.sigle ? ` (${r.personne_morale?.sigle})` : "");
-  }
+  const nomComplet = isEI
+    ? `${r.personne_physique?.premier_prenom} ${formatNameFull(
+        r.personne_physique?.nom_patronymique,
+        r.personne_physique?.nom_usage
+      )}`
+    : r.nom +
+      (r.personne_morale?.sigle ? ` (${r.personne_morale?.sigle})` : "");
 
   const dateCloture =
     (r?.personne_morale?.date_cloture_exceptionnelle ??
