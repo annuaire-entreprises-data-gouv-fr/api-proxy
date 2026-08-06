@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/annuaire-entreprises-data-gouv-fr/annuaire-entreprises-api-proxy#readme",
   "scripts": {
-    "dev": "nodemon index.ts",
+    "dev": "nodemon --exec tsx index.ts",
     "start": "node dist/index.js",
     "test": "jest --runInBand",
     "lint": "ultracite check",
@@ -54,7 +54,7 @@
     "lefthook": "2.1.10",
     "nodemon": "3.1.14",
     "ts-jest": "29.4.11",
-    "ts-node": "10.9.2",
+    "tsx": "4.23.5",
     "ultracite": "7.8.0"
   },
   "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
