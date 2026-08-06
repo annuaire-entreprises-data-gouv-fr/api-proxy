@@ -19,6 +19,7 @@ trustPolicyExclude:
 allowBuilds:
   "@sentry/cli": true
   "@swc/core": true
+  esbuild: true
   lefthook: true
   unrs-resolver: false
 
