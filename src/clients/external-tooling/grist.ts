@@ -11,7 +11,7 @@ interface IGristRecords {
 const gristTables = {
   "feature-flags": {
     docId: "uE2WGSjyBbSfiuSGbQiN9K",
-    tableId: "Feature_flags",
+    tableId: process.env.FEATURE_FLAGS_GRIST_NAME || "Feature_flags",
   },
 } as const;
 

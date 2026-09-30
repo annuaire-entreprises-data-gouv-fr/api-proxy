@@ -153,10 +153,21 @@ export class RedisStorage implements BuildStorage {
 }
 
 export class RedisStorageMock implements BuildStorage {
-  find = (_key: string) => Promise.resolve(undefined);
-  set = (_key: string, _value: any, _: any, _ttl = 0) => Promise.resolve();
+  private readonly cache = new Map<string, any>();
+
+  find = (_key: string) => Promise.resolve(this.cache.get(_key));
+
+  set = (_key: string, _value: any, _: any, _ttl = 0) => {
+    this.cache.set(_key, _value);
+    return Promise.resolve();
+  };
+
   getTTL = (_key: string) => 0;
-  remove = (_key: string) => Promise.resolve();
+
+  remove = (_key: string) => {
+    this.cache.delete(_key);
+    return Promise.resolve();
+  };
 }
 
 export class RedisStorageException extends Error {
