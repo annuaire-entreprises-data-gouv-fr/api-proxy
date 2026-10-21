@@ -4,7 +4,8 @@ import {
   HttpTooManyRequests,
   HttpUnauthorizedError,
 } from "../../../http-exceptions";
-import httpClient, {
+import {
+  httpClient,
   httpGet,
   type IDefaultRequestConfig,
 } from "../../../utils/network";
@@ -29,13 +30,13 @@ class RNEAccountUnavailableError extends Error {
 }
 
 const parisDateFormatter = new Intl.DateTimeFormat("en-GB", {
-  timeZone: "Europe/Paris",
-  year: "numeric",
-  month: "numeric",
   day: "numeric",
   hour: "numeric",
-  minute: "numeric",
   hourCycle: "h23",
+  minute: "numeric",
+  month: "numeric",
+  timeZone: "Europe/Paris",
+  year: "numeric",
 });
 
 const parisDateParts = (date: Date) =>
@@ -74,8 +75,8 @@ const isAccountUnavailable = (error: unknown) =>
 
 export class RNEClient {
   private readonly _accounts: Record<RNEAccount, IRNEAccountState> = {
-    main: { token: "", refreshTokenPromise: null },
-    fallback: { token: "", refreshTokenPromise: null },
+    fallback: { refreshTokenPromise: null, token: "" },
+    main: { refreshTokenPromise: null, token: "" },
   };
   private _forceFallbackUntil: Date | null = null;
 
@@ -101,17 +102,17 @@ export class RNEClient {
         : process.env.RNE_GRAND_PUBLIC_PASSWORD;
 
     const response = await httpClient<{ token: string }>({
-      method: "POST",
-      url: routes.inpi.api.rne.login,
       data: {
-        username,
         password,
+        username,
       },
-      timeout: constants.timeout.XXL,
-      useCache: false,
       headers: {
         "Content-Type": "application/json",
       },
+      method: "POST",
+      timeout: constants.timeout.XXL,
+      url: routes.inpi.api.rne.login,
+      useCache: false,
     });
     return response.token;
   };
@@ -156,8 +157,8 @@ export class RNEClient {
           ...options?.headers,
           Authorization: `Bearer ${token}`,
         },
-        useCache: !!options?.useCache,
         signal,
+        useCache: !!options?.useCache,
       });
 
     const token = await this.getToken(account);

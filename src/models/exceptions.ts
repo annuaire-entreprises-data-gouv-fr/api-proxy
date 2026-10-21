@@ -46,8 +46,8 @@ export const Information = Exception;
  */
 export function throwUnreachableCaseError(value: never): never {
   throw new InternalError({
-    message: "Unreachable case",
     context: { details: value },
+    message: "Unreachable case",
   });
 }
 

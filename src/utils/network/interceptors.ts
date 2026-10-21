@@ -29,12 +29,12 @@ export const logInterceptor = (response: AxiosResponse<any, any>) => {
 
   console.info(
     formatLog({
-      url: response?.config?.url || "",
-      status: response?.status,
       //@ts-expect-error
       isFromCached: response?.cached,
-      time: startTime ? endTime - startTime : undefined,
       method: (response?.config?.method || "").toUpperCase(),
+      status: response?.status,
+      time: startTime ? endTime - startTime : undefined,
+      url: response?.config?.url || "",
     })
   );
 
@@ -64,11 +64,11 @@ export const errorInterceptor = (error: AxiosError) => {
     const startTime = config?.metadata?.startTime;
     console.error(
       formatLog({
-        url,
-        status,
         isFromCached: false,
-        time: startTime ? endTime - startTime : undefined,
         method: error.request?.method || "",
+        status,
+        time: startTime ? endTime - startTime : undefined,
+        url,
       })
     );
   }

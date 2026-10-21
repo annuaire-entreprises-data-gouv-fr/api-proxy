@@ -6,9 +6,9 @@ const parseObservations = (observationsHtml: NodeListOf<Element>) => {
 
   for (const observationHtml of observationsHtml) {
     const current = {
-      numObservation: "",
       dateAjout: "",
       description: "",
+      numObservation: "",
     } as IObservation;
 
     const fields = observationHtml.querySelectorAll("div.bloc-detail-notice");

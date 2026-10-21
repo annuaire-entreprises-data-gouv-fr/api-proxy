@@ -63,33 +63,33 @@ const mapPersonneMoraleToDomainObject = (
   siren: Siren
 ): IImmatriculation => {
   return {
-    siren,
-    dirigeants: mapDirigeantsToDomainObject(pm?.composition?.pouvoirs),
     beneficiaires: [],
+    dirigeants: mapDirigeantsToDomainObject(pm?.composition?.pouvoirs),
+    metadata: {
+      isFallback: false,
+    },
     observations: [
       // observations équivalent in RNE
       ...inscriptionsOffices
         .filter((i: IRNEInscriptionsOffices) => !!i.observationComplementaire)
         .map((i: IRNEInscriptionsOffices) => ({
-          numObservation: "NC",
+          dateAjout: i.dateEffet ?? "",
           description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ""}${
             i.observationComplementaire ?? "observation vide"
           }`,
-          dateAjout: i.dateEffet ?? "",
+          numObservation: "NC",
         })),
       // old observations - come from old RCS records. Not sure it exist for RNM or RAA
       ...(pm?.observations?.rcs || []).map((o) => {
         const { numObservation = "", texte = "", dateAjout = "" } = o || {};
         return {
-          numObservation,
-          description: texte.trimStart().trimEnd(),
           dateAjout: formatINPIDateField(dateAjout),
+          description: texte.trimStart().trimEnd(),
+          numObservation,
         };
       }),
     ],
-    metadata: {
-      isFallback: false,
-    },
+    siren,
   };
 };
 
@@ -105,33 +105,33 @@ const mapPersonnePhysiqueToDomainObject = (
   } = pp?.identite.entrepreneur?.descriptionPersonne || {};
 
   return {
-    siren,
+    beneficiaires: [],
     dirigeants: [
       {
+        dateDemission: null,
+        dateNaissanceFull: "",
+        dateNaissancePartial: dateDeNaissance,
+        estDemissionnaire: false,
         nom,
         prenom: prenoms.join(", "),
         role: "",
-        dateNaissancePartial: dateDeNaissance,
-        dateNaissanceFull: "",
-        estDemissionnaire: false,
-        dateDemission: null,
       },
     ],
-    beneficiaires: [],
+    metadata: {
+      isFallback: false,
+    },
     // inscriptionsOffices are the new way to name observations in RNE
     // not sure there are old observations for EI
     observations: inscriptionsOffices
       .filter((i: IRNEInscriptionsOffices) => !!i.observationComplementaire)
       .map((i: IRNEInscriptionsOffices) => ({
-        numObservation: "NC",
+        dateAjout: i.dateEffet ?? "",
         description: `${i.partnerCenter ? `${i.partnerCenter} : ` : ""}${
           i.observationComplementaire
         }`,
-        dateAjout: i.dateEffet ?? "",
+        numObservation: "NC",
       })),
-    metadata: {
-      isFallback: false,
-    },
+    siren,
   };
 };
 
@@ -156,13 +156,13 @@ const mapDirigeantsToDomainObject = (
         libelleFromCodeRoleDirigeant(p?.roleEntreprise);
 
       return {
+        dateDemission: p.dateMentionDemissionOrdre ?? null,
+        dateNaissanceFull: "",
+        dateNaissancePartial: dateDeNaissance,
+        estDemissionnaire: p.mentionDemissionOrdre,
         nom: nomComplet,
         prenom: prenoms.join(", "),
         role,
-        dateNaissancePartial: dateDeNaissance,
-        dateNaissanceFull: "",
-        estDemissionnaire: p.mentionDemissionOrdre,
-        dateDemission: p.dateMentionDemissionOrdre ?? null,
       } as IEtatCivil;
     }
     const {
@@ -175,9 +175,9 @@ const mapDirigeantsToDomainObject = (
       p.libelleRoleEntreprise || libelleFromCodeRoleDirigeant(p.roleEntreprise);
 
     return {
-      siren,
       denomination,
       natureJuridique: formeJuridique,
       role,
+      siren,
     } as IPersonneMorale;
   }) || [];

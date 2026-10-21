@@ -24,6 +24,7 @@ const app = new Hono();
 const port = process.env.PORT || 3000;
 const useSentry =
   process.env.NODE_ENV === "production" && process.env.SENTRY_DSN;
+const SENTRY_DENIED_KEYS = ["forwarded", "-ip", "remote-", "via", "-user"];
 
 // https://hono.dev/docs/middleware/builtin/secure-headers
 app.use(secureHeaders());
@@ -34,6 +35,26 @@ app.use(secureHeaders());
 
 if (useSentry) {
   Sentry.init({
+    // Sentry v11 defaults to attaching stack traces to captureMessage events,
+    // which would regroup existing issues. Keep the v10 behavior.
+    attachStacktrace: false,
+    // Sentry v11 collects cookies, bodies and user info by default.
+    // Keep the v10 restrictive baseline.
+    // https://github.com/getsentry/sentry-javascript/blob/develop/MIGRATION.md#if-you-want-to-keep-the-v10-default-behavior
+    dataCollection: {
+      cookies: false,
+      databaseQueryData: false,
+      genAI: { inputs: false, outputs: false },
+      graphQL: { document: false, variables: false },
+      httpBodies: [],
+      httpHeaders: {
+        request: { deny: SENTRY_DENIED_KEYS },
+        response: { deny: SENTRY_DENIED_KEYS },
+      },
+      queues: false,
+      urlQueryParams: { deny: SENTRY_DENIED_KEYS },
+      userInfo: false,
+    },
     dsn: process.env.SENTRY_DSN,
     integrations: [],
   });

@@ -3,6 +3,7 @@
     "outDir": "./dist",
     "rootDir": "./",
     "target": "es2021",
+    "lib": ["es2022"],
     "module": "commonjs",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

@@ -130,10 +130,10 @@ const clientUniteLegaleIG = async (siren: Siren, signal?: AbortSignal) => {
 
   try {
     const response = await httpGet<IGResponse>(routes.ig + siren, {
-      signal: combinedSignal,
       headers: {
         "User-Agent": "bruno-runtime/2.1.0",
       },
+      signal: combinedSignal,
     });
 
     if (!response) {
@@ -148,7 +148,7 @@ const clientUniteLegaleIG = async (siren: Siren, signal?: AbortSignal) => {
       if (signal?.aborted) {
         throw error; // Re-throw for external cancellation handling
       }
-      throw new HttpTimeoutError("Timeout");
+      throw new HttpTimeoutError("Timeout", { cause: error });
     }
     throw error;
   }
@@ -178,30 +178,30 @@ const mapToDomainObject = (r: IGResponse, siren: Siren) => {
       : "";
 
   return {
-    siren,
-    nomComplet,
-    etat: ["ACTIF", "ACTIVE"].includes(r?.etat) ? "A" : "C",
-    libelleNatureJuridique,
     activitePrincipale: r?.activite_naf?.code || "",
-    libelleActivitePrincipale: r?.activite_naf?.libelle || "",
-    dateCreation: "",
-    siege: null,
     association: {
       idAssociation: r?.personne_morale?.numero_rna || null,
     },
+    dateCreation: "",
+    etat: ["ACTIF", "ACTIVE"].includes(r?.etat) ? "A" : "C",
     immatriculation: {
-      dateDebutActivite: "",
-      dateFin: "",
-      duree: 0,
-      natureEntreprise: [],
-      dateCloture,
-      dateImmatriculation: r?.date_immatriculation || "",
-      dateRadiation: r?.date_radiation || "",
-      isPersonneMorale: !isEI,
       capital: r?.personne_morale?.capital
         ? `${r?.personne_morale?.capital?.montant} ${r?.personne_morale?.capital?.devise?.code} ${r?.personne_morale?.capital?.type}`
         : "",
+      dateCloture,
+      dateDebutActivite: "",
+      dateFin: "",
+      dateImmatriculation: r?.date_immatriculation || "",
+      dateRadiation: r?.date_radiation || "",
+      duree: 0,
+      isPersonneMorale: !isEI,
+      natureEntreprise: [],
     },
+    libelleActivitePrincipale: r?.activite_naf?.libelle || "",
+    libelleNatureJuridique,
+    nomComplet,
+    siege: null,
+    siren,
   };
 };
 

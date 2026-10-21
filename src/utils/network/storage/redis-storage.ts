@@ -22,8 +22,8 @@ export class RedisStorage implements BuildStorage {
     }, 10_000);
 
     this._client = createClient({
-      url: process.env.REDIS_URL,
       pingInterval: 1000,
+      url: process.env.REDIS_URL,
     });
 
     this._client.on("error", (err) => {
