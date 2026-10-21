@@ -17,6 +17,7 @@ trustPolicyExclude:
 
 # SECURITY: pnpm blocks install scripts by default, enabled explicitly for:
 allowBuilds:
+  "@parcel/watcher": false
   "@sentry/cli": true
   "@swc/core": true
   esbuild: true
