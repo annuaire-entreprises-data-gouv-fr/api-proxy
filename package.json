@@ -2,27 +2,23 @@
   "name": "annuaire-entreprises-api-proxy",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "homepage": "https://github.com/annuaire-entreprises-data-gouv-fr/annuaire-entreprises-api-proxy#readme",
+  "bugs": {
+    "url": "https://github.com/annuaire-entreprises-data-gouv-fr/annuaire-entreprises-api-proxy/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/annuaire-entreprises-data-gouv-fr/annuaire-entreprises-api-proxy.git"
   },
-  "engines": {
-    "node": ">=22.22.2",
-    "pnpm": ">=11.1.2"
-  },
   "license": "AGPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/annuaire-entreprises-data-gouv-fr/annuaire-entreprises-api-proxy/issues"
-  },
-  "homepage": "https://github.com/annuaire-entreprises-data-gouv-fr/annuaire-entreprises-api-proxy#readme",
+  "main": "index.ts",
   "scripts": {
+    "build": "tsc",
     "dev": "nodemon --exec tsx index.ts",
-    "start": "node dist/index.js",
-    "test": "jest --runInBand",
     "lint": "ultracite check",
     "lint:fix": "ultracite fix",
-    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "jest --runInBand",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -39,7 +35,7 @@
     "yauzl": "3.4.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.16",
+    "@biomejs/biome": "2.5.15",
     "@commitlint/cli": "21.2.3",
     "@commitlint/config-conventional": "21.2.3",
     "@swc/core": "1.16.18",
@@ -53,7 +49,11 @@
     "lefthook": "2.2.1",
     "nodemon": "3.1.14",
     "tsx": "4.23.15",
-    "ultracite": "7.8.0"
+    "ultracite": "8.0.1"
   },
-  "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
+  "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499",
+  "engines": {
+    "node": ">=22.22.2",
+    "pnpm": ">=11.1.2"
+  }
 }

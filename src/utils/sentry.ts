@@ -49,5 +49,3 @@ export const logWarningInSentry = logInSentryFactory(
 export const logErrorInSentry = logInSentryFactory(
   "error" as Sentry.SeverityLevel
 );
-
-export default logErrorInSentry;

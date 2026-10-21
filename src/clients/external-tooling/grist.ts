@@ -1,5 +1,5 @@
 import constants from "../../constants";
-import httpClient from "../../utils/network";
+import { httpClient } from "../../utils/network";
 import routes from "../urls";
 
 interface IGristRecords {
@@ -32,12 +32,12 @@ export async function readFromGrist(
   timeout: number = constants.timeout.XXL
 ) {
   const { records } = await httpClient<IGristRecords>({
-    method: "GET",
-    url: getGristUrl(tableKey),
     headers: {
       Authorization: `Bearer ${process.env.GRIST_API_KEY}`,
     },
+    method: "GET",
     timeout,
+    url: getGristUrl(tableKey),
   });
 
   return records.map((r: any) => r.fields);

@@ -15,7 +15,7 @@ export const extractObservationsFromHtml = (
   _siren: Siren
 ): IObservation[] => {
   const dom = new JSDOM(html);
-  const document = dom.window.document;
+  const { document } = dom.window;
 
   const container = document.querySelector(
     "div#notice-description > div.bloc-without-img"

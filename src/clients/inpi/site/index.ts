@@ -13,9 +13,9 @@ export const fetchObservationsFromSite = async (
   const url = `${routes.inpi.portail.entreprise}${encodedSiren}`;
 
   const response = await httpGet<string>(url, {
+    signal,
     timeout: constants.timeout.XXXXL,
     useCache: false,
-    signal,
   });
 
   return extractObservationsFromHtml(response, siren);

@@ -21,8 +21,8 @@ import { storage } from "./storage/storage";
 const agentOptions = {
   keepAlive: true, // Keep sockets around even when there are no outstanding requests, so they can be used for future requests without having to reestablish a TCP connection. Defaults to false
   keepAliveMsecs: 1000, // When using the keepAlive option, specifies the initial delay for TCP Keep-Alive packets. Ignored when the keepAlive option is false or undefined. Defaults to 1000.
-  maxSockets: 128, // Maximum number of sockets to allow per host. Defaults to Infinity.
   maxFreeSockets: 128, // Maximum number of sockets to leave open in a free state. Only relevant if keepAlive is set to true. Defaults to 256.
+  maxSockets: 128, // Maximum number of sockets to allow per host. Defaults to Infinity.
 };
 
 export interface IDefaultRequestConfig {
@@ -41,16 +41,16 @@ export const axiosInstanceFactory = (
   timeout = constants.timeout.L
 ): AxiosCacheInstance => {
   const axiosOptions = {
-    timeout,
-    httpsAgent: new https.Agent(agentOptions),
     httpAgent: new http.Agent(agentOptions),
+    httpsAgent: new https.Agent(agentOptions),
+    timeout,
   };
 
   const axiosInstance = setupCache(Axios.create(axiosOptions), {
-    storage: buildStorage(storage),
+    debug: console.info,
     // ignore cache-control headers as some API like sirene return 'no-cache' headers
     headerInterpreter: () => CACHE_TIMEOUT,
-    debug: console.info,
+    storage: buildStorage(storage),
   });
 
   //@ts-expect-error
@@ -70,8 +70,8 @@ const axiosInstanceWithCache = axiosInstanceFactory();
  */
 async function httpClient<T>(config: IDefaultRequestConfig): Promise<T> {
   const response = await axiosInstanceWithCache({
-    timeout: constants.timeout.S,
     cache: config.useCache ? defaultCacheConfig : false,
+    timeout: constants.timeout.S,
     ...config,
   });
   return response.data;
@@ -87,9 +87,7 @@ async function httpGet<T>(
   url: string,
   config?: IDefaultRequestConfig
 ): Promise<T> {
-  return await httpClient({ ...config, url, method: "GET" });
+  return await httpClient({ ...config, method: "GET", url });
 }
 
 export { httpClient, httpGet };
-
-export default httpClient;

@@ -35,8 +35,6 @@ app.use(secureHeaders());
 
 if (useSentry) {
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-    integrations: [],
     // Sentry v11 defaults to attaching stack traces to captureMessage events,
     // which would regroup existing issues. Keep the v10 behavior.
     attachStacktrace: false,
@@ -44,19 +42,21 @@ if (useSentry) {
     // Keep the v10 restrictive baseline.
     // https://github.com/getsentry/sentry-javascript/blob/develop/MIGRATION.md#if-you-want-to-keep-the-v10-default-behavior
     dataCollection: {
-      userInfo: false,
       cookies: false,
+      databaseQueryData: false,
+      genAI: { inputs: false, outputs: false },
+      graphQL: { document: false, variables: false },
+      httpBodies: [],
       httpHeaders: {
         request: { deny: SENTRY_DENIED_KEYS },
         response: { deny: SENTRY_DENIED_KEYS },
       },
-      httpBodies: [],
-      urlQueryParams: { deny: SENTRY_DENIED_KEYS },
-      genAI: { inputs: false, outputs: false },
-      databaseQueryData: false,
       queues: false,
-      graphQL: { document: false, variables: false },
+      urlQueryParams: { deny: SENTRY_DENIED_KEYS },
+      userInfo: false,
     },
+    dsn: process.env.SENTRY_DSN,
+    integrations: [],
   });
 }
 

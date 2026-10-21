@@ -1,9 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/biome/core"],
-  "javascript": {
-    "globals": ["jest"]
-  },
+  "extends": ["ultracite/biome/core", "ultracite/biome/jest"],
   "linter": {
     "rules": {
       "style": {
@@ -13,7 +10,14 @@
         "noExcessiveCognitiveComplexity": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        // External API responses don't always match their declared types,
+        // so optional chaining on them is a runtime guard, not dead code.
+        "noUnnecessaryConditions": "off",
+        // Flags function parameters sharing a name with interface properties.
+        "noShadow": "off",
+        // Flags expect() in test helpers, even when only called inside it().
+        "noMisplacedAssertion": "off"
       }
     }
   }

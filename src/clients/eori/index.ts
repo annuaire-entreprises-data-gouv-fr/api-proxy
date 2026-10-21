@@ -1,6 +1,6 @@
 import constants from "../../constants";
 import type { Siren, Siret } from "../../models/siren-and-siret";
-import httpClient from "../../utils/network";
+import { httpClient } from "../../utils/network";
 import routes from "../urls";
 
 function createSOAPRequest(eoriNumber: string) {
@@ -34,16 +34,16 @@ const clientEORI = async (
   const eoriConstructed = `FR${siretOrSiren}`;
 
   const response = await httpClient<string>({
-    url: routes.eori,
-    method: "POST",
     data: createSOAPRequest(eoriConstructed),
     headers: {
       "Content-Type": "text/xml;charset=UTF-8",
       SOAPAction: "",
     },
-    timeout: constants.timeout.XXL,
-    useCache: true,
+    method: "POST",
     signal,
+    timeout: constants.timeout.XXL,
+    url: routes.eori,
+    useCache: true,
   });
   const result = response.match(resultRegex)?.[0];
 

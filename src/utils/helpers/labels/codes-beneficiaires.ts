@@ -1,10 +1,10 @@
 export const codesBeneficiaires = {
-  BE_SOC: "Société",
-  BE_PLA: "Placement Collectif",
+  Autre: "Autre",
   BE_GIE: "GIE",
+  BE_PLA: "Placement Collectif",
+  BE_SOC: "Société",
+  GOA_DBE: "GIE au Association",
+  OPC_DBE: "Placement Collectif",
   // Pour les données collectées par d'anciens formulaires
   SOC_DBE: "Société",
-  OPC_DBE: "Placement Collectif",
-  GOA_DBE: "GIE au Association",
-  Autre: "Autre",
 };

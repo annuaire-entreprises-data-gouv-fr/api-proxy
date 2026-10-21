@@ -101,8 +101,8 @@ describe("getOrSetWithCacheExpiry", () => {
       expect(result).toEqual(staleValue);
       expect(mockLogWarningInSentry).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: "SmartCacheStorageException",
           message: expect.stringContaining("Callback failed for key"),
+          name: "SmartCacheStorageException",
         })
       );
     });

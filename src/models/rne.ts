@@ -78,7 +78,9 @@ const fetchRneAPI = async (
     if (errorAPIRNE instanceof HttpNotFound) {
       throw errorAPIRNE;
     }
-    throw new HttpServerError(`[RNE] API  failed : ${errorAPIRNE}`);
+    throw new HttpServerError(`[RNE] API  failed : ${errorAPIRNE}`, {
+      cause: errorAPIRNE,
+    });
   }
 };
 
@@ -98,7 +100,9 @@ const fetchRneImmatriculationDate = async (
     if (errorAPIRNE instanceof HttpNotFound) {
       throw errorAPIRNE;
     }
-    throw new HttpServerError(`[RNE] API  failed : ${errorAPIRNE}`);
+    throw new HttpServerError(`[RNE] API  failed : ${errorAPIRNE}`, {
+      cause: errorAPIRNE,
+    });
   }
 };
 
@@ -118,7 +122,9 @@ const fetchRneObservationsSite = async (
     if (fallbackError instanceof HttpNotFound) {
       throw fallbackError;
     }
-    throw new HttpServerError(`[RNE] Site failed : ${fallbackError}`);
+    throw new HttpServerError(`[RNE] Site failed : ${fallbackError}`, {
+      cause: fallbackError,
+    });
   }
 };
 

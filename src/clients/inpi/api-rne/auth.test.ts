@@ -5,13 +5,12 @@ import {
   HttpTooManyRequests,
   HttpUnauthorizedError,
 } from "../../../http-exceptions";
-import httpClient, { httpGet } from "../../../utils/network";
+import { httpClient, httpGet } from "../../../utils/network";
 import routes from "../../urls";
 import { RNEClient } from "./auth";
 
 jest.mock("../../../utils/network", () => ({
-  __esModule: true,
-  default: jest.fn(),
+  httpClient: jest.fn(),
   httpGet: jest.fn(),
 }));
 
@@ -22,12 +21,12 @@ jest.mock("dotenv", () => ({
 
 const RESOURCE_URL = "https://api.rne.test/resource";
 const MAIN_CREDENTIALS = {
-  username: "main-login",
   password: "main-password",
+  username: "main-login",
 };
 const FALLBACK_CREDENTIALS = {
-  username: "fallback-login",
   password: "fallback-password",
+  username: "fallback-login",
 };
 const MAIN_RESULT = { account: "main" };
 const FALLBACK_RESULT = { account: "fallback" };
@@ -40,11 +39,11 @@ const expectLoginToUse = (
 ) => {
   expect(mockHttpClient.mock.calls[callNumber - 1]?.[0]).toEqual(
     expect.objectContaining({
+      data: credentials,
+      headers: { "Content-Type": "application/json" },
       method: "POST",
       url: routes.inpi.api.rne.login,
-      data: credentials,
       useCache: false,
-      headers: { "Content-Type": "application/json" },
     })
   );
 };
@@ -65,15 +64,15 @@ const deferredToken = () => {
     resolveToken = resolve;
     rejectToken = reject;
   });
-  return { promise, resolveToken, rejectToken };
+  return { promise, rejectToken, resolveToken };
 };
 
 const originalCredentials = {
-  RNE_GRAND_PUBLIC_LOGIN: process.env.RNE_GRAND_PUBLIC_LOGIN,
-  RNE_GRAND_PUBLIC_PASSWORD: process.env.RNE_GRAND_PUBLIC_PASSWORD,
   RNE_GRAND_PUBLIC_FALLBACK_LOGIN: process.env.RNE_GRAND_PUBLIC_FALLBACK_LOGIN,
   RNE_GRAND_PUBLIC_FALLBACK_PASSWORD:
     process.env.RNE_GRAND_PUBLIC_FALLBACK_PASSWORD,
+  RNE_GRAND_PUBLIC_LOGIN: process.env.RNE_GRAND_PUBLIC_LOGIN,
+  RNE_GRAND_PUBLIC_PASSWORD: process.env.RNE_GRAND_PUBLIC_PASSWORD,
 };
 
 const deferredSignal = () => {
@@ -122,17 +121,17 @@ describe("RNEClient", () => {
     expectLastRequestToUse("main-token");
     expect(mockHttpGet).toHaveBeenCalledWith(RESOURCE_URL, {
       headers: { Authorization: "Bearer main-token" },
-      useCache: false,
       signal: undefined,
+      useCache: false,
     });
   });
 
   it("preserves request options and headers through fallback", async () => {
-    const signal = new AbortController().signal;
+    const { signal } = new AbortController();
     const options = {
       headers: { "x-request-id": "request-id" },
-      responseType: "arraybuffer" as const,
       params: { siren: "123456789" },
+      responseType: "arraybuffer" as const,
       timeout: 3000,
       useCache: true,
     };
@@ -150,19 +149,19 @@ describe("RNEClient", () => {
 
     expect(mockHttpGet).toHaveBeenNthCalledWith(1, RESOURCE_URL, {
       ...options,
-      signal,
       headers: {
         ...options.headers,
         Authorization: "Bearer main-token",
       },
+      signal,
     });
     expect(mockHttpGet).toHaveBeenNthCalledWith(2, RESOURCE_URL, {
       ...options,
-      signal,
       headers: {
         ...options.headers,
         Authorization: "Bearer fallback-token",
       },
+      signal,
     });
     expect(options.headers).toEqual({ "x-request-id": "request-id" });
   });
@@ -241,77 +240,77 @@ describe("RNEClient", () => {
 
   it.each([
     {
-      scenario: "summer",
-      now: "2026-08-05T10:00:00.000Z",
       cutoff: "2026-08-05T22:05:00.000Z",
+      now: "2026-08-05T10:00:00.000Z",
+      scenario: "summer",
     },
     {
-      scenario: "winter",
-      now: "2026-02-05T10:00:00.000Z",
       cutoff: "2026-02-05T23:05:00.000Z",
+      now: "2026-02-05T10:00:00.000Z",
+      scenario: "winter",
     },
     {
-      scenario: "the day before summer time begins",
-      now: "2026-03-28T11:00:00.000Z",
       cutoff: "2026-03-28T23:05:00.000Z",
+      now: "2026-03-28T11:00:00.000Z",
+      scenario: "the day before summer time begins",
     },
     {
-      scenario: "the day summer time begins",
-      now: "2026-03-29T10:00:00.000Z",
       cutoff: "2026-03-29T22:05:00.000Z",
+      now: "2026-03-29T10:00:00.000Z",
+      scenario: "the day summer time begins",
     },
     {
-      scenario: "the day before winter time begins",
-      now: "2026-10-24T10:00:00.000Z",
       cutoff: "2026-10-24T22:05:00.000Z",
+      now: "2026-10-24T10:00:00.000Z",
+      scenario: "the day before winter time begins",
     },
     {
-      scenario: "the day winter time begins",
-      now: "2026-10-25T11:00:00.000Z",
       cutoff: "2026-10-25T23:05:00.000Z",
+      now: "2026-10-25T11:00:00.000Z",
+      scenario: "the day winter time begins",
     },
     {
-      scenario: "month rollover",
-      now: "2026-08-31T10:00:00.000Z",
       cutoff: "2026-08-31T22:05:00.000Z",
+      now: "2026-08-31T10:00:00.000Z",
+      scenario: "month rollover",
     },
     {
-      scenario: "year rollover",
-      now: "2026-12-31T11:00:00.000Z",
       cutoff: "2026-12-31T23:05:00.000Z",
+      now: "2026-12-31T11:00:00.000Z",
+      scenario: "year rollover",
     },
     {
-      scenario: "failover at 00:01 Paris time",
-      now: "2026-08-05T22:01:00.000Z",
       cutoff: "2026-08-06T22:05:00.000Z",
+      now: "2026-08-05T22:01:00.000Z",
+      scenario: "failover at 00:01 Paris time",
     },
-  ])("returns to main at exactly next-day 00:05 Paris time: $scenario", async ({
-    now,
-    cutoff,
-  }) => {
-    jest.setSystemTime(new Date(now));
-    mockHttpClient
-      .mockRejectedValueOnce(new Error("main account blocked"))
-      .mockResolvedValueOnce({ token: "fallback-token" })
-      .mockResolvedValueOnce({ token: "recovered-main-token" });
-    mockHttpGet
-      .mockResolvedValueOnce(FALLBACK_RESULT)
-      .mockResolvedValueOnce(FALLBACK_RESULT)
-      .mockResolvedValueOnce(MAIN_RESULT);
-    const client = new RNEClient();
+  ])(
+    "returns to main at exactly next-day 00:05 Paris time: $scenario",
+    async ({ now, cutoff }) => {
+      jest.setSystemTime(new Date(now));
+      mockHttpClient
+        .mockRejectedValueOnce(new Error("main account blocked"))
+        .mockResolvedValueOnce({ token: "fallback-token" })
+        .mockResolvedValueOnce({ token: "recovered-main-token" });
+      mockHttpGet
+        .mockResolvedValueOnce(FALLBACK_RESULT)
+        .mockResolvedValueOnce(FALLBACK_RESULT)
+        .mockResolvedValueOnce(MAIN_RESULT);
+      const client = new RNEClient();
 
-    await expect(client.get(RESOURCE_URL)).resolves.toEqual(FALLBACK_RESULT);
-    jest.setSystemTime(new Date(new Date(cutoff).getTime() - 1));
-    await expect(client.get(RESOURCE_URL)).resolves.toEqual(FALLBACK_RESULT);
-    expect(mockHttpClient).toHaveBeenCalledTimes(2);
-    expectLastRequestToUse("fallback-token");
+      await expect(client.get(RESOURCE_URL)).resolves.toEqual(FALLBACK_RESULT);
+      jest.setSystemTime(new Date(new Date(cutoff).getTime() - 1));
+      await expect(client.get(RESOURCE_URL)).resolves.toEqual(FALLBACK_RESULT);
+      expect(mockHttpClient).toHaveBeenCalledTimes(2);
+      expectLastRequestToUse("fallback-token");
 
-    jest.setSystemTime(new Date(cutoff));
-    await expect(client.get(RESOURCE_URL)).resolves.toEqual(MAIN_RESULT);
-    expect(mockHttpClient).toHaveBeenCalledTimes(3);
-    expectLoginToUse(3, MAIN_CREDENTIALS);
-    expectLastRequestToUse("recovered-main-token");
-  });
+      jest.setSystemTime(new Date(cutoff));
+      await expect(client.get(RESOURCE_URL)).resolves.toEqual(MAIN_RESULT);
+      expect(mockHttpClient).toHaveBeenCalledTimes(3);
+      expectLoginToUse(3, MAIN_CREDENTIALS);
+      expectLastRequestToUse("recovered-main-token");
+    }
+  );
 
   it("returns to the main account early when fallback exhausts its quota", async () => {
     mockHttpClient
@@ -457,17 +456,22 @@ describe("RNEClient", () => {
     new HttpForbiddenError("resource forbidden"),
     new HttpNotFound("resource missing"),
     new HttpServerError("resource unavailable"),
-  ])("propagates a resource error with status $status unchanged", async (error) => {
-    mockHttpClient.mockResolvedValue({ token: "main-token" });
-    mockHttpGet.mockRejectedValueOnce(error).mockResolvedValueOnce(MAIN_RESULT);
-    const client = new RNEClient();
+  ])(
+    "propagates a resource error with status $status unchanged",
+    async (error) => {
+      mockHttpClient.mockResolvedValue({ token: "main-token" });
+      mockHttpGet
+        .mockRejectedValueOnce(error)
+        .mockResolvedValueOnce(MAIN_RESULT);
+      const client = new RNEClient();
 
-    await expect(client.get(RESOURCE_URL)).rejects.toBe(error);
-    await expect(client.get(RESOURCE_URL)).resolves.toEqual(MAIN_RESULT);
+      await expect(client.get(RESOURCE_URL)).rejects.toBe(error);
+      await expect(client.get(RESOURCE_URL)).resolves.toEqual(MAIN_RESULT);
 
-    expect(mockHttpClient).toHaveBeenCalledTimes(1);
-    expectLastRequestToUse("main-token");
-  });
+      expect(mockHttpClient).toHaveBeenCalledTimes(1);
+      expectLastRequestToUse("main-token");
+    }
+  );
 
   it("shares the first login between concurrent requests", async () => {
     const token = deferredToken();
