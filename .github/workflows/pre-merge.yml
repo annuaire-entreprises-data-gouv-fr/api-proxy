@@ -11,7 +11,7 @@ on:
 # Be extremely careful as the env variables defined here are accessible by all the actions of the workflow.
 # For critical env variable, declare it within the action.
 env:
-  node-version: 22.22.2
+  node-version: 24.22.1
 jobs:
   dependencies:
     name: "Install dependencies"
@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: corepack enable pnpm
       - name: Cache node modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: restore-dependencies
         env:
           cache-name: cache-node-modules
