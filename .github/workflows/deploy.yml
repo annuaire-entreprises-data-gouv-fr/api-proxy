@@ -4,7 +4,7 @@ permissions:
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
   deploy-production:
     name: Deploy - production
     runs-on: ubuntu-latest
-    needs: [deploy-staging]
+    needs: [ deploy-staging ]
     environment:
       name: production
 

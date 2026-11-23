@@ -1,5 +1,5 @@
 export const cleanTextFromHtml = (raw = "") =>
-  raw.replace("\n", "").replace(/\s+/g, " ").replace("<br>", "").trim();
+  raw.replace("\n", "").replace(/\s+/gu, " ").replace("<br>", "").trim();
 
 /**
  * converts a html block of two adjacents <p> into a {label, text }

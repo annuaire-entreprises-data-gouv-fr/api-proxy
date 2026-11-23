@@ -85,12 +85,15 @@ export const isLuhnValid = (str: string) => {
 export const isLikelyASiretOrSiren = (slug: string) =>
   hasSirenFormat(slug) || hasSiretFormat(slug);
 
-export const hasSirenFormat = (str: string) => !!str.match(/^\d{9}$/g);
+const SIREN_PATTERN = /^\d{9}$/u;
+const SIRET_PATTERN = /^\d{14}$/u;
 
-export const hasSiretFormat = (str: string) => !!str.match(/^\d{14}$/g);
+export const hasSirenFormat = (str: string) => SIREN_PATTERN.test(str);
+
+export const hasSiretFormat = (str: string) => SIRET_PATTERN.test(str);
 
 export const formatSiret = (siret = "") =>
-  siret.replace(/(\d{3})/g, "$1 ").replace(/(\s)(?=(\d{2})$)/g, "");
+  siret.replace(/(?<block>\d{3})/gu, "$<block> ").replace(/\s(?=\d{2}$)/gu, "");
 
 export const extractSirenFromSiret = (siret: string) =>
   verifySiren(siret.slice(0, 9));

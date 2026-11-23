@@ -17,13 +17,10 @@ export const clientFeatureFlags = async (): Promise<{
 
     return response
       .filter((row) => !!row.feature_name)
-      .reduce(
-        (acc: { [key: string]: FeatureFlagValue }, row) => {
-          acc[row.feature_name] = row.value;
-          return acc;
-        },
-        {} as { [key: string]: FeatureFlagValue }
-      );
+      .reduce<{ [key: string]: FeatureFlagValue }>((acc, row) => {
+        acc[row.feature_name] = row.value;
+        return acc;
+      }, {});
   };
 
   featureFlagsPromise = callback();

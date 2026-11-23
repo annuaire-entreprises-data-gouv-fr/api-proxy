@@ -91,6 +91,7 @@ export class RNEClient {
     return "main";
   };
 
+  // biome-ignore lint/style/useThisInClassMethods: The default account uses instance state.
   refreshToken = async (account: RNEAccount = this.getActiveAccount()) => {
     const username =
       account === "fallback"
