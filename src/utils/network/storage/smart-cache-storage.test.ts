@@ -30,7 +30,7 @@ describe("getOrSetWithCacheExpiry", () => {
   });
 
   describe("When value exists and is fresh", () => {
-    test("Should return cached value without calling callback", async () => {
+    it("Should return cached value without calling callback", async () => {
       const cachedValue = { data: "cached" };
       const ttl = 900_000; // 900 seconds remaining
       // age = expiration - ttl so 100 seconds old. less than freshTime 500 seconds
@@ -53,7 +53,7 @@ describe("getOrSetWithCacheExpiry", () => {
   });
 
   describe("When value exists but is stale", () => {
-    test("Should refresh value successfully and return fresh data", async () => {
+    it("Should refresh value successfully and return fresh data", async () => {
       const staleValue = { data: "stale" };
       const freshValue = { data: "fresh" };
       const smallFreshTime = 500_000; // 500 seconds
@@ -81,7 +81,7 @@ describe("getOrSetWithCacheExpiry", () => {
       );
     });
 
-    test("Should return stale value when callback fails", async () => {
+    it("Should return stale value when callback fails", async () => {
       const staleValue = { data: "stale" };
       const ttl = 10; // Very low TTL = old value
       const smallFreshTime = 500_000;
@@ -109,7 +109,7 @@ describe("getOrSetWithCacheExpiry", () => {
   });
 
   describe("When key doesn't exist", () => {
-    test("Should call callback and cache the result", async () => {
+    it("Should call callback and cache the result", async () => {
       const freshValue = { data: "fresh" };
 
       mockStorageFind.mockResolvedValue(null);
@@ -136,7 +136,7 @@ describe("getOrSetWithCacheExpiry", () => {
   });
 
   describe("When callback fails", () => {
-    test("Should throw error when no cache exists and callback fails", async () => {
+    it("Should throw error when no cache exists and callback fails", async () => {
       const callbackError = new Error("Callback failed");
 
       mockStorageFind.mockResolvedValue(null);
@@ -150,7 +150,7 @@ describe("getOrSetWithCacheExpiry", () => {
   });
 
   describe("Edge cases", () => {
-    test("Should handle TTL of 0", async () => {
+    it("Should handle TTL of 0", async () => {
       const cachedValue = { data: "cached" };
       const freshValue = { data: "fresh" };
 
@@ -171,7 +171,7 @@ describe("getOrSetWithCacheExpiry", () => {
       expect(result).toEqual(freshValue);
     });
 
-    test("Should handle null TTL (key doesn't exist)", async () => {
+    it("Should handle null TTL (key doesn't exist)", async () => {
       const freshValue = { data: "fresh" };
 
       mockStorageFind.mockResolvedValue(null);
@@ -190,7 +190,7 @@ describe("getOrSetWithCacheExpiry", () => {
       expect(mockCallback).toHaveBeenCalled();
     });
 
-    test("Should handle callback returning null", async () => {
+    it("Should handle callback returning null", async () => {
       mockStorageFind.mockResolvedValue(null);
       mockStorageGetTTL.mockResolvedValue(null);
       mockCallback.mockResolvedValue(null);
@@ -212,7 +212,7 @@ describe("getOrSetWithCacheExpiry", () => {
       );
     });
 
-    test("Should handle callback returning undefined", async () => {
+    it("Should handle callback returning undefined", async () => {
       mockStorageFind.mockResolvedValue(null);
       mockStorageGetTTL.mockResolvedValue(null);
       mockCallback.mockResolvedValue(undefined);

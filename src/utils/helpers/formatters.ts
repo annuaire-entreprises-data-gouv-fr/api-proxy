@@ -8,7 +8,7 @@ export const capitalize = (str: string) => {
 
 export const formatIntFr = (intAsString = "") => {
   try {
-    return intAsString.replace(/(\d)(?=(\d{3})+$)/g, "$1 ");
+    return intAsString.replace(/(?<digit>\d)(?=(?:\d{3})+$)/gu, "$<digit> ");
   } catch {
     return intAsString;
   }
@@ -23,8 +23,8 @@ export const formatFloatFr = (floatAsString = "") => {
   }
 };
 
-const WHITESPACE_END = /\s+$/;
-const WHITESPACE_START = /^\s+/;
+const WHITESPACE_END = /\s+$/u;
+const WHITESPACE_START = /^\s+/u;
 
 /**
  * Normalize string and remove special chars & diacritics before using a term in search
@@ -32,11 +32,11 @@ const WHITESPACE_START = /^\s+/;
 export const escapeTerm = (term: string) =>
   term
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u0300-\u036f]/gu, "")
     .replace(WHITESPACE_END, "")
     .replace(WHITESPACE_START, "");
 
-const WHITESPACE_COMMA = /[,\s]+/;
+const WHITESPACE_COMMA = /[,\s]+/u;
 
 export const formatFirstNames = (firstNamesRaw: string) => {
   const firstNames = firstNamesRaw.split(WHITESPACE_COMMA);

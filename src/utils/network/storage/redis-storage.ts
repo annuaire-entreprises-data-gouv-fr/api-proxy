@@ -162,6 +162,7 @@ export class RedisStorageMock implements BuildStorage {
     return Promise.resolve();
   };
 
+  // biome-ignore lint/style/useThisInClassMethods: BuildStorage requires an instance method; the mock always returns zero.
   getTTL = (_key: string) => 0;
 
   remove = (_key: string) => {

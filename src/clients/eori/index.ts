@@ -20,8 +20,8 @@ export interface IEORIValidation {
   isValid: boolean;
 }
 
-const resultRegex = /<result>[\s\S]*?<\/result>/;
-const eoriRegex = /<eori>(.*?)<\/eori>/;
+const resultRegex = /<result>[\s\S]*?<\/result>/u;
+const eoriRegex = /<eori>(?<eori>.*?)<\/eori>/u;
 
 /**
  * Call EORI SOAP API to validate EORI number
@@ -51,7 +51,7 @@ const clientEORI = async (
     return null;
   }
 
-  const eori = result.match(eoriRegex)?.[1] ?? eoriConstructed;
+  const eori = result.match(eoriRegex)?.groups?.eori ?? eoriConstructed;
   const isValid = result.includes("<status>0</status>");
   return {
     eori,
